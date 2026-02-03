@@ -1,0 +1,718 @@
+/* ============================
+   DEPARTMENTS PAGE STYLES
+   Trang Khoa Phòng - Redesigned
+=============================== */
+
+:root {
+  --primary-color: #0891b2;
+  --primary-dark: #0e7490;
+  --primary-light: #22d3ee;
+  --secondary-color: #f0fdfa;
+  --text-dark: #1e293b;
+  --text-light: #64748b;
+  --text-muted: #94a3b8;
+  --white: #ffffff;
+  --bg-light: #f8fafc;
+  --border-color: #e2e8f0;
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --radius: 12px;
+  --radius-lg: 16px;
+}
+
+/* Page Title Section - thay thế hero banner */
+.page-title-section {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+  padding: 80px 0 60px;
+  position: relative;
+  overflow: hidden;
+}
+
+.page-title-section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+.page-title-content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.page-title-content h1 {
+  font-size: 42px;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 16px;
+  line-height: 1.2;
+}
+
+.page-title-content p {
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.breadcrumb a {
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.breadcrumb a:hover {
+  color: var(--white);
+}
+
+.breadcrumb .separator {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.breadcrumb .current {
+  color: var(--white);
+  font-weight: 500;
+}
+
+/* Stats Section */
+.departments-stats-section {
+  padding: 0;
+  margin-top: -40px;
+  position: relative;
+  z-index: 10;
+}
+
+.stats-overview {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.stat-card {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: var(--shadow-lg);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-xl);
+}
+
+.stat-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--white);
+  flex-shrink: 0;
+}
+
+.stat-icon.available {
+  background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+}
+
+.stat-icon.doctors {
+  background: linear-gradient(135deg, #6366f1 0%, #818cf8 100%);
+}
+
+.stat-icon.emergency {
+  background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+}
+
+.stat-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-number {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-dark);
+  line-height: 1.2;
+}
+
+.stat-label {
+  font-size: 14px;
+  color: var(--text-light);
+  margin-top: 4px;
+}
+
+/* Section Headers */
+.section-header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.section-tag {
+  display: inline-block;
+  background: var(--secondary-color);
+  color: var(--primary-color);
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.section-title {
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 16px;
+}
+
+.section-subtitle {
+  font-size: 16px;
+  color: var(--text-light);
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* Departments List Section */
+.departments-list-section {
+  background-color: var(--bg-light);
+  padding: 80px 0;
+}
+
+/* Departments Grid */
+.departments-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  gap: 24px;
+}
+
+.department-card {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  transition: all 0.3s ease;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.department-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-xl);
+}
+
+.department-icon-wrapper {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 24px auto 0;
+  transition: transform 0.3s;
+}
+
+.department-card:hover .department-icon-wrapper {
+  transform: scale(1.1);
+}
+
+.department-icon-wrapper.internal {
+  background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+  color: var(--white);
+}
+
+.department-icon-wrapper.surgery {
+  background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+  color: var(--white);
+}
+
+.department-icon-wrapper.maternity {
+  background: linear-gradient(135deg, #ec4899 0%, #f472b6 100%);
+  color: var(--white);
+}
+
+.department-icon-wrapper.pediatrics {
+  background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+  color: var(--white);
+}
+
+.department-icon-wrapper.emergency {
+  background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+  color: var(--white);
+}
+
+.department-icon-wrapper.cardiology {
+  background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);
+  color: var(--white);
+}
+
+.department-content {
+  padding: 24px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.department-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.department-header h3 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+.department-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--white);
+}
+
+.department-badge.internal {
+  background-color: #3b82f6;
+}
+.department-badge.surgery {
+  background-color: #10b981;
+}
+.department-badge.maternity {
+  background-color: #ec4899;
+}
+.department-badge.pediatrics {
+  background-color: #f59e0b;
+}
+.department-badge.emergency {
+  background-color: #ef4444;
+}
+.department-badge.cardiology {
+  background-color: #8b5cf6;
+}
+
+.department-description {
+  color: var(--text-light);
+  line-height: 1.7;
+  margin-bottom: 20px;
+  font-size: 15px;
+}
+
+.department-stats {
+  display: flex;
+  gap: 24px;
+  padding: 16px 0;
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 20px;
+}
+
+.dept-stat {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-light);
+  font-size: 14px;
+}
+
+.dept-stat svg {
+  color: var(--primary-color);
+}
+
+.dept-stat strong {
+  color: var(--text-dark);
+}
+
+.department-services {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 20px 0;
+  flex: 1;
+}
+
+.department-services li {
+  padding: 8px 0;
+  padding-left: 24px;
+  position: relative;
+  color: var(--text-light);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.department-services li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 14px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--primary-color);
+}
+
+.department-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-color);
+}
+
+.hotline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-light);
+  font-size: 14px;
+}
+
+.hotline svg {
+  color: var(--primary-color);
+}
+
+.hotline.emergency-hotline {
+  color: #ef4444;
+}
+
+.hotline.emergency-hotline svg {
+  color: #ef4444;
+}
+
+.btn-detail {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: var(--primary-color);
+  color: var(--white);
+  text-decoration: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-detail:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-2px);
+}
+
+.btn-detail.emergency-btn {
+  background-color: #ef4444;
+}
+
+.btn-detail.emergency-btn:hover {
+  background-color: #dc2626;
+}
+
+/* Info Section */
+.departments-info-section {
+  background-color: var(--white);
+  padding: 80px 0;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.info-card {
+  background-color: var(--bg-light);
+  padding: 32px;
+  border-radius: var(--radius-lg);
+  transition: all 0.3s ease;
+  border: 1px solid var(--border-color);
+}
+
+.info-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--primary-color);
+}
+
+.info-icon-wrapper {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--white);
+  margin-bottom: 20px;
+}
+
+.info-card h3 {
+  font-size: 20px;
+  color: var(--text-dark);
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.info-card > p {
+  color: var(--text-light);
+  line-height: 1.7;
+  margin-bottom: 20px;
+  font-size: 15px;
+}
+
+.info-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.info-card ul li {
+  padding: 10px 0;
+  padding-left: 20px;
+  position: relative;
+  color: var(--text-light);
+  font-size: 14px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.info-card ul li:last-child {
+  border-bottom: none;
+}
+
+.info-card ul li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 16px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--primary-color);
+}
+
+.info-card ul li strong {
+  color: var(--text-dark);
+}
+
+/* CTA Section */
+.cta-section {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+  padding: 60px 0;
+}
+
+.cta-content {
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.cta-content h2 {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 12px;
+}
+
+.cta-content p {
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 28px;
+}
+
+.cta-buttons {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-primary,
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 28px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background: var(--white);
+  color: var(--primary-color);
+}
+
+.btn-primary:hover {
+  background: var(--bg-light);
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--white);
+  border: 2px solid rgba(255, 255, 255, 0.5);
+}
+
+.btn-secondary:hover {
+  border-color: var(--white);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Active Nav Item */
+.nav-list-item.active {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .stats-overview {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .departments-grid {
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  }
+
+  .info-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .page-title-content h1 {
+    font-size: 32px;
+  }
+
+  .page-title-content p {
+    font-size: 16px;
+  }
+
+  .stats-overview {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .stat-card {
+    padding: 16px;
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .stat-icon {
+    width: 56px;
+    height: 56px;
+  }
+
+  .stat-number {
+    font-size: 24px;
+  }
+
+  .departments-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .section-title {
+    font-size: 28px;
+  }
+
+  .cta-content h2 {
+    font-size: 26px;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-title-section {
+    padding: 60px 0 50px;
+  }
+
+  .page-title-content h1 {
+    font-size: 26px;
+  }
+
+  .departments-stats-section {
+    margin-top: -30px;
+  }
+
+  .stats-overview {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .stat-card {
+    padding: 14px;
+  }
+
+  .stat-icon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .stat-icon svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .stat-number {
+    font-size: 20px;
+  }
+
+  .stat-label {
+    font-size: 12px;
+  }
+
+  .department-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .department-footer {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .btn-detail {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .cta-buttons {
+    flex-direction: column;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    width: 100%;
+    justify-content: center;
+  }
+}

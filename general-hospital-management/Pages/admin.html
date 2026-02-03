@@ -1,0 +1,2156 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Trị - Bệnh Viện Đa Khoa</title>
+    
+    <link rel="stylesheet" href="../icon/themify-icons/themify-icons.css">
+    
+    <link rel="stylesheet" href="../css/admin.css">
+    
+    <!-- AngularJS -->
+    <script src="../angular/angular.min.js"></script>
+    <script src="../js/api.service.js"></script>
+    <script src="../js/admin.controller.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/admin_click.js"></script>
+    
+    <!-- Separate Services -->
+    <script src="../js/services/patient.service.js"></script>
+    <script src="../js/services/bed.service.js"></script>
+    <script src="../js/services/department.service.js"></script>
+    <script src="../js/services/admission.service.js"></script>
+    
+    <!-- Separate Controllers -->
+    <script src="../js/controllers/patient.controller.js"></script>
+    <script src="../js/controllers/patient.modal.js"></script>
+    <script src="../js/controllers/bed.controller.js"></script>
+    <script src="../js/controllers/bed.modal.js"></script>
+    <script src="../js/controllers/department.controller.js"></script>
+    <script src="../js/controllers/department.modal.js"></script>
+    <script src="../js/controllers/admission.modal.js"></script>
+    
+    <!-- Surgery & Doctor -->
+    <script src="../js/services/surgery.service.js"></script>
+    <script src="../js/services/doctor.service.js"></script>
+    <script src="../js/controllers/surgery.controller.js"></script>
+    <script src="../js/controllers/surgery.modal.js"></script>
+    
+    <!-- Medical Records -->
+    <script src="../js/services/medicalrecord.service.js"></script>
+    <script src="../js/controllers/medicalrecord.controller.js"></script>
+    <script src="../js/controllers/medicalrecord.modal.js"></script>
+
+    <!-- Medical Personnel -->
+    <script src="../js/controllers/doctor.controller.js"></script>
+    <script src="../js/controllers/doctor.modal.js"></script>
+    <script src="../js/services/nurse.service.js"></script>
+    <script src="../js/controllers/nurse.controller.js"></script>
+    <script src="../js/controllers/nurse.modal.js"></script>
+    
+    <!-- Billing -->
+    <script src="../js/services/billing.service.js"></script>
+    <script src="../js/controllers/billing.controller.js"></script>
+    <script src="../js/controllers/billing.modal.js"></script>
+
+    <!-- Report & Audit -->
+    <script src="../js/services/report.service.js"></script>
+    <script src="../js/controllers/report.controller.js"></script>
+    <script src="../js/services/audit.service.js"></script>
+    <script src="../js/controllers/audit.controller.js"></script>
+
+    <!-- Lab Tests -->
+    <script src="../js/services/labtest.service.js"></script>
+    <script src="../js/controllers/labtest.controller.js"></script>
+</head>
+<body>
+
+    <div ng-controller="AdminController" class="admin-wrapper">
+
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2><i class="ti-pulse"></i> BV Đa Khoa</h2>
+            <span class="role-label">{{currentUser.name || 'Admin Dashboard'}}</span>
+        </div>
+        
+        <ul>
+            <li ng-class="{'active': currentSection === 'home'}" ng-click="showSection('home')"><i class="ti-dashboard"></i> Tổng quan</li>
+            <li ng-class="{'active': currentSection === 'patients'}" ng-click="showSection('patients')"><i class="ti-wheelchair"></i> Quản lý Bệnh nhân</li>
+            <li ng-class="{'active': currentSection === 'beds'}" ng-click="showSection('beds')"><i class="ti-layout-grid2"></i> Quản lý Giường bệnh</li>
+            <li ng-class="{'active': currentSection === 'departments'}" ng-click="showSection('departments')"><i class="ti-home"></i> Quản lý Khoa phòng</li>
+            <li ng-class="{'active': currentSection === 'surgery'}" ng-click="showSection('surgery')"><i class="ti-cut"></i> Lịch Phẫu thuật & Thủ thuật</li>
+            <li ng-class="{'active': currentSection === 'records'}" ng-click="showSection('records')"><i class="ti-file"></i> Hồ sơ Bệnh án (EHR)</li>
+            <li ng-class="{'active': currentSection === 'doctors'}" ng-click="showSection('doctors')"><i class="ti-user"></i> Nhân sự Y tế</li>
+            <li ng-class="{'active': currentSection === 'billing'}" ng-click="showSection('billing')"><i class="ti-money"></i> Viện phí & BHYT</li> 
+            <li ng-class="{'active': currentSection === 'report'}" ng-click="showSection('report')"><i class="ti-bar-chart"></i> Báo cáo thống kê</li>
+            <li ng-class="{'active': currentSection === 'labtests'}" ng-click="showSection('labtests')"><i class="ti-flask"></i> Quản lý Xét nghiệm</li>
+            <li ng-class="{'active': currentSection === 'settings'}" ng-click="showSection('settings')"><i class="ti-settings"></i> Cấu hình</li>
+            
+            <li class="sidebar-link-ext">
+                <a href="/index.html" target="_blank">
+                    <i class="ti-world"></i> Xem Trang Chủ
+                </a>
+            </li>
+            <li ng-click="logout()" class="logout-link"><i class="ti-power-off"></i> Đăng xuất</li>
+        </ul>
+    </div>
+
+    <div class="content">
+        <div class="topbar">
+            <div class="user-info">
+                <i class="ti-bell"></i>
+                <div class="admin-profile">
+                    <i class="ti-user"></i> <span>Quản trị viên</span>
+                </div>
+            </div>
+        </div>
+        
+        <div id="home" class="page fade-in">
+            <div class="header-section">
+                <h4>Tổng quan hoạt động</h4>
+                <p class="date-text">Hôm nay: 27/11/2025</p>
+            </div>
+
+            <div class="dashboard">
+                <div class="card blue">
+                    <i class="ti-wheelchair"></i>
+                    <p>Tổng Bệnh nhân</p>
+                    <h3>126</h3>
+                </div>
+                <div class="card green">
+                    <i class="ti-calendar"></i>
+                    <p>Lịch hẹn Hôm nay</p>
+                    <h3>89</h3>
+                </div>
+                <div class="card orange">
+                    <i class="ti-user"></i>
+                    <p>Bác sĩ trực</p>
+                    <h3>15</h3>
+                </div>
+                <div class="card red">
+                    <i class="ti-money"></i>
+                    <p>Doanh thu (Ngày)</p>
+                    <h3>45 Tr</h3>
+                </div>
+            </div>
+
+            <div class="block">
+                <h4><i class="ti-time"></i> Hoạt động gần đây</h4>
+                <div class="activity">
+                    <div><i class="ti-plus"></i> Tiếp nhận bệnh nhân <b>Nguyễn Văn A</b> vào Khoa Nội</div>
+                    <div><i class="ti-check-box"></i> Bác sĩ Hùng hoàn thành khám mã <b>#PK102</b></div>
+                    <div><i class="ti-user"></i> Bệnh nhân mới <b>Trần Thị B</b> đăng ký trực tuyến</div>
+                    <div><i class="ti-pencil-alt"></i> Cập nhật bệnh án hồ sơ <b>Lê Văn C</b></div>
+                </div>
+            </div>
+
+            <div class="block">
+                <h4><i class="ti-bar-chart"></i> Thống kê nhanh</h4>
+                <div class="stats">
+                    <div class="stat"><p>Đã thu phí</p><h3>12.500.000 đ</h3></div>
+                    <div class="stat"><p>Ca cấp cứu</p><h3>5</h3></div>
+                    <div class="stat"><p>Xuất viện</p><h3>8</h3></div>
+                </div>
+            </div>
+
+            <div class="block">
+                <h4><i class="ti-notepad"></i> Ghi chú trực ban</h4>
+                <textarea placeholder="Nhập ghi chú giao ban hoặc nhắc nhở công việc..."></textarea>
+            </div>
+        </div>
+        
+        <div id="patients" class="page hidden fade-in" ng-class="{'active': currentSection === 'patients'}">
+            <div class="art-header"> 
+                <h4><i class="ti-wheelchair"></i> Danh sách Bệnh nhân</h4>
+                <div class="header-actions">
+                    <input type="text" 
+                           ng-model="searchText" 
+                           ng-keypress="$event.keyCode === 13 && searchPatients()"
+                           placeholder="Tìm kiếm bệnh nhân..." 
+                           class="input-search">
+                    <button class="btn btn-primary" ng-click="searchPatients()">
+                        <i class="ti-search"></i> Tìm kiếm
+                    </button>
+                    <button class="btn add-btn" onclick="openPatientModalJS()">
+                        <i class="ti-plus"></i> Tiếp nhận Mới
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Loading State -->
+            <div class="block" ng-if="loading.patients">
+                <div class="loading-spinner">
+                    <i class="ti-reload spin"></i> Đang tải dữ liệu...
+                </div>
+            </div>
+            
+            <!-- Error State -->
+            <div class="block bg-warning-light" ng-if="errors.patients">
+                <p class="text-danger"><i class="ti-alert"></i> {{errors.patients}}</p>
+            </div>
+            
+            <!-- Data Table -->
+            <div class="block block-no-padding" ng-if="!loading.patients">
+                <table class="art-table"> 
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Họ tên</th>
+                            <th>Ngày sinh</th>
+                            <th>Giới tính</th>
+                            <th>Địa chỉ</th>
+                            <th>Số thẻ BHYT</th>
+                            <th>Trạng thái</th>
+                            <th>Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dynamic rows from API -->
+                        <tr ng-repeat="patient in patients track by $index">
+                            <td>{{$index + 1}}</td>
+                            <td><b>{{patient.hoTen}}</b></td>
+                            <td>{{patient.ngaySinh | date:'dd/MM/yyyy'}}</td>
+                            <td>{{patient.gioiTinh}}</td>
+                            <td>{{patient.diaChi || '-'}}</td>
+                            <td>{{patient.soTheBaoHiem || 'Không có'}}</td>
+                            <td>
+                                <span class="badge" 
+                                      ng-class="{
+                                          'badge-danger': patient.trangThai === 'Nội trú',
+                                          'badge-warning': patient.trangThai === 'Chờ xét nghiệm',
+                                          'badge-success': patient.trangThai === 'Đã ổn định' || patient.trangThai === 'Đã xuất viện',
+                                          'badge-primary': !patient.trangThai
+                                      }">
+                                    {{patient.trangThai || 'Đang điều trị'}}
+                                </span>
+                            </td>
+                            <td>
+                                <button class="btn btn-edit" ng-click="editPatient(patient)">
+                                    <i class="ti-pencil"></i> Sửa
+                                </button>
+                                <button class="btn btn-detail" ng-click="viewPatient(patient)">
+                                    <i class="ti-file"></i> Hồ sơ
+                                </button>
+                                <button class="btn btn-danger" ng-click="deletePatient(patient)">
+                                    <i class="ti-trash"></i> Xóa
+                                </button>
+                            </td>
+                        </tr>
+                        
+                        <!-- Empty State -->
+                        <tr ng-if="patients.length === 0 && !loading.patients">
+                            <td colspan="8" class="text-center">
+                                <i class="ti-info-alt"></i> Không có dữ liệu bệnh nhân
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <!-- Pagination -->
+                <div class="pagination-footer" ng-if="totalPages > 1" style="padding: 15px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #eee;">
+                    <div style="font-size: 13px; color: #666;">
+                        Hiển thị trang <b>{{currentPage}}</b> / <b>{{totalPages}}</b> trên tổng số <b>{{totalRecords}}</b> bệnh nhân
+                    </div>
+                    <div style="display: flex; gap: 5px;">
+                        <button class="btn" style="padding: 5px 10px; font-size: 13px;" 
+                                ng-disabled="currentPage <= 1" 
+                                ng-click="changePage(currentPage - 1)"
+                                ng-class="{'btn-gray': currentPage > 1, 'disabled': currentPage <= 1}">
+                            <i class="ti-angle-left"></i> Trước
+                        </button>
+                        
+                        <button class="btn" style="padding: 5px 10px; font-size: 13px;" 
+                                ng-repeat="p in getPages()" 
+                                ng-click="changePage(p)"
+                                ng-class="{'btn-primary': p === currentPage, 'btn-gray': p !== currentPage}">
+                            {{p}}
+                        </button>
+                        
+                        <button class="btn" style="padding: 5px 10px; font-size: 13px;" 
+                                ng-disabled="currentPage >= totalPages" 
+                                ng-click="changePage(currentPage + 1)"
+                                ng-class="{'btn-gray': currentPage < totalPages, 'disabled': currentPage >= totalPages}">
+                            Sau <i class="ti-angle-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="beds" class="page hidden fade-in">
+            <div class="art-header">
+                <h4><i class="ti-layout-grid2"></i> Quản lý Giường bệnh</h4>
+                <button class="btn add-btn" onclick="openBedModalJS()">
+                    <i class="ti-plus"></i> Thêm giường mới
+                </button>
+            </div>
+
+            <div class="block block-mb-20">
+                <!-- Search Bar -->
+                <div class="search-controls" style="display: flex; gap: 10px; margin-bottom: 15px;">
+                    <input type="text" id="bedSearchInput" class="input-default" 
+                           placeholder="Tìm theo tên giường, mã giường..." 
+                           ng-model="bedSearchKeyword"
+                           ng-keyup="$event.keyCode === 13 && searchBeds()"
+                           style="flex: 1; max-width: 400px;">
+                    <button class="btn btn-primary" ng-click="searchBeds()">
+                        <i class="ti-search"></i> Tìm kiếm
+                    </button>
+                    <button class="btn btn-gray" ng-click="bedSearchKeyword = ''; loadBeds()" ng-if="bedSearchKeyword">
+                        <i class="ti-close"></i> Xóa tìm
+                    </button>
+                </div>
+                
+                <!-- Filter Controls -->
+                <div class="filter-controls">
+                    <select id="departmentFilter" class="input-default" ng-model="selectedDepartmentFilter">
+                        <option value="">Tất cả khoa</option>
+                        <option ng-repeat="dept in departments" ng-value="dept.id">{{dept.tenKhoa}}</option>
+                    </select>
+                    <button class="btn" ng-click="filterByStatus('all')" 
+                            ng-class="{'btn-primary': selectedStatusFilter === 'all', 'btn-gray': selectedStatusFilter !== 'all'}">
+                        Tất cả
+                    </button>
+                    <button class="btn" ng-click="filterByStatus('available')"
+                            ng-class="{'btn-success': selectedStatusFilter === 'available', 'btn-gray': selectedStatusFilter !== 'available'}">
+                        <i class="ti-check"></i> Trống
+                    </button>
+                    <button class="btn" ng-click="filterByStatus('occupied')"
+                            ng-class="{'btn-danger': selectedStatusFilter === 'occupied', 'btn-gray': selectedStatusFilter !== 'occupied'}">
+                        <i class="ti-user"></i> Đang sử dụng
+                    </button>
+                </div>
+            </div>
+
+
+            <!-- Thống kê theo Khoa - Động -->
+            <div class="dept-stats-grid" ng-if="departmentStats.length > 0">
+                <div class="block" ng-repeat="stat in departmentStats track by stat.khoaId" 
+                     ng-click="selectedDepartmentFilter = stat.khoaId"
+                     style="cursor: pointer;"
+                     ng-class="{'block-active': selectedDepartmentFilter === stat.khoaId}">
+                    <h4><i class="ti-home"></i> {{stat.tenKhoa}}</h4>
+                    <div class="dept-stats-container">
+                        <div class="stats-row">
+                            <span>Tổng giường:</span>
+                            <b>{{stat.total}}</b>
+                        </div>
+                        <div class="stats-row">
+                            <span>Đang sử dụng:</span>
+                            <b class="text-danger">{{stat.occupied}}</b>
+                        </div>
+                        <div class="stats-row">
+                            <span>Trống:</span>
+                            <b class="text-success">{{stat.available}}</b>
+                        </div>
+                        <div class="stats-row-last">
+                            <span>Công suất:</span>
+                            <b>{{stat.percentage}}%</b>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Loading hoặc Chưa có dữ liệu -->
+            <div class="dept-stats-grid" ng-if="departmentStats.length === 0 && !bedLoading">
+                <div class="block" style="text-align: center; padding: 20px;">
+                    <i class="ti-info-alt"></i> Chưa có dữ liệu thống kê khoa phòng
+                </div>
+            </div>
+
+            <div class="block block-no-padding">
+                <!-- Loading State -->
+                <div ng-if="bedLoading" class="loading-spinner" style="padding: 20px; text-align: center;">
+                    <i class="ti-reload spin"></i> Đang tải dữ liệu giường bệnh...
+                </div>
+                
+                <table class="art-table" ng-if="!bedLoading">
+                    <thead>
+                        <tr>
+                            <th>Mã giường</th>
+                            <th>Khoa/Phòng</th>
+                            <th>Loại giường</th>
+                            <th>Bệnh nhân</th>
+                            <th>Ngày nhập</th>
+                            <th>Trạng thái</th>
+                            <th>Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="bed in getFilteredBeds() track by $index">
+                            <td><code>{{(bed.id || '').substring(0,8)}}...</code></td>
+                            <td>{{getDepartmentName(bed.khoaId)}}</td>
+                            <td>{{bed.loaiGiuong || 'Thường'}}</td>
+                            <td>
+                                <span ng-if="bed.tenBenhNhan">
+                                    <b>{{bed.tenBenhNhan}}</b>
+                                </span>
+                                <span ng-if="!bed.tenBenhNhan" class="text-muted">-</span>
+                            </td>
+                            <td>
+                                <span ng-if="bed.ngayNhapVien">{{bed.ngayNhapVien | date:'dd/MM/yyyy'}}</span>
+                                <span ng-if="!bed.ngayNhapVien" class="text-muted">-</span>
+                            </td>
+                            <td>
+                                <span class="badge" 
+                                      ng-class="{
+                                          'badge-danger': bed.trangThai === 1 || bed.tenBenhNhan,
+                                          'badge-success': bed.trangThai === 0 && !bed.tenBenhNhan
+                                      }">
+                                    {{bed.tenBenhNhan ? 'Đang sử dụng' : 'Trống'}}
+                                </span>
+                            </td>
+                            <td>
+                                <!-- Actions for Empty Bed -->
+                                <button class="btn btn-success" ng-if="!bed.tenBenhNhan && bed.trangThai !== 1" ng-click="openAdmitModal(bed)" title="Tiếp nhận bệnh nhân">
+                                    <i class="ti-user"></i> Tiếp nhận
+                                </button>
+                                
+                                <button class="btn btn-edit" ng-click="editBed(bed)">
+                                    <i class="ti-pencil"></i> Sửa
+                                </button>
+                                <button class="btn btn-detail" ng-click="viewBed(bed)">
+                                    <i class="ti-eye"></i> Chi tiết
+                                </button>
+                                <button class="btn btn-danger" ng-click="deleteBed(bed)">
+                                    <i class="ti-trash"></i> Xóa
+                                </button>
+                            </td>
+                        </tr>
+                        
+                        <!-- Empty State -->
+                        <tr ng-if="getFilteredBeds().length === 0 && !bedLoading">
+                            <td colspan="7" class="text-center" style="padding: 20px;">
+                                <i class="ti-info-alt"></i> Không có dữ liệu giường bệnh
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- DEPARTMENTS SECTION -->
+        <!-- ============================================ -->
+        <div id="departments" class="page hidden fade-in">
+            <div class="art-header">
+                <h4><i class="ti-home"></i> Quản lý Khoa phòng</h4>
+                <button class="btn add-btn" onclick="openDepartmentModalJS()">
+                    <i class="ti-plus"></i> Thêm khoa mới
+                </button>
+            </div>
+
+            <div class="block block-mb-20">
+                <!-- Search Bar -->
+                <div class="search-controls" style="display: flex; gap: 10px; margin-bottom: 15px;">
+                    <input type="text" id="deptSearchInput" class="input-default" 
+                           placeholder="Tìm theo tên khoa, loại khoa..." 
+                           ng-model="departmentSearchKeyword"
+                           ng-keyup="$event.keyCode === 13 && searchDepartments()"
+                           style="flex: 1; max-width: 400px;">
+                    <button class="btn btn-primary" ng-click="searchDepartments()">
+                        <i class="ti-search"></i> Tìm kiếm
+                    </button>
+                    <button class="btn btn-gray" ng-click="departmentSearchKeyword = ''" ng-if="departmentSearchKeyword">
+                        <i class="ti-close"></i> Xóa tìm
+                    </button>
+                </div>
+            </div>
+
+            <div class="block block-no-padding">
+                <!-- Loading State -->
+                <div ng-if="departmentLoading" class="loading-spinner" style="padding: 20px; text-align: center;">
+                    <i class="ti-reload spin"></i> Đang tải danh sách khoa phòng...
+                </div>
+                
+                <table class="art-table" ng-if="!departmentLoading">
+                    <thead>
+                        <tr>
+                            <th>Mã khoa</th>
+                            <th>Tên khoa</th>
+                            <th>Loại khoa</th>
+                            <th>Số giường tiêu chuẩn</th>
+                            <th>Số giường hiện có</th>
+                            <th>Đang sử dụng</th>
+                            <th>Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="dept in getFilteredDepartments() track by $index">
+                            <td><code>{{(dept.id || '').substring(0,8)}}...</code></td>
+                            <td><b>{{dept.tenKhoa}}</b></td>
+                            <td>{{dept.loaiKhoa}}</td>
+                            <td class="text-center">{{dept.soGiuongTieuChuan || 0}}</td>
+                            <td class="text-center">
+                                <span class="badge" ng-class="{
+                                    'badge-success': dept.soGiuongHienCo < dept.soGiuongTieuChuan,
+                                    'badge-warning': dept.soGiuongHienCo >= dept.soGiuongTieuChuan
+                                }">
+                                    {{dept.soGiuongHienCo || 0}}
+                                </span>
+                            </td>
+                            <td class="text-center">
+                                <span class="badge badge-danger" ng-if="dept.soGiuongDangDung > 0">
+                                    {{dept.soGiuongDangDung}}
+                                </span>
+                                <span ng-if="!dept.soGiuongDangDung || dept.soGiuongDangDung === 0">0</span>
+                            </td>
+                            <td>
+                                <button class="btn btn-edit" ng-click="editDepartment(dept)">
+                                    <i class="ti-pencil"></i> Sửa
+                                </button>
+                                <button class="btn btn-detail" ng-click="viewDepartment(dept)">
+                                    <i class="ti-eye"></i> Chi tiết
+                                </button>
+                                <button class="btn btn-danger" ng-click="deleteDepartment(dept)">
+                                    <i class="ti-trash"></i> Xóa
+                                </button>
+                            </td>
+                        </tr>
+                        
+                        <!-- Empty State -->
+                        <tr ng-if="getFilteredDepartments().length === 0 && !departmentLoading">
+                            <td colspan="7" class="text-center" style="padding: 20px;">
+                                <i class="ti-info-alt"></i> Không có dữ liệu khoa phòng
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- SURGERY SECTION -->
+        <!-- ============================================ -->
+        <div id="surgery" class="page hidden fade-in" ng-show="currentSection === 'surgery'" ng-controller="SurgeryController">
+            <div class="art-header">
+                <h4><i class="ti-cut"></i> Lịch Phẫu thuật & Thủ thuật</h4>
+                <button class="btn add-btn" ng-click="openSurgeryModal('create')">
+                    <i class="ti-plus"></i> Đặt lịch mổ
+                </button>
+            </div>
+
+            <div class="block block-mb-20">
+                <div class="filter-controls-simple">
+                    <button class="btn" ng-class="{'btn-primary-light': surgeryFilter.date === 'today', 'btn-gray': surgeryFilter.date !== 'today'}" ng-click="surgeryFilter.date = 'today'; refreshSurgery()">Hôm nay</button>
+                    <button class="btn" ng-class="{'btn-primary-light': surgeryFilter.date === 'week', 'btn-gray': surgeryFilter.date !== 'week'}" ng-click="surgeryFilter.date = 'week'; refreshSurgery()">Tuần này</button>
+                    <button class="btn" ng-class="{'btn-primary-light': surgeryFilter.date === 'all', 'btn-gray': surgeryFilter.date !== 'all'}" ng-click="surgeryFilter.date = 'all'; refreshSurgery()">Tất cả</button>
+                    
+                    <select class="input-default" ng-model="surgeryFilter.roomId">
+                        <option value="">Tất cả phòng mổ</option>
+                        <option value="PhongMo1">Phòng mổ 1</option>
+                        <option value="PhongMo2">Phòng mổ 2</option>
+                        <option value="PhongMo3">Phòng mổ 3</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="dashboard dashboard-mb-30">
+                <div class="card blue">
+                    <i class="ti-calendar"></i>
+                    <p>Ca mổ hôm nay</p>
+                    <h3>{{stats.today}}</h3>
+                </div>
+                <div class="card green">
+                    <i class="ti-check-box"></i>
+                    <p>Đã hoàn thành</p>
+                    <h3>{{stats.completed}}</h3>
+                </div>
+                <div class="card orange">
+                    <i class="ti-time"></i>
+                    <p>Đang thực hiện</p>
+                    <h3>{{stats.running}}</h3>
+                </div>
+                <div class="card red">
+                    <i class="ti-alert"></i>
+                    <p>Chờ thực hiện</p>
+                    <h3>{{stats.pending}}</h3>
+                </div>
+            </div>
+
+            <!-- Loading & Error -->
+            <div class="block" ng-if="loading.surgery">
+                <div class="loading-spinner"><i class="ti-reload spin"></i> Đang tải lịch phẫu thuật...</div>
+            </div>
+            <div class="block bg-warning-light" ng-if="errors.surgery">
+                <p class="text-danger"><i class="ti-alert"></i> {{errors.surgery}}</p>
+            </div>
+
+            <div class="block block-no-padding" ng-if="!loading.surgery">
+                <table class="art-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Bệnh nhân</th>
+                            <th>Loại phẫu thuật</th>
+                            <th>Bác sĩ chính</th>
+                            <th>Phòng mổ</th>
+                            <th>Ngày</th>
+                            <th>Chi phí</th>
+                            <th>Trạng thái</th>
+                            <th>Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="s in surgeryList">
+                            <td>{{$index + 1}}</td>
+                            <td>
+                                <b>{{s.tenBenhNhan || 'N/A'}}</b>
+                            </td>
+                            <td>{{s.loaiPhauThuat || 'Chưa xác định'}}</td>
+                            <td>{{s.tenBacSi || getDoctorName(s.bacSiChinhId)}}</td>
+                            <td>{{s.phongMo || 'N/A'}}</td>
+                            <td>{{s.ngay | date:'dd/MM/yyyy'}}</td>
+                            <td>{{(s.chiPhi | number:0) || '0'}} đ</td>
+                            <td>
+                                <span class="badge" ng-class="getSurgeryStatusBadge(s.trangThai).class">
+                                    {{getSurgeryStatusBadge(s.trangThai).text}}
+                                </span>
+                            </td>
+                            <td>
+                                <button class="btn btn-edit" ng-click="openSurgeryModal('edit', s)"><i class="ti-pencil"></i> Sửa</button>
+                                <button class="btn btn-danger" ng-click="deleteSurgery(s)"><i class="ti-trash"></i> Xóa</button>
+                            </td>
+                        </tr>
+                        <tr ng-if="surgeryList.length === 0">
+                             <td colspan="9" class="text-center" style="padding: 20px;"><i class="ti-info-alt"></i> Chưa có lịch phẫu thuật nào.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div id="records" class="page hidden fade-in" ng-show="currentSection === 'records'" ng-controller="MedicalRecordController">
+            <div class="art-header">
+                <h4><i class="ti-file"></i> Hồ sơ Bệnh án Điện tử (EHR)</h4>
+                <div class="header-actions">
+                    <input type="text" ng-model="searchRecordText" placeholder="Tìm kiếm theo tên BN, chẩn đoán..." class="input-search">
+                    <button class="btn add-btn" ng-click="openRecordModal('create')">
+                        <i class="ti-plus"></i> Tạo hồ sơ mới
+                    </button>
+                </div>
+            </div>
+
+            <!-- Loading & Error -->
+            <div class="block" ng-if="loading.records">
+                <div class="loading-spinner"><i class="ti-reload spin"></i> Đang tải hồ sơ bệnh án...</div>
+            </div>
+            <div class="block bg-warning-light" ng-if="errors.records">
+                <p class="text-danger"><i class="ti-alert"></i> {{errors.records}}</p>
+            </div>
+
+            <div class="block block-no-padding" ng-if="!loading.records">
+                <table class="art-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Bệnh nhân</th>
+                            <th>Chẩn đoán ban đầu</th>
+                            <th>Bác sĩ phụ trách</th>
+                            <th>Ngày lập</th>
+                            <th>Kết quả điều trị</th>
+                            <th>Trạng thái</th>
+                            <th>Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="r in recordList | filter:recordFilter">
+                            <td>{{$index + 1}}</td>
+                            <td>
+                                <b>{{r.tenBenhNhan || 'N/A'}}</b>
+                            </td>
+                            <td>{{r.chanDoanBanDau || 'Chưa có'}}</td>
+                            <td>{{getDoctorNameById(r.bacSiPhuTrachId)}}</td>
+                            <td>{{r.ngayLap | date:'dd/MM/yyyy'}}</td>
+                            <td>{{r.ketQuaDieuTri || '-'}}</td>
+                            <td>
+                                <span class="badge" ng-class="getRecordStatusBadge(r).class">
+                                    {{getRecordStatusBadge(r).text}}
+                                </span>
+                            </td>
+                            <td>
+                                <button class="btn btn-detail" ng-click="viewRecordDetail(r)"><i class="ti-eye"></i> Xem</button>
+                                <button class="btn btn-edit" ng-click="openRecordModal('edit', r)"><i class="ti-pencil"></i> Sửa</button>
+                                <button class="btn btn-danger" ng-click="deleteRecord(r)"><i class="ti-trash"></i> Xóa</button>
+                            </td>
+                        </tr>
+                        <tr ng-if="recordList.length === 0">
+                             <td colspan="8" class="text-center" style="padding: 20px;"><i class="ti-info-alt"></i> Chưa có hồ sơ bệnh án nào.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div id="billing" class="page hidden fade-in" ng-controller="BillingController">
+            <div class="art-header">
+                <h4><i class="ti-money"></i> Quản lý Viện phí & Bảo hiểm y tế</h4>
+                <button class="btn btn-primary" ng-click="loadInvoices()">
+                    <i class="ti-reload"></i> Làm mới
+                </button>
+            </div>
+
+            <div class="dashboard dashboard-mb-30">
+                <div class="card blue">
+                    <i class="ti-money"></i>
+                    <p>Tổng thu</p>
+                    <h3>{{formatMoneyShort(stats.tongThu)}}</h3>
+                </div>
+                <div class="card green">
+                    <i class="ti-credit-card"></i>
+                    <p>Đã thu</p>
+                    <h3>{{formatMoneyShort(stats.daThu)}}</h3>
+                </div>
+                <div class="card orange">
+                    <i class="ti-id-badge"></i>
+                    <p>BHYT thanh toán</p>
+                    <h3>{{formatMoneyShort(stats.bhytThanhToan)}}</h3>
+                </div>
+                <div class="card red">
+                    <i class="ti-alert"></i>
+                    <p>Công nợ</p>
+                    <h3>{{formatMoneyShort(stats.congNo)}}</h3>
+                </div>
+            </div>
+
+            <!-- Loading -->
+            <div class="block" ng-if="loading.invoices">
+                <div class="loading-spinner"><i class="ti-reload spin"></i> Đang tải danh sách hóa đơn...</div>
+            </div>
+            
+            <!-- Error -->
+            <div class="block bg-warning-light" ng-if="errors.invoices">
+                <p class="text-danger"><i class="ti-alert"></i> {{errors.invoices}}</p>
+            </div>
+
+            <div class="block block-no-padding" ng-if="!loading.invoices">
+                <table class="art-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Bệnh nhân</th>
+                            <th>Ngày nhập viện</th>
+                            <th>Tổng tiền</th>
+                            <th>BHYT chi trả</th>
+                            <th>BN phải trả</th>
+                            <th>Ngày tạo HĐ</th>
+                            <th>Trạng thái</th>
+                            <th>Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="inv in getPagedInvoices()">
+                            <td>{{$index + 1 + (currentPage - 1) * pageSize}}</td>
+                            <td><b>{{inv.tenBenhNhan || 'N/A'}}</b></td>
+                            <td>{{inv.ngayNhapVien | date:'dd/MM/yyyy'}}</td>
+                            <td><b>{{formatMoney(inv.tongTien)}} đ</b></td>
+                            <td>{{formatMoney(inv.baoHiemChiTra)}} đ</td>
+                            <td>{{formatMoney(inv.benhNhanThanhToan)}} đ</td>
+                            <td>{{inv.ngay | date:'dd/MM/yyyy'}}</td>
+                            <td>
+                                <span class="badge" ng-class="getStatusBadge(inv.trangThai).class">
+                                    {{getStatusBadge(inv.trangThai).text}}
+                                </span>
+                            </td>
+                            <td>
+                                <button class="btn btn-detail" ng-click="exportPdf(inv)" title="Xuất PDF">
+                                    <i class="ti-file"></i> PDF
+                                </button>
+                                <button class="btn btn-danger" ng-click="deleteInvoice(inv)" title="Xóa">
+                                    <i class="ti-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr ng-if="invoices.length === 0">
+                            <td colspan="9" class="text-center"><i class="ti-info"></i> Chưa có hóa đơn nào.</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <!-- Pagination -->
+                <div class="pagination-footer" ng-if="totalPages > 1" style="padding: 10px; text-align: right;">
+                    <button class="btn btn-sm" ng-disabled="currentPage <= 1" ng-click="changePage(currentPage - 1)">Previous</button>
+                    <span>Trang {{currentPage}}/{{totalPages}}</span>
+                    <button class="btn btn-sm" ng-disabled="currentPage >= totalPages" ng-click="changePage(currentPage + 1)">Next</button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="labtests" class="page hidden fade-in" ng-controller="LabTestController">
+            <div class="art-header">
+                <h4><i class="ti-flask"></i> Quản lý Xét nghiệm & Dịch vụ Lab</h4>
+                <button class="btn btn-primary" ng-click="openModal()">
+                    <i class="ti-plus"></i> Thêm xét nghiệm mới
+                </button>
+            </div>
+
+            <div class="block block-mb-20">
+                <div class="search-controls" style="display: flex; gap: 10px;">
+                    <div class="search-wrapper" style="width: 300px;">
+                        <i class="ti-search"></i>
+                        <input type="text" placeholder="Tìm kiếm tên xét nghiệm..." ng-model="searchKeyword" ng-enter="search()" class="input-default" style="width: 100%; padding-left: 35px;">
+                    </div>
+                    
+                    <button class="btn btn-primary" ng-click="search()">Tìm kiếm</button>
+                    
+                    <button class="btn btn-gray" ng-click="refresh()">
+                        <i class="ti-reload"></i> Làm mới
+                    </button>
+                </div>
+            </div>
+
+            <!-- Loading & Error -->
+            <div class="block" ng-if="loading">
+                <div class="loading-spinner">
+                    <i class="ti-reload spin"></i> Đang tải dữ liệu...
+                </div>
+            </div>
+            
+            <div class="block bg-warning-light" ng-if="errorMessage">
+                <p class="text-danger"><i class="ti-alert"></i> {{errorMessage}}</p>
+            </div>
+
+            <!-- Data Table -->
+            <div class="block block-no-padding" ng-if="!loading && !errorMessage">
+                <table class="art-table">
+                    <thead>
+                        <tr>
+                            <th>Xét nghiệm</th>
+                            <th>Kết quả</th>
+                            <th>Ngày thực hiện</th>
+                            <th class="text-right">Đơn giá</th>
+                            <th class="text-right">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="item in labTests">
+                            <td>
+                                <b>{{item.loaiXetNghiem}}</b>
+                                <div class="text-sm text-gray" ng-if="item.tenBenhNhan">BN: {{item.tenBenhNhan}}</div>
+                            </td>
+                            <td>{{item.ketQua || 'Chưa có kết quả'}}</td>
+                            <td>{{item.ngay | date:'dd/MM/yyyy HH:mm'}}</td>
+                            <td class="text-right"><b>{{item.donGia | number}} đ</b></td>
+                            <td class="text-right">
+                                <button class="btn btn-edit btn-small" title="Sửa" ng-click="openModal(item)">
+                                    <i class="ti-pencil"></i>
+                                </button>
+                                <button class="btn btn-danger btn-small" title="Xóa" ng-click="delete(item)">
+                                    <i class="ti-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr ng-if="labTests.length === 0">
+                            <td colspan="5" class="text-center" style="padding: 20px;">
+                                <i class="ti-info-alt"></i> Chưa có phiếu xét nghiệm nào
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination-controls" ng-if="labTests.length > 0" style="padding: 15px; text-align: right;">
+                <span class="text-gray">Hiển thị {{labTests.length}} phiếu</span>
+            </div>
+
+            <!-- MODAL: ADD/EDIT LAB TEST -->
+            <div class="modal-overlay" ng-if="showModal" style="display: flex;">
+                <div class="modal-container">
+                    <div class="modal-header">
+                        <h3>{{isEditing ? 'Cập nhật' : 'Thêm mới'}} Phiếu Xét nghiệm</h3>
+                        <button class="modal-close" ng-click="closeModal()"><i class="ti-close"></i></button>
+                    </div>
+                    <div class="modal-body">
+                        <form ng-submit="save()">
+                            <div class="form-row" ng-if="!isEditing">
+                                 <div class="form-group" style="width: 100%;">
+                                    <label>Mã Nhập viện (Hospitalization ID) <span class="text-danger">*</span></label>
+                                    <input type="text" class="input-default" style="width: 100%;" ng-model="formData.nhapVienId" placeholder="Nhập ID đợt nhập viện của bệnh nhân">
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group" style="width: 100%;">
+                                    <label>Loại Xét nghiệm <span class="text-danger">*</span></label>
+                                    <input type="text" class="input-default" style="width: 100%;" ng-model="formData.loaiXetNghiem" required placeholder="VD: Huyết học, Sinh hóa...">
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group" style="width: 100%;">
+                                    <label>Kết quả</label>
+                                    <textarea class="input-default" ng-model="formData.ketQua" rows="3" placeholder="Nhập kết quả xét nghiệm..."></textarea>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Ngày thực hiện</label>
+                                    <input type="datetime-local" class="input-default" style="width: 100%;" ng-model="formData.ngay">
+                                </div>
+                                <div class="form-group">
+                                    <label>Đơn giá (VNĐ)</label>
+                                    <input type="number" class="input-default" style="width: 100%;" ng-model="formData.donGia" min="0" step="1000">
+                                </div>
+                            </div>
+
+                            <div class="alert alert-danger" ng-if="formError" style="margin-top: 15px; color: red;">
+                                {{formError}}
+                            </div>
+                            
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-gray" ng-click="closeModal()">Hủy</button>
+                                <button type="submit" class="btn btn-primary" ng-disabled="isSaving">
+                                    <i ng-if="isSaving" class="ti-reload spin"></i>
+                                    {{isSaving ? 'Đang lưu...' : 'Lưu dữ liệu'}}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="appointments" class="page hidden fade-in">
+            <div class="art-header">
+                <h4><i class="ti-calendar"></i> Lịch khám & Hẹn</h4>
+                <button class="btn add-btn" onclick="openAppointmentForm()">
+                    <i class="ti-plus"></i> Đặt lịch mới
+                </button>
+            </div>
+            
+            <div class="block block-mb-20">
+                <div class="filter-controls-simple">
+                    <button class="btn btn-primary-light">Hôm nay</button>
+                    <button class="btn btn-gray">Tuần này</button>
+                    <button class="btn btn-gray">Tháng này</button>
+                    <button class="btn btn-gray">Tất cả</button>
+                </div>
+            </div>
+
+            <div class="block block-no-padding">
+                <table class="art-table">
+                    <thead>
+                        <tr>
+                            <th>Mã lịch</th>
+                            <th>Bệnh nhân</th>
+                            <th>Bác sĩ</th>
+                            <th>Khoa</th>
+                            <th>Ngày giờ</th>
+                            <th>Loại khám</th>
+                            <th>Trạng thái</th>
+                            <th>Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>LH001</td>
+                            <td><b>Nguyễn Văn An</b></td>
+                            <td>BS. Trần Văn Hùng</td>
+                            <td>Khoa Nội</td>
+                            <td>27/11/2025<br><small class="table-small-text">09:00</small></td>
+                            <td>Khám thường</td>
+                            <td><span class="badge badge-success">Đã xác nhận</span></td>
+                            <td>
+                                <button class="btn btn-edit"><i class="ti-pencil"></i></button>
+                                <button class="btn btn-detail"><i class="ti-eye"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>LH002</td>
+                            <td><b>Trần Thị Bưởi</b></td>
+                            <td>BS. Lê Thị Mai</td>
+                            <td>Khoa Ngoại</td>
+                            <td>27/11/2025<br><small class="table-small-text">10:30</small></td>
+                            <td>Khám cấp cứu</td>
+                            <td><span class="badge badge-warning">Chờ xác nhận</span></td>
+                            <td>
+                                <button class="btn btn-edit"><i class="ti-pencil"></i></button>
+                                <button class="btn btn-detail"><i class="ti-eye"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>LH003</td>
+                            <td><b>Lê Văn Cường</b></td>
+                            <td>BS. Phạm Văn Đức</td>
+                            <td>Khoa Nhi</td>
+                            <td>28/11/2025<br><small class="table-small-text">14:00</small></td>
+                            <td>Khám định kỳ</td>
+                            <td><span class="badge badge-success">Đã xác nhận</span></td>
+                            <td>
+                                <button class="btn btn-edit"><i class="ti-pencil"></i></button>
+                                <button class="btn btn-detail"><i class="ti-eye"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>LH004</td>
+                            <td><b>Phạm Thị Dung</b></td>
+                            <td>BS. Nguyễn Văn Nam</td>
+                            <td>Khoa Sản</td>
+                            <td>28/11/2025<br><small class="table-small-text">08:00</small></td>
+                            <td>Khám thường</td>
+                            <td><span class="badge badge-danger">Đã hủy</span></td>
+                            <td>
+                                <button class="btn btn-edit"><i class="ti-pencil"></i></button>
+                                <button class="btn btn-detail"><i class="ti-eye"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="doctors" class="page hidden fade-in" ng-class="{'active': currentSection === 'doctors'}" ng-init="staffTab = 'doctors'">
+            <div class="art-header">
+                <h4><i class="ti-user"></i> Quản lý Nhân sự Y tế</h4>
+                <div class="header-actions">
+                    <button class="btn add-btn" onclick="openDoctorModalJS()" ng-show="staffTab === 'doctors'">
+                        <i class="ti-plus"></i> Thêm Bác sĩ
+                    </button>
+                    <button class="btn add-btn" onclick="openNurseModalJS()" ng-show="staffTab === 'nurses'">
+                        <i class="ti-plus"></i> Thêm Y tá
+                    </button>
+                </div>
+            </div>
+
+            <div class="block block-mb-20">
+                <div class="filter-controls-simple">
+                    <button class="btn" ng-click="staffTab = 'doctors'; refreshDoctorsTab()" ng-class="{'btn-primary-light': staffTab === 'doctors', 'btn-gray': staffTab !== 'doctors'}">Bác sĩ</button>
+                    <button class="btn" ng-click="staffTab = 'nurses'; refreshNursesTab()" ng-class="{'btn-primary-light': staffTab === 'nurses', 'btn-gray': staffTab !== 'nurses'}">Y tá / Điều dưỡng</button>
+                </div>
+            </div>
+
+            <!-- DOCTOR TAB -->
+            <div ng-show="staffTab === 'doctors'" ng-controller="DoctorController" class="fade-in">
+                 <div class="search-controls" style="display: flex; gap: 10px; margin-bottom: 15px;">
+                    <input type="text" class="input-default" 
+                           placeholder="Tìm kiếm Bác sĩ (Tên, Chuyên khoa)..." 
+                           ng-model="doctorSearchKeyword"
+                           ng-keypress="$event.keyCode === 13 && searchDoctors()"
+                           style="flex: 1; max-width: 400px;">
+                    <button class="btn btn-primary" ng-click="searchDoctors()">
+                        <i class="ti-search"></i> Tìm kiếm
+                    </button>
+                </div>
+                
+                <div class="block block-no-padding">
+                    <div ng-if="loading.doctors" class="loading-spinner"><i class="ti-reload spin"></i> Đang tải...</div>
+                    <table class="art-table" ng-if="!loading.doctors">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Họ tên</th>
+                                <th>Chuyên khoa</th>
+                                <th>Khoa/Phòng</th>
+                                <th>Liên hệ</th>
+                                <th>Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="doc in doctors">
+                                <td>{{$index + 1 + (currentPage - 1) * pageSize}}</td>
+                                <td><b>{{doc.hoTen}}</b></td>
+                                <td>{{doc.chuyenKhoa || '-'}}</td>
+                                <td>{{getDepartmentName(doc.khoaId)}}</td>
+                                <td>{{doc.thongTinLienHe || '-'}}</td>
+                                <td>
+                                    <button class="btn btn-edit" ng-click="editDoctor(doc)"><i class="ti-pencil"></i> Sửa</button>
+                                    <button class="btn btn-danger" ng-click="deleteDoctor(doc)"><i class="ti-trash"></i> Xóa</button>
+                                </td>
+                            </tr>
+                            <tr ng-if="doctors.length === 0">
+                                <td colspan="6" class="text-center"><i class="ti-info"></i> Không tìm thấy bác sĩ nào.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <!-- Pagination -->
+                    <!-- Reusing simple pagination logic -->
+                    <div class="pagination-footer" ng-if="totalPages > 1" style="padding: 10px; text-align: right;">
+                         <button class="btn btn-sm" ng-disabled="currentPage <= 1" ng-click="changePage(currentPage - 1)">Previous</button>
+                         <span>Trang {{currentPage}}/{{totalPages}}</span>
+                         <button class="btn btn-sm" ng-disabled="currentPage >= totalPages" ng-click="changePage(currentPage + 1)">Next</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NURSE TAB -->
+            <div ng-show="staffTab === 'nurses'" ng-controller="NurseController" class="fade-in">
+                 <div class="search-controls" style="display: flex; gap: 10px; margin-bottom: 15px;">
+                    <input type="text" class="input-default" 
+                           placeholder="Tìm kiếm Y tá (Tên, SĐT)..." 
+                           ng-model="nurseSearchKeyword"
+                           ng-keypress="$event.keyCode === 13 && searchNurses()"
+                           style="flex: 1; max-width: 400px;">
+                    <button class="btn btn-primary" ng-click="searchNurses()">
+                        <i class="ti-search"></i> Tìm kiếm
+                    </button>
+                </div>
+                
+                <div class="block block-no-padding">
+                    <div ng-if="loading.nurses" class="loading-spinner"><i class="ti-reload spin"></i> Đang tải...</div>
+                    <table class="art-table" ng-if="!loading.nurses">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Họ tên</th>
+                                <th>Giới tính</th>
+                                <th>Ngày sinh</th>
+                                <th>Khoa/Phòng</th>
+                                <th>Số điện thoại</th>
+                                <th>CCHN</th>
+                                <th>Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="nurse in nurses">
+                                <td>{{$index + 1 + (currentPage - 1) * pageSize}}</td>
+                                <td><b>{{nurse.hoTen}}</b></td>
+                                <td>{{nurse.gioiTinh}}</td>
+                                <td>{{nurse.ngaySinh | date:'dd/MM/yyyy'}}</td>
+                                <td>{{getDepartmentName(nurse.khoaId)}}</td>
+                                <td>{{nurse.soDienThoai || '-'}}</td>
+                                <td>{{nurse.chungChiHanhNghe || '-'}}</td>
+                                <td>
+                                    <button class="btn btn-edit" ng-click="editNurse(nurse)"><i class="ti-pencil"></i> Sửa</button>
+                                    <button class="btn btn-danger" ng-click="deleteNurse(nurse)"><i class="ti-trash"></i> Xóa</button>
+                                </td>
+                            </tr>
+                            <tr ng-if="nurses.length === 0">
+                                <td colspan="8" class="text-center"><i class="ti-info"></i> Không tìm thấy y tá nào.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                     <!-- Pagination -->
+                    <div class="pagination-footer" ng-if="totalPages > 1" style="padding: 10px; text-align: right;">
+                         <button class="btn btn-sm" ng-disabled="currentPage <= 1" ng-click="changePage(currentPage - 1)">Previous</button>
+                         <span>Trang {{currentPage}}/{{totalPages}}</span>
+                         <button class="btn btn-sm" ng-disabled="currentPage >= totalPages" ng-click="changePage(currentPage + 1)">Next</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="report" class="page hidden fade-in">
+            <div class="art-header">
+                <h4><i class="ti-bar-chart"></i> Báo cáo & Thống kê</h4>
+                <div class="header-actions">
+                    <select class="input-default">
+                        <option>Tháng 11/2025</option>
+                        <option>Tháng 10/2025</option>
+                        <option>Tháng 9/2025</option>
+                    </select>
+                    <button class="btn add-btn">
+                        <i class="ti-download"></i> Xuất Excel
+                    </button>
+                </div>
+            </div>
+
+            <div class="dashboard dashboard-mb-30">
+                <div class="card blue">
+                    <i class="ti-bar-chart"></i>
+                    <p>Tổng số ca khám</p>
+                    <h3>1.245</h3>
+                </div>
+                <div class="card green">
+                    <i class="ti-user"></i>
+                    <p>Bệnh nhân mới</p>
+                    <h3>89</h3>
+                </div>
+                <div class="card orange">
+                    <i class="ti-money"></i>
+                    <p>Doanh thu</p>
+                    <h3>1.250 Tr</h3>
+                </div>
+                <div class="card red">
+                    <i class="ti-time"></i>
+                    <p>Thời gian TB khám</p>
+                    <h3>25 phút</h3>
+                </div>
+            </div>
+
+            <div class="block block-mb-30">
+                <h4><i class="ti-layout-grid2"></i> Báo cáo Công suất Giường bệnh</h4>
+                <div class="mt-20">
+                    <table class="art-table">
+                        <thead>
+                            <tr>
+                                <th>Khoa/Phòng</th>
+                                <th>Tổng giường</th>
+                                <th>Đang sử dụng</th>
+                                <th>Trống</th>
+                                <th>Công suất (%)</th>
+                                <th>Số ngày TB/giường</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><b>Khoa Nội</b></td>
+                                <td>50</td>
+                                <td>35</td>
+                                <td>15</td>
+                                <td><b class="text-warning">70%</b></td>
+                                <td>5.2 ngày</td>
+                            </tr>
+                            <tr>
+                                <td><b>Khoa Ngoại</b></td>
+                                <td>40</td>
+                                <td>28</td>
+                                <td>12</td>
+                                <td><b class="text-warning">70%</b></td>
+                                <td>6.8 ngày</td>
+                            </tr>
+                            <tr>
+                                <td><b>Khoa Nhi</b></td>
+                                <td>30</td>
+                                <td>22</td>
+                                <td>8</td>
+                                <td><b class="text-warning">73%</b></td>
+                                <td>4.5 ngày</td>
+                            </tr>
+                            <tr>
+                                <td><b>Khoa Sản</b></td>
+                                <td>25</td>
+                                <td>18</td>
+                                <td>7</td>
+                                <td><b class="text-warning">72%</b></td>
+                                <td>3.2 ngày</td>
+                            </tr>
+                            <tr class="report-total-row">
+                                <td><b>TỔNG CỘNG</b></td>
+                                <td>145</td>
+                                <td>103</td>
+                                <td>42</td>
+                                <td><b class="text-primary">71%</b></td>
+                                <td>5.0 ngày</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="block block-mb-30">
+                <h4><i class="ti-money"></i> Báo cáo Chi phí Điều trị</h4>
+                <div class="mt-20">
+                    <table class="art-table">
+                        <thead>
+                            <tr>
+                                <th>Khoa/Phòng</th>
+                                <th>Số ca điều trị</th>
+                                <th>Tổng chi phí</th>
+                                <th>Chi phí TB/ca</th>
+                                <th>BHYT thanh toán</th>
+                                <th>Bệnh nhân trả</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><b>Khoa Nội</b></td>
+                                <td>425</td>
+                                <td>425.000.000 đ</td>
+                                <td>1.000.000 đ</td>
+                                <td>340.000.000 đ (80%)</td>
+                                <td>85.000.000 đ (20%)</td>
+                            </tr>
+                            <tr>
+                                <td><b>Khoa Ngoại</b></td>
+                                <td>320</td>
+                                <td>960.000.000 đ</td>
+                                <td>3.000.000 đ</td>
+                                <td>672.000.000 đ (70%)</td>
+                                <td>288.000.000 đ (30%)</td>
+                            </tr>
+                            <tr>
+                                <td><b>Khoa Nhi</b></td>
+                                <td>280</td>
+                                <td>280.000.000 đ</td>
+                                <td>1.000.000 đ</td>
+                                <td>224.000.000 đ (80%)</td>
+                                <td>56.000.000 đ (20%)</td>
+                            </tr>
+                            <tr>
+                                <td><b>Khoa Sản</b></td>
+                                <td>220</td>
+                                <td>440.000.000 đ</td>
+                                <td>2.000.000 đ</td>
+                                <td>352.000.000 đ (80%)</td>
+                                <td>88.000.000 đ (20%)</td>
+                            </tr>
+                            <tr class="report-total-row">
+                                <td><b>TỔNG CỘNG</b></td>
+                                <td>1.245</td>
+                                <td><b>2.105.000.000 đ</b></td>
+                                <td><b>1.690.000 đ</b></td>
+                                <td><b>1.588.000.000 đ (75.4%)</b></td>
+                                <td><b>517.000.000 đ (24.6%)</b></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="d-grid grid-2-col gap-25 mb-30">
+                <div class="block">
+                    <h4><i class="ti-bar-chart-alt"></i> Thống kê theo khoa</h4>
+                    <div class="mt-20">
+                        <div class="stats-list-item">
+                            <span>Khoa Nội</span>
+                            <b>425 ca</b>
+                        </div>
+                        <div class="stats-list-item">
+                            <span>Khoa Ngoại</span>
+                            <b>320 ca</b>
+                        </div>
+                        <div class="stats-list-item">
+                            <span>Khoa Nhi</span>
+                            <b>280 ca</b>
+                        </div>
+                        <div class="stats-list-item">
+                            <span>Khoa Sản</span>
+                            <b>220 ca</b>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="block">
+                    <h4><i class="ti-pie-chart"></i> Tỷ lệ loại khám</h4>
+                    <div class="mt-20">
+                        <div class="stats-list-item">
+                            <span>Khám thường</span>
+                            <b>65%</b>
+                        </div>
+                        <div class="stats-list-item">
+                            <span>Khám cấp cứu</span>
+                            <b>20%</b>
+                        </div>
+                        <div class="stats-list-item">
+                            <span>Khám định kỳ</span>
+                            <b>10%</b>
+                        </div>
+                        <div class="stats-list-item">
+                            <span>Khác</span>
+                            <b>5%</b>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="block">
+                <h4><i class="ti-line-chart"></i> Biểu đồ doanh thu (7 ngày gần nhất)</h4>
+                <div class="chart-placeholder">
+                    <i class="ti-bar-chart chart-placeholder-icon"></i>
+                    <p class="chart-placeholder-text">Biểu đồ sẽ được tích hợp sau</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="settings" class="page hidden fade-in" ng-controller="AuditController">
+            <div class="art-header">
+                <h4><i class="ti-notepad"></i> Nhật ký Hệ thống</h4>
+            </div>
+            
+            <!-- Tab Navigation -->
+            <div class="block block-mb-20">
+                <div class="filter-controls-simple">
+                    <button class="btn" ng-click="switchAuditTab('system')" ng-class="{'btn-primary-light': auditTab === 'system', 'btn-gray': auditTab !== 'system'}">
+                        <i class="ti-server"></i> Nhật ký hệ thống
+                    </button>
+                    <button class="btn" ng-click="switchAuditTab('medical')" ng-class="{'btn-primary-light': auditTab === 'medical', 'btn-gray': auditTab !== 'medical'}">
+                        <i class="ti-file"></i> Audit Hồ sơ bệnh án
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Filter -->
+            <div class="block block-mb-20">
+                <div class="form-row" style="display: flex; gap: 10px; align-items: flex-end;">
+                    <div class="form-group" style="flex: 1;">
+                        <label>Hành động</label>
+                        <input type="text" class="input-default" ng-model="search.hanhDong" placeholder="Lọc theo hành động...">
+                    </div>
+                    <div class="form-group">
+                        <label>Từ ngày</label>
+                        <input type="date" class="input-default" ng-model="search.tuNgay">
+                    </div>
+                    <div class="form-group">
+                        <label>Đến ngày</label>
+                        <input type="date" class="input-default" ng-model="search.denNgay">
+                    </div>
+                    <button class="btn btn-primary" ng-click="applySearch()"><i class="ti-search"></i> Tìm</button>
+                    <button class="btn btn-gray" ng-click="resetSearch()"><i class="ti-reload"></i> Reset</button>
+                </div>
+            </div>
+            
+            <!-- SYSTEM LOGS TAB -->
+            <div ng-show="auditTab === 'system'">
+                <div ng-if="loading.system" class="loading-spinner" style="padding: 20px; text-align: center;"><i class="ti-reload spin"></i> Đang tải...</div>
+                <div ng-if="errors.system" class="alert alert-danger" style="padding: 15px; background: #f8d7da; color: #721c24; border-radius: 5px;">{{errors.system}}</div>
+                
+                <div class="block block-no-padding" ng-if="!loading.system">
+                    <table class="art-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Người dùng</th>
+                                <th>Hành động</th>
+                                <th>Mô tả</th>
+                                <th>Thời gian</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="log in systemLogs">
+                                <td>{{$index + 1 + (search.pageNumber - 1) * search.pageSize}}</td>
+                                <td><b>{{log.tenNguoiDung || 'N/A'}}</b></td>
+                                <td><span class="badge badge-info">{{log.hanhDong}}</span></td>
+                                <td>{{log.moTa || '-'}}</td>
+                                <td>{{formatDate(log.thoiGian)}}</td>
+                            </tr>
+                            <tr ng-if="systemLogs.length === 0">
+                                <td colspan="5" class="text-center" style="padding: 20px;"><i class="ti-info"></i> Chưa có dữ liệu nhật ký</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <div class="pagination-footer" ng-if="pagination.system.totalPages > 1" style="padding: 10px; text-align: right;">
+                        <button class="btn btn-sm" ng-disabled="search.pageNumber <= 1" ng-click="changePage(search.pageNumber - 1)">Previous</button>
+                        <span>Trang {{search.pageNumber}}/{{pagination.system.totalPages}}</span>
+                        <button class="btn btn-sm" ng-disabled="search.pageNumber >= pagination.system.totalPages" ng-click="changePage(search.pageNumber + 1)">Next</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- MEDICAL RECORD LOGS TAB -->
+            <div ng-show="auditTab === 'medical'">
+                <div ng-if="loading.medical" class="loading-spinner" style="padding: 20px; text-align: center;"><i class="ti-reload spin"></i> Đang tải...</div>
+                <div ng-if="errors.medical" class="alert alert-danger" style="padding: 15px; background: #f8d7da; color: #721c24; border-radius: 5px;">{{errors.medical}}</div>
+                
+                <div class="block block-no-padding" ng-if="!loading.medical">
+                    <table class="art-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Hồ sơ</th>
+                                <th>Hành động</th>
+                                <th>Chẩn đoán cũ</th>
+                                <th>Người sửa</th>
+                                <th>Thời gian</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="log in medicalLogs">
+                                <td>{{$index + 1 + (search.pageNumber - 1) * search.pageSize}}</td>
+                                <td><code>{{log.hoSoBenhAnId}}</code></td>
+                                <td><span class="badge badge-warning">{{log.hanhDong}}</span></td>
+                                <td>{{log.chanDoanCu || '-'}}</td>
+                                <td><b>{{log.tenNguoiSua || 'N/A'}}</b></td>
+                                <td>{{formatDate(log.thoiGianSua)}}</td>
+                            </tr>
+                            <tr ng-if="medicalLogs.length === 0">
+                                <td colspan="6" class="text-center" style="padding: 20px;"><i class="ti-info"></i> Chưa có dữ liệu audit</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <div class="pagination-footer" ng-if="pagination.medical.totalPages > 1" style="padding: 10px; text-align: right;">
+                        <button class="btn btn-sm" ng-disabled="search.pageNumber <= 1" ng-click="changePage(search.pageNumber - 1)">Previous</button>
+                        <span>Trang {{search.pageNumber}}/{{pagination.medical.totalPages}}</span>
+                        <button class="btn btn-sm" ng-disabled="search.pageNumber >= pagination.medical.totalPages" ng-click="changePage(search.pageNumber + 1)">Next</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div> <!-- End content -->
+    
+    </div> <!-- End AdminController wrapper -->
+    
+    <!-- ============================================ -->
+    <!-- PATIENT MODAL (Vanilla JS - OUTSIDE Angular) -->
+    <!-- ============================================ -->
+    <div id="patientModalOverlay" class="modal-overlay" style="display: none;" onclick="closePatientModalJS()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3><i class="ti-user"></i> <span id="patientModalTitle">Tiếp nhận Bệnh nhân Mới</span></h3>
+                <button class="modal-close" onclick="closePatientModalJS()">
+                    <i class="ti-close"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Họ và tên *</label>
+                        <input type="text" id="patient_hoTen" placeholder="Nhập họ tên bệnh nhân" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Ngày sinh *</label>
+                        <input type="date" id="patient_ngaySinh" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Giới tính *</label>
+                        <select id="patient_gioiTinh" required>
+                            <option value="">-- Chọn giới tính --</option>
+                            <option value="Nam">Nam</option>
+                            <option value="Nữ">Nữ</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Số điện thoại</label>
+                        <input type="tel" id="patient_soDienThoai" placeholder="0900 000 000">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group full-width">
+                        <label>Địa chỉ</label>
+                        <input type="text" id="patient_diaChi" placeholder="Nhập địa chỉ">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Số thẻ BHYT</label>
+                        <input type="text" id="patient_soTheBaoHiem" placeholder="VD: DN123456789">
+                    </div>
+                    <div class="form-group">
+                        <label>Mức hưởng BHYT (%)</label>
+                        <input type="number" id="patient_mucHuong" min="0" max="100" placeholder="80" value="80">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Hạn thẻ BHYT</label>
+                        <input type="date" id="patient_hanTheBHYT">
+                    </div>
+                    <div class="form-group">
+                        <label>Trạng thái</label>
+                        <select id="patient_trangThai">
+                            <option value="">-- Chọn trạng thái --</option>
+                            <option value="Đang điều trị" selected>Đang điều trị</option>
+                            <option value="Nội trú">Nội trú</option>
+                            <option value="Chờ xét nghiệm">Chờ xét nghiệm</option>
+                            <option value="Đã ổn định">Đã ổn định</option>
+                            <option value="Đã xuất viện">Đã xuất viện</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Error message -->
+                <div id="patientFormError" class="form-error" style="display: none;">
+                    <i class="ti-alert"></i> <span></span>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn btn-gray" onclick="closePatientModalJS()">
+                    <i class="ti-close"></i> Hủy
+                </button>
+                <button class="btn btn-primary" onclick="savePatientModalJS()">
+                    <i class="ti-save"></i> Lưu
+                </button>
+            </div>
+    </div>
+    
+    <!-- ============================================ -->
+    <!-- BED MODAL -->
+    <!-- ============================================ -->
+    <div id="bedModalOverlay" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 id="bedModalTitle"><i class="ti-layout-grid2"></i> Thêm Giường bệnh Mới</h4>
+                <button class="modal-close" onclick="closeBedModalJS()">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <!-- Error message -->
+                <div id="bedModalError" class="form-error" style="display: none; color: red; margin-bottom: 15px;">
+                    <i class="ti-alert"></i> <span></span>
+                </div>
+                
+                <!-- Mã giường (chỉ hiện khi edit) -->
+                <div class="form-row" id="bedIdRow" style="display: none;">
+                    <div class="form-group" style="width: 100%;">
+                        <label>Mã giường</label>
+                        <input type="text" id="bedIdDisplay" class="input-default" readonly 
+                               style="background-color: #f5f5f5; cursor: not-allowed;">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="bedKhoaId">Khoa phòng <span class="required">*</span></label>
+                        <select id="bedKhoaId" class="input-default">
+                            <option value="">-- Chọn khoa --</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="bedTenGiuong">Tên giường <span class="required">*</span></label>
+                        <input type="text" id="bedTenGiuong" class="input-default" placeholder="VD: G-01, Giường 1...">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="bedLoaiGiuong">Loại giường</label>
+                        <select id="bedLoaiGiuong" class="input-default">
+                            <option value="Thường">Thường</option>
+                            <option value="VIP">VIP</option>
+                            <option value="ICU">ICU (Hồi sức)</option>
+                            <option value="Cấp cứu">Cấp cứu</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="bedGiaTien">Giá tiền/ngày (VNĐ) <span class="required">*</span></label>
+                        <input type="number" id="bedGiaTien" class="input-default" placeholder="500000">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="bedTrangThai">Trạng thái</label>
+                        <select id="bedTrangThai" class="input-default">
+                            <option value="0">Trống</option>
+                            <option value="1">Đang sử dụng</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn btn-gray" onclick="closeBedModalJS()">
+                    <i class="ti-close"></i> Hủy
+                </button>
+                <button class="btn btn-primary" onclick="saveBedModalJS()">
+                    <i class="ti-save"></i> Lưu
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- ============================================ -->
+    <!-- DEPARTMENT MODAL -->
+    <!-- ============================================ -->
+    <div id="departmentModalOverlay" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 id="departmentModalTitle"><i class="ti-home"></i> Thêm Khoa phòng Mới</h4>
+                <button class="modal-close" onclick="closeDepartmentModalJS()">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <!-- Error message -->
+                <div id="departmentModalError" class="form-error" style="display: none; color: red; margin-bottom: 15px;">
+                    <i class="ti-alert"></i> <span></span>
+                </div>
+                
+                <!-- Mã khoa (readonly, chỉ hiện khi edit) -->
+                <div class="form-row" id="deptIdRow" style="display: none;">
+                    <div class="form-group" style="width: 100%;">
+                        <label>Mã khoa</label>
+                        <input type="text" id="deptIdDisplay" class="input-default" readonly 
+                               style="background-color: #f5f5f5; cursor: not-allowed;">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="deptTenKhoa">Tên khoa <span class="required">*</span></label>
+                        <input type="text" id="deptTenKhoa" class="input-default" placeholder="VD: Khoa Nội, Khoa Ngoại...">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="deptLoaiKhoa">Loại khoa <span class="required">*</span></label>
+                        <select id="deptLoaiKhoa" class="input-default">
+                            <option value="">-- Chọn loại khoa --</option>
+                            <option value="Lâm sàng">Lâm sàng</option>
+                            <option value="Cận lâm sàng">Cận lâm sàng</option>
+                            <option value="Hành chính">Hành chính</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="deptSoGiuongTieuChuan">Số giường tiêu chuẩn <span class="required">*</span></label>
+                        <input type="number" id="deptSoGiuongTieuChuan" class="input-default" min="0" placeholder="10">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn btn-gray" onclick="closeDepartmentModalJS()">
+                    <i class="ti-close"></i> Hủy
+                </button>
+                <button class="btn btn-primary" onclick="saveDepartmentModalJS()">
+                    <i class="ti-save"></i> Lưu
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- ADMISSION MODAL OVERLAY -->
+    <!-- ADMISSION MODAL OVERLAY -->
+    <div id="admissionModalOverlay" class="modal-overlay" style="display: none; z-index: 9999;">
+        <div class="modal-content" style="width: 500px; max-width: 95%;">
+            <div class="modal-header">
+                <h4 id="admissionModalTitle"><i class="ti-user"></i> Tiếp nhận Bệnh nhân</h4>
+                <button class="modal-close" onclick="closeAdmissionModalJS()">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <div id="admissionModalError" class="form-error" style="display: none; color: red; margin-bottom: 10px;"></div>
+                
+                <div class="form-row">
+                    <div class="form-group" style="width: 100%;">
+                        <label>Giường được chọn:</label>
+                        <div id="admitBedInfo" style="font-weight: bold; color: #007bff; padding: 5px 0;">Loading...</div>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group" style="width: 100%;">
+                        <label for="admitPatientSelect">Chọn Bệnh nhân <span style="color: red;">*</span></label>
+                        <select id="admitPatientSelect" class="input-default" style="width: 100%;">
+                            <option value="">Đang tải danh sách...</option>
+                        </select>
+                        <small style="color: #666; font-size: 0.85em;">Chọn bệnh nhân từ danh sách hồ sơ</small>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group" style="width: 100%;">
+                        <label for="admitReason">Lý do nhập viện</label>
+                        <textarea id="admitReason" class="input-default" rows="3" placeholder="Nhập chẩn đoán sơ bộ hoặc lý do nhập viện..." style="width: 100%;"></textarea>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn btn-gray" onclick="closeAdmissionModalJS()">
+                    <i class="ti-close"></i> Hủy
+                </button>
+                <button class="btn btn-primary" onclick="saveAdmissionModalJS()">
+                    <i class="ti-check"></i> Xác nhận
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Angular Bootstrap -->
+    <!-- SURGERY MODAL OVERLAY -->
+    <div id="surgeryModalOverlay" class="modal-overlay" style="display: none; z-index: 9999;">
+        <div class="modal-content" style="width: 600px; max-width: 95%;">
+            <div class="modal-header">
+                <h4 id="surgeryModalTitle"><i class="ti-cut"></i> Đặt lịch mổ Mới</h4>
+                <button class="modal-close" onclick="closeSurgeryModalJS()">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <div id="surgeryModalError" class="form-error" style="display: none; color: red; margin-bottom: 15px;"></div>
+                
+                <div class="form-row">
+                    <div class="form-group" style="width: 100%;">
+                        <label>Chọn Bệnh nhân (Đang nằm viện) <span style="color: red">*</span></label>
+                        <select id="surgeryPatientSelect" class="input-default" style="width: 100%;">
+                            <option value="">-- Đang tải danh sách --</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                     <div class="form-group">
+                        <label>Bác sĩ Phụ trách <span style="color: red">*</span></label>
+                        <select id="surgeryDoctorSelect" class="input-default">
+                             <option value="">-- Đang tải --</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Phòng mổ</label>
+                        <select id="surgeryRoom" class="input-default">
+                            <option value="">-- Chọn phòng --</option>
+                            <option value="PhongMo1">Phòng mổ 1</option>
+                            <option value="PhongMo2">Phòng mổ 2</option>
+                            <option value="PhongMo3">Phòng mổ 3</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group" style="width: 100%;">
+                        <label>Loại phẫu thuật/Thủ thuật</label>
+                        <input type="text" id="surgeryType" class="input-default" placeholder="VD: Phẫu thuật ruột thừa, Nội soi...">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Ngày phẫu thuật <span style="color: red">*</span></label>
+                        <input type="datetime-local" id="surgeryDateTime" class="input-default">
+                    </div>
+                    <div class="form-group">
+                        <label>Chi phí (VNĐ)</label>
+                        <input type="number" id="surgeryChiPhi" class="input-default" placeholder="0" step="1000" min="0">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group" style="width: 100%;">
+                         <label>Trạng thái</label>
+                         <select id="surgeryStatus" class="input-default">
+                             <option value="0">Chờ thực hiện</option>
+                             <option value="1">Đang thực hiện</option>
+                             <option value="2">Đã hoàn thành</option>
+                         </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn btn-gray" onclick="closeSurgeryModalJS()">
+                    <i class="ti-close"></i> Hủy
+                </button>
+                <button class="btn btn-primary" onclick="saveSurgeryModalJS()">
+                    <i class="ti-save"></i> Lưu Lịch mổ
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MEDICAL RECORD MODAL OVERLAY -->
+    <div id="medicalRecordModalOverlay" class="modal-overlay" style="display: none; z-index: 9999;">
+        <div class="modal-content" style="width: 750px; max-width: 95%; max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header">
+                <h4 id="medicalRecordModalTitle"><i class="ti-file"></i> Lập Hồ sơ Bệnh án</h4>
+                <button class="modal-close" onclick="closeMedicalRecordModalJS()">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <div id="medicalRecordModalError" class="form-error" style="display: none; color: red; margin-bottom: 15px;"></div>
+                
+                <!-- PHẦN I: HÀNH CHÍNH -->
+                <div style="border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 5px;">
+                    <h5 style="margin: 0 0 15px 0; color: #2c5282;"><i class="ti-user"></i> I. THÔNG TIN HÀNH CHÍNH</h5>
+                    
+                    <div class="form-row">
+                        <div class="form-group" style="width: 100%;">
+                            <label>Chọn Bệnh nhân đang nằm viện <span style="color: red">*</span></label>
+                            <select id="mrPatientSelect" class="input-default" style="width: 100%;">
+                                <option value="">-- Đang tải danh sách --</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Họ và tên:</label>
+                            <span id="mrDisplayTenBenhNhan" style="font-weight: bold;">-</span>
+                        </div>
+                        <div class="form-group">
+                            <label>Ngày sinh:</label>
+                            <span id="mrDisplayNgaySinh">-</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- PHẦN II: CHẨN ĐOÁN -->
+                <div style="border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 5px;">
+                    <h5 style="margin: 0 0 15px 0; color: #2c5282;"><i class="ti-clipboard"></i> II. CHẨN ĐOÁN</h5>
+                    
+                    <div class="form-row">
+                        <div class="form-group" style="width: 100%;">
+                            <label>Chẩn đoán vào viện (ICD kèm theo)</label>
+                            <textarea id="mrChanDoanBanDau" class="input-default" rows="2" placeholder="Nhập chẩn đoán ban đầu khi nhập viện..."></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group" style="width: 100%;">
+                            <label>Chẩn đoán ra viện</label>
+                            <textarea id="mrChanDoanRaVien" class="input-default" rows="2" placeholder="Nhập chẩn đoán khi xuất viện..."></textarea>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- PHẦN III: TÓM TẮT ĐIỀU TRỊ -->
+                <div style="border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 5px;">
+                    <h5 style="margin: 0 0 15px 0; color: #2c5282;"><i class="ti-pulse"></i> III. TÓM TẮT QUÁ TRÌNH ĐIỀU TRỊ</h5>
+                    
+                    <div class="form-row">
+                        <div class="form-group" style="width: 100%;">
+                            <label>Tiền sử bệnh lý</label>
+                            <textarea id="mrTienSuBenh" class="input-default" rows="2" placeholder="Tiền sử bệnh lý của bệnh nhân..."></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group" style="width: 100%;">
+                            <label>Phương án điều trị</label>
+                            <textarea id="mrPhuongAnDieuTri" class="input-default" rows="3" placeholder="Mô tả phương án điều trị và diễn biến lâm sàng..."></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group" style="width: 100%;">
+                            <label>Kết quả điều trị</label>
+                            <select id="mrKetQuaDieuTri" class="input-default">
+                                <option value="">-- Chọn kết quả --</option>
+                                <option value="Khỏi">Khỏi</option>
+                                <option value="Đỡ, giảm">Đỡ, giảm</option>
+                                <option value="Không thay đổi">Không thay đổi</option>
+                                <option value="Nặng hơn">Nặng hơn</option>
+                                <option value="Tử vong">Tử vong</option>
+                                <option value="Theo dõi">Theo dõi tiếp</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group" style="width: 100%;">
+                            <label>Bác sĩ phụ trách <span style="color: red">*</span></label>
+                            <select id="mrDoctorSelect" class="input-default">
+                                <option value="">-- Chọn Bác sĩ --</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn btn-gray" onclick="printMedicalRecordJS()" style="margin-right: auto;">
+                    <i class="ti-printer"></i> In Hồ sơ
+                </button>
+                <button id="medicalRecordDischargeBtn" class="btn btn-danger" onclick="dischargeMedicalRecordJS()" style="margin-right: 10px; display: none;">
+                    <i class="ti-export"></i> Xuất viện
+                </button>
+                <button class="btn btn-gray" onclick="closeMedicalRecordModalJS()">
+                    <i class="ti-close"></i> Đóng
+                </button>
+                <button id="medicalRecordSaveBtn" class="btn btn-primary" onclick="saveMedicalRecordModalJS()">
+                    <i class="ti-save"></i> Lưu Hồ sơ
+                </button>
+            </div>
+        </div>
+    <!-- Doctor Modal -->
+    <div class="modal-overlay" id="doctorModalOverlay" style="display: none;">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 id="doctorModalTitle">Thêm Bác sĩ Mới</h3>
+                <button class="modal-close" onclick="closeDoctorModalJS()"><i class="ti-close"></i></button>
+            </div>
+            
+            <div class="modal-body">
+                <p id="doctorModalError" class="modal-error" style="display: none; color: red; margin-bottom: 10px;"></p>
+                
+                <div class="form-row">
+                    <div class="form-group" style="width: 100%;">
+                        <label>Họ và tên <span style="color: red">*</span></label>
+                        <input type="text" id="docHoTen" class="input-default" placeholder="Nhập họ tên bác sĩ">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Khoa/Phòng <span style="color: red">*</span></label>
+                        <select id="docKhoaSelect" class="input-default">
+                            <option value="">-- Chọn Khoa --</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Chuyên khoa</label>
+                        <input type="text" id="docChuyenKhoa" class="input-default" placeholder="VD: Nội soi, Tim mạch">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group" style="width: 100%;">
+                        <label>Thông tin liên hệ</label>
+                        <input type="text" id="docLienHe" class="input-default" placeholder="Email hoặc Số điện thoại">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn btn-gray" onclick="closeDoctorModalJS()">
+                    <i class="ti-close"></i> Hủy
+                </button>
+                <button class="btn btn-primary" onclick="saveDoctorModalJS()">
+                    <i class="ti-save"></i> Lưu
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Nurse Modal -->
+    <div class="modal-overlay" id="nurseModalOverlay" style="display: none;">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 id="nurseModalTitle">Thêm Y tá Mới</h3>
+                <button class="modal-close" onclick="closeNurseModalJS()"><i class="ti-close"></i></button>
+            </div>
+            
+            <div class="modal-body">
+                <p id="nurseModalError" class="modal-error" style="display: none; color: red; margin-bottom: 10px;"></p>
+                
+                <div class="form-row">
+                    <div class="form-group" style="width: 100%;">
+                        <label>Họ và tên <span style="color: red">*</span></label>
+                        <input type="text" id="nurseHoTen" class="input-default" placeholder="Nhập họ tên y tá">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Ngày sinh</label>
+                        <input type="date" id="nurseNgaySinh" class="input-default">
+                    </div>
+                    <div class="form-group">
+                        <label>Giới tính</label>
+                        <select id="nurseGioiTinh" class="input-default">
+                            <option value="Nam">Nam</option>
+                            <option value="Nữ">Nữ</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Khoa/Phòng</label>
+                        <select id="nurseKhoaSelect" class="input-default">
+                            <option value="">-- Chọn Khoa --</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Số điện thoại</label>
+                        <input type="text" id="nursePhone" class="input-default" placeholder="Số điện thoại liên hệ">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                     <div class="form-group" style="width: 100%;">
+                        <label>Chứng chỉ hành nghề</label>
+                        <input type="text" id="nurseChungChi" class="input-default" placeholder="Số CCHN (nếu có)">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn btn-gray" onclick="closeNurseModalJS()">
+                    <i class="ti-close"></i> Hủy
+                </button>
+                <button class="btn btn-primary" onclick="saveNurseModalJS()">
+                    <i class="ti-save"></i> Lưu
+                </button>
+            </div>
+        </div>
+    </div>
+
+    </div>
+
+    <!-- ============================================ -->
+    <!-- BILLING MODAL (Payment before discharge) -->
+    <!-- ============================================ -->
+    <div class="modal-overlay" id="billingModalOverlay" style="display: none;">
+        <div class="modal-container" style="max-width: 500px;">
+            <div class="modal-header" style="background: linear-gradient(135deg, #28a745, #20c997);">
+                <h3 id="billingModalTitle"><i class="ti-money"></i> Thanh toán Viện phí</h3>
+                <button class="modal-close" onclick="closeBillingModalJS()"><i class="ti-close"></i></button>
+            </div>
+            <div class="modal-body">
+                <p id="billingModalError" class="modal-error" style="display: none; color: red; margin-bottom: 10px;"></p>
+                
+                <!-- Loading State -->
+                <div id="billingLoading" style="text-align: center; padding: 30px;">
+                    <i class="ti-reload spin" style="font-size: 24px;"></i>
+                    <p>Đang tải thông tin hóa đơn...</p>
+                </div>
+                
+                <!-- Content -->
+                <div id="billingContent" style="display: none;">
+                    <div class="bill-info-row" style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee;">
+                        <span style="color: #666;">Bệnh nhân:</span>
+                        <span id="billPatientName" style="font-weight: bold;">-</span>
+                    </div>
+                    <div class="bill-info-row" style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee;">
+                        <span style="color: #666;">Giường:</span>
+                        <span id="billBedName">-</span>
+                    </div>
+                    <div class="bill-info-row" style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee;">
+                        <span style="color: #666;">Giá giường:</span>
+                        <span id="billBedPrice">-</span>
+                    </div>
+                    <div class="bill-info-row" style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee;">
+                        <span style="color: #666;">Số ngày nằm:</span>
+                        <span id="billDaysStayed">-</span>
+                    </div>
+                    
+                    <!-- Chi tiết chi phí -->
+                    <div style="background: #fff3cd; padding: 12px; margin-top: 15px; border-radius: 8px; border: 1px solid #ffc107;">
+                        <h5 style="margin: 0 0 10px 0; font-size: 14px; color: #856404;"><i class="ti-receipt"></i> Chi tiết chi phí</h5>
+                        <div class="bill-info-row" style="display: flex; justify-content: space-between; padding: 5px 0;">
+                            <span style="color: #666;">Tiền giường:</span>
+                            <span id="billBedCost">-</span>
+                        </div>
+                        <div class="bill-info-row" style="display: flex; justify-content: space-between; padding: 5px 0;">
+                            <span style="color: #666;">Chi phí phẫu thuật:</span>
+                            <span id="billSurgeryCost">-</span>
+                        </div>
+                        <div class="bill-info-row" style="display: flex; justify-content: space-between; padding: 5px 0;">
+                            <span style="color: #666;">Chi phí xét nghiệm:</span>
+                            <span id="billLabCost">-</span>
+                        </div>
+                    </div>
+                    
+                    <div style="background: #f8f9fa; padding: 15px; margin-top: 15px; border-radius: 8px;">
+                        <div class="bill-info-row" style="display: flex; justify-content: space-between; padding: 5px 0;">
+                            <span style="color: #666;">Tổng tiền:</span>
+                            <span id="billTotalAmount" style="font-weight: bold; color: #333;">-</span>
+                        </div>
+                        <div class="bill-info-row" style="display: flex; justify-content: space-between; padding: 5px 0;">
+                            <span style="color: #666;">BHYT chi trả:</span>
+                            <span id="billInsuranceCover" style="color: #28a745;">-</span>
+                        </div>
+                        <div class="bill-info-row" style="display: flex; justify-content: space-between; padding: 10px 0; border-top: 2px solid #dee2e6; margin-top: 10px;">
+                            <span style="font-weight: bold; font-size: 16px;">BỆNH NHÂN TRẢ:</span>
+                            <span id="billPatientPay" style="font-weight: bold; font-size: 18px; color: #dc3545;">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer" id="billingFooter" style="display: none;">
+                <button class="btn btn-gray" onclick="closeBillingModalJS()">
+                    <i class="ti-close"></i> Hủy
+                </button>
+                <button id="billingPayBtn" class="btn btn-success" onclick="payBillingModalJS()" style="background: #28a745;">
+                    <i class="ti-credit-card"></i> Thanh toán
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Angular Bootstrap -->
+    <script>
+        angular.element(document).ready(function() {
+            if (!angular.element(document.querySelector('.admin-wrapper')).scope()) {
+                angular.bootstrap(document, ['hospitalApp']);
+            }
+            
+            // Move modals to body to avoid any hidden parent issues
+            var modals = ['patientModalOverlay', 'bedModalOverlay', 'departmentModalOverlay', 'admissionModalOverlay', 'surgeryModalOverlay', 'medicalRecordModalOverlay', 'doctorModalOverlay', 'nurseModalOverlay', 'billingModalOverlay'];
+            
+            modals.forEach(function(modalId) {
+                var modal = document.getElementById(modalId);
+                if (modal && modal.parentElement !== document.body) {
+                    document.body.appendChild(modal);
+                }
+            });
+            console.log('Modals moved to body');
+        });
+    </script>
+</body>
+</html>

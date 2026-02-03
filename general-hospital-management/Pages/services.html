@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dịch vụ y tế - Bệnh viện Đa khoa Trung ương</title>
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/services.css" />
+  </head>
+  <body>
+    <header class="header">
+      <div class="header-top">
+        <div class="logo">
+          <a href="../index.html">
+            <img src="../images/logo.jpg" alt="Hospital Logo" />
+          </a>
+        </div>
+      </div>
+      <nav class="navbar">
+        <ul class="nav-list">
+          <li><a href="../index.html" class="nav-list-item">Trang chủ</a></li>
+          <li><a href="./aboutus.html" class="nav-list-item">Giới thiệu</a></li>
+          <li><a href="./departments.html" class="nav-list-item">Khoa phòng</a></li>
+          <li><a href="./services.html" class="nav-list-item active">Dịch vụ</a></li>
+          <li><a href="#" class="nav-list-item">Bác sĩ</a></li>
+          <li><a href="#" class="nav-list-item">Đặt lịch hẹn</a></li>
+        </ul>
+      </nav>
+      <div class="header-btn">
+        <a href="#" class="btn btn-login">Đăng ký</a>
+        <a href="./login.html" class="btn btn-register">Đăng nhập</a>
+      </div>
+    </header>
+
+    <!-- Main Content - Không có banner -->
+    <main class="services-main">
+      
+      <!-- Thống kê tổng quan dịch vụ -->
+      <section class="services-overview">
+        <div class="container">
+          <div class="overview-header">
+            <h1>Dịch vụ Y tế</h1>
+            <p>Bệnh viện Đa khoa Trung ương cung cấp đầy đủ các dịch vụ y tế chất lượng cao</p>
+          </div>
+          <div class="overview-stats">
+            <div class="stat-box">
+              <span class="stat-icon">🏥</span>
+              <div class="stat-info">
+                <span class="stat-value">156</span>
+                <span class="stat-label">Dịch vụ khám chữa bệnh</span>
+              </div>
+            </div>
+            <div class="stat-box">
+              <span class="stat-icon">🔬</span>
+              <div class="stat-info">
+                <span class="stat-value">89</span>
+                <span class="stat-label">Loại xét nghiệm</span>
+              </div>
+            </div>
+            <div class="stat-box">
+              <span class="stat-icon">💉</span>
+              <div class="stat-info">
+                <span class="stat-value">45</span>
+                <span class="stat-label">Kỹ thuật can thiệp</span>
+              </div>
+            </div>
+            <div class="stat-box">
+              <span class="stat-icon">🩺</span>
+              <div class="stat-info">
+                <span class="stat-value">24/7</span>
+                <span class="stat-label">Cấp cứu liên tục</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Bảng giá dịch vụ khám bệnh -->
+      <section class="services-pricing">
+        <div class="container">
+          <h2 class="section-title">Bảng giá dịch vụ khám bệnh</h2>
+          
+          <div class="pricing-tabs">
+            <button class="tab-btn active" data-tab="kham-benh">Khám bệnh</button>
+            <button class="tab-btn" data-tab="xet-nghiem">Xét nghiệm</button>
+            <button class="tab-btn" data-tab="chan-doan-hinh-anh">Chẩn đoán hình ảnh</button>
+            <button class="tab-btn" data-tab="thu-thuat">Thủ thuật</button>
+          </div>
+
+          <!-- Tab Khám bệnh -->
+          <div class="tab-content active" id="kham-benh">
+            <table class="pricing-table">
+              <thead>
+                <tr>
+                  <th>Mã DV</th>
+                  <th>Tên dịch vụ</th>
+                  <th>Khoa thực hiện</th>
+                  <th>Thời gian</th>
+                  <th>Giá BHYT</th>
+                  <th>Giá dịch vụ</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="service-code">KB001</span></td>
+                  <td>Khám bệnh thông thường</td>
+                  <td>Khoa Khám bệnh</td>
+                  <td>15-20 phút</td>
+                  <td>29.600đ</td>
+                  <td>150.000đ</td>
+                </tr>
+                <tr>
+                  <td><span class="service-code">KB002</span></td>
+                  <td>Khám chuyên khoa Nội</td>
+                  <td>Khoa Nội tổng hợp</td>
+                  <td>20-30 phút</td>
+                  <td>39.600đ</td>
+                  <td>200.000đ</td>
+                </tr>
+                <tr>
+                  <td><span class="service-code">KB003</span></td>
+                  <td>Khám chuyên khoa Ngoại</td>
+                  <td>Khoa Ngoại tổng hợp</td>
+                  <td>20-30 phút</td>
+                  <td>39.600đ</td>
+                  <td>200.000đ</td>
+                </tr>
+                <tr>
+                  <td><span class="service-code">KB004</span></td>
+                  <td>Khám chuyên khoa Tim mạch</td>
+                  <td>Khoa Tim mạch</td>
+                  <td>30-45 phút</td>
+                  <td>55.000đ</td>
+                  <td>300.000đ</td>
+                </tr>
+                <tr>
+                  <td><span class="service-code">KB005</span></td>
+                  <td>Khám chuyên khoa Thần kinh</td>
+                  <td>Khoa Thần kinh</td>
+                  <td>30-45 phút</td>
+                  <td>55.000đ</td>
+                  <td>300.000đ</td>
+                </tr>
+                <tr>
+                  <td><span class="service-code">KB006</span></td>
+                  <td>Khám Sản phụ khoa</td>
+                  <td>Khoa Sản</td>
+                  <td>20-30 phút</td>
+                  <td>45.000đ</td>
+                  <td>250.000đ</td>
+                </tr>
+                <tr>
+                  <td><span class="service-code">KB007</span></td>
+                  <td>Khám Nhi khoa</td>
+                  <td>Khoa Nhi</td>
+                  <td>20-30 phút</td>
+                  <td>39.600đ</td>
+                  <td>200.000đ</td>
+                </tr>
+                <tr>
+                  <td><span class="service-code">KB008</span></td>
+                  <td>Khám Mắt</td>
+                  <td>Khoa Mắt</td>
+                  <td>15-25 phút</td>
+                  <td>35.000đ</td>
+                  <td>180.000đ</td>
+                </tr>
+                <tr>
+                  <td><span class="service-code">KB009</span></td>
+                  <td>Khám Tai Mũi Họng</td>
+                  <td>Khoa TMH</td>
+                  <td>15-25 phút</td>
+                  <td>35.000đ</td>
+                  <td>180.000đ</td>
+                </tr>
+                <tr>
+                  <td><span class="service-code">KB010</span></td>
+                  <td>Khám Da liễu</td>
+                  <td>Khoa Da liễu</td>
+                  <td>15-20 phút</td>
+                  <td>35.000đ</td>
+                  <td>180.000đ</td>
+                </tr>
+                <tr class="highlight-row">
+                  <td><span class="service-code premium">KB011</span></td>
+                  <td>Khám VIP (Giáo sư, Tiến sĩ)</td>
+                  <td>Phòng khám VIP</td>
+                  <td>45-60 phút</td>
+                  <td>-</td>
+                  <td>500.000đ</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Tab Xét nghiệm -->
+          <div class="tab-content" id="xet-nghiem">
+            <table class="pricing-table">
+              <thead>
+                <tr>
+                  <th>Mã DV</th>
+                  <th>Tên xét nghiệm</th>
+                  <th>Loại mẫu</th>
+                  <th>Thời gian trả KQ</th>
+                  <th>Giá BHYT</th>
+                  <th>Giá dịch vụ</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="service-code">XN001</span></td>
+                  <td>Công thức máu toàn phần (CBC)</td>
+                  <td>Máu</td>
+                  <td>2 giờ</td>
+                  <td>45.900đ</td>
+                  <td>85.000đ</td>
+                </tr>
+                <tr>
+                  <td><span class="service-code">XN002</span></td>
+                  <td>Đường huyết lúc đói (Glucose)</td>
+                  <td>Máu</td>
+                  <td>1 giờ</td>
+                  <td>18.700đ</td>
+                  <td>35.000đ</td>
+                </tr>
+                <tr>
+                  <td><span class="service-code">XN003</span></td>
+                  <td>HbA1c (Đái tháo đường)</td>
+                  <td>Máu</td>
+                  <td>4 giờ</td>
+                  <td>95.200đ</td>
+                  <td>180.000đ</td>
+                </tr>
+                <tr>
+                  <td><span class="service-code">XN004</span></td>
+                  <td>Chức năng gan (AST, ALT, GGT)</td>
+                  <td>Máu</td>
+                  <td>3 giờ</td>
+                  <td>75.600đ</td>
+                  <td>150.000đ</td>
+                </tr>
+                <tr>
+                  <td><span class="service-code">XN005</span></td>
+                  <td>Chức năng thận (Ure, Creatinin)</td>
+                  <td>Máu</td>
+                  <td>3 giờ</td>
+                  <td>56.100đ</td>
+                  <td>110.000đ</td>
+                </tr>
+                <tr>
+                  <td><span class="service-code">XN006</span></td>
+                  <td>Mỡ máu (Cholesterol, Triglycerid, HDL, LDL)</td>
+                  <td>Máu</td>
+                  <td>4 giờ</td>
+                  <td>112.200đ</td>
+                  <td>220.000đ</td>
+                </tr>
+                <tr>
+                  <td><span class="service-code">XN007</span></td>
+                  <td>Tổng phân tích nước tiểu</td>
+                  <td>Nước tiểu</td>
+                  <td>1 giờ</td>
+                  <td>27.500đ</td>
+                  <td>50.000đ</td>
+                </tr>
+                <tr>
+                  <td><span class="service-code">XN008</span></td>
+                  <td>HBsAg (Viêm gan B)</td>
+                  <td>Máu</td>
+                  <td>4 giờ</td>
+                  <td>66.000đ</td>
+                  <td>130.000đ</td>
+                </tr>
+                <tr>
+                  <td><span class="service-code">XN009</span></td>
+                  <td>Anti-HCV (Viêm gan C)</td>
+                  <td>Máu</td>
+                  <td>4 giờ</td>
+                  <td>99.000đ</td>
+                  <td>195.000đ</td>
+                </tr>
+                <tr>
+                  <td><span class="service-code">XN010</span></td>
+                  <td>HIV Ag/Ab Combo</td>
+                  <td>Máu</td>
+                  <td>4 giờ</td>
+                  <td>88.000đ</td>
+                  <td>175.000đ</td>
+                </tr>
+                <tr>
+                  <td><span class="service-code">XN011</span></td>
+                  <td>PSA (Tầm soát ung thư tuyến tiền liệt)</td>
+                  <td>Máu</td>
+                  <td>6 giờ</td>
+                  <td>132.000đ</td>
+                  <td>260.000đ</td>
+                </tr>
+                <tr>
+                  <td><span class="service-code">XN012</span></td>
+                  <td>AFP (Tầm soát ung thư gan)</td>
+                  <td>Máu</td>
+                  <td>6 giờ</td>
+                  <td>121.000đ</td>
+                  <td>240.000đ</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Tab Chẩn đoán hình ảnh -->
+          <div class="tab-content" id="chan-doan-hinh-anh">
+            <table class="pricing-table">
+              <thead>
+                <tr>
+                  <th>Mã DV</th>
+                  <th>Tên dịch vụ</th>
+                  <th>Thiết bị</th>
+                  <th>Thời gian</th>
+                  <th>Giá BHYT</th>
+                  <th>Giá dịch vụ</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="service-code">HA001</span></td>
+                  <td>X-quang ngực thẳng</td>
+                  <td>X-quang kỹ thuật số</td>
+                  <td>15 phút</td>
+                  <td>44.000đ</td>
+                  <td>90.000đ</td>
+                </tr>
+                <tr>
+                  <td><span class="service-code">HA002</span></td>
+                  <td>X-quang cột sống</td>
+                  <td>X-quang kỹ thuật số</td>
+                  <td>20 phút</td>
+                  <td>66.000đ</td>
+                  <td>130.000đ</td>
+                </tr>
+                <tr>
+                  <td><span class="service-code">HA003</span></td>
+                  <td>Siêu âm bụng tổng quát</td>
+                  <td>Siêu âm 4D</td>
+                  <td>20 phút</td>
+                  <td>88.000đ</td>
+                  <td>180.000đ</td>
+                </tr>
+                <tr>
+                  <td><span class="service-code">HA004</span></td>
+                  <td>Siêu âm tim</td>
+                  <td>Siêu âm Doppler màu</td>
+                  <td>30 phút</td>
+                  <td>220.000đ</td>
+                  <td>450.000đ</td>
+                </tr>
+                <tr>
+                  <td><span class="service-code">HA005</span></td>
+                  <td>Siêu âm thai</td>
+                  <td>Siêu âm 4D</td>
+                  <td>25 phút</td>
+                  <td>110.000đ</td>
+                  <td>250.000đ</td>
+                </tr>
+                <tr>
+                  <td><span class="service-code">HA006</span></td>
+                  <td>Siêu âm tuyến giáp</td>
+                  <td>Siêu âm đàn hồi</td>
+                  <td>20 phút</td>
+                  <td>99.000đ</td>
+                  <td>200.000đ</td>
+                </tr>
+                <tr>
+                  <td><span class="service-code">HA007</span></td>
+                  <td>CT Scanner sọ não</td>
+                  <td>CT 128 lát cắt</td>
+                  <td>30 phút</td>
+                  <td>550.000đ</td>
+                  <td>1.100.000đ</td>
+                </tr>
+                <tr>
+                  <td><span class="service-code">HA008</span></td>
+                  <td>CT Scanner ngực</td>
+                  <td>CT 128 lát cắt</td>
+                  <td>30 phút</td>
+                  <td>660.000đ</td>
+                  <td>1.300.000đ</td>
+                </tr>
+                <tr>
+                  <td><span class="service-code">HA009</span></td>
+                  <td>CT Scanner bụng</td>
+                  <td>CT 128 lát cắt</td>
+                  <td>45 phút</td>
+                  <td>770.000đ</td>
+                  <td>1.500.000đ</td>
+                </tr>
+                <tr>
+                  <td><span class="service-code">HA010</span></td>
+                  <td>MRI sọ não</td>
+                  <td>MRI 1.5 Tesla</td>
+                  <td>45 phút</td>
+                  <td>1.100.000đ</td>
+                  <td>2.200.000đ</td>
+                </tr>
+                <tr>
+                  <td><span class="service-code">HA011</span></td>
+                  <td>MRI cột sống</td>
+                  <td>MRI 1.5 Tesla</td>
+                  <td>45 phút</td>
+                  <td>1.100.000đ</td>
+                  <td>2.200.000đ</td>
+                </tr>
+                <tr>
+                  <td><span class="service-code">HA012</span></td>
+                  <td>Điện tim (ECG)</td>
+                  <td>Máy điện tim 12 chuyển đạo</td>
+                  <td>15 phút</td>
+                  <td>44.000đ</td>
+                  <td>90.000đ</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Tab Thủ thuật -->
+          <div class="tab-content" id="thu-thuat">
+            <table class="pricing-table">
+              <thead>
+                <tr>
+                  <th>Mã DV</th>
+                  <th>Tên thủ thuật</th>
+                  <th>Khoa thực hiện</th>
+                  <th>Thời gian</th>
+                  <th>Giá BHYT</th>
+                  <th>Giá dịch vụ</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="service-code">TT001</span></td>
+                  <td>Tiêm tĩnh mạch</td>
+                  <td>Phòng thủ thuật</td>
+                  <td>10 phút</td>
+                  <td>22.000đ</td>
+                  <td>50.000đ</td>
+                </tr>
+                <tr>
+                  <td><span class="service-code">TT002</span></td>
+                  <td>Truyền dịch</td>
+                  <td>Phòng thủ thuật</td>
+                  <td>1-2 giờ</td>
+                  <td>55.000đ</td>
+                  <td>120.000đ</td>
+                </tr>
+                <tr>
+                  <td><span class="service-code">TT003</span></td>
+                  <td>Thay băng vết thương nhỏ</td>
+                  <td>Phòng thủ thuật</td>
+                  <td>15 phút</td>
+                  <td>33.000đ</td>
+                  <td>70.000đ</td>
+                </tr>
+                <tr>
+                  <td><span class="service-code">TT004</span></td>
+                  <td>Khâu vết thương (< 5cm)</td>
+                  <td>Khoa Ngoại</td>
+                  <td>30 phút</td>
+                  <td>110.000đ</td>
+                  <td>250.000đ</td>
+                </tr>
+                <tr>
+                  <td><span class="service-code">TT005</span></td>
+                  <td>Cắt chỉ</td>
+                  <td>Phòng thủ thuật</td>
+                  <td>10 phút</td>
+                  <td>22.000đ</td>
+                  <td>50.000đ</td>
+                </tr>
+                <tr>
+                  <td><span class="service-code">TT006</span></td>
+                  <td>Nội soi dạ dày</td>
+                  <td>Khoa Nội tiêu hóa</td>
+                  <td>30 phút</td>
+                  <td>385.000đ</td>
+                  <td>800.000đ</td>
+                </tr>
+                <tr>
+                  <td><span class="service-code">TT007</span></td>
+                  <td>Nội soi đại tràng</td>
+                  <td>Khoa Nội tiêu hóa</td>
+                  <td>45 phút</td>
+                  <td>495.000đ</td>
+                  <td>1.000.000đ</td>
+                </tr>
+                <tr>
+                  <td><span class="service-code">TT008</span></td>
+                  <td>Chọc dò dịch màng phổi</td>
+                  <td>Khoa Hô hấp</td>
+                  <td>30 phút</td>
+                  <td>220.000đ</td>
+                  <td>450.000đ</td>
+                </tr>
+                <tr>
+                  <td><span class="service-code">TT009</span></td>
+                  <td>Sinh thiết gan</td>
+                  <td>Khoa Nội tiêu hóa</td>
+                  <td>45 phút</td>
+                  <td>550.000đ</td>
+                  <td>1.100.000đ</td>
+                </tr>
+                <tr>
+                  <td><span class="service-code">TT010</span></td>
+                  <td>Đặt catheter tĩnh mạch trung tâm</td>
+                  <td>Khoa Hồi sức</td>
+                  <td>30 phút</td>
+                  <td>440.000đ</td>
+                  <td>900.000đ</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Gói khám sức khỏe -->
+      <section class="health-packages">
+        <div class="container">
+          <h2 class="section-title">Gói khám sức khỏe tổng quát</h2>
+          <div class="packages-grid">
+            
+            <div class="package-card">
+              <div class="package-header basic">
+                <span class="package-badge">Cơ bản</span>
+                <h3>Gói Bronze</h3>
+                <div class="package-price">
+                  <span class="price">1.500.000</span>
+                  <span class="currency">VNĐ</span>
+                </div>
+              </div>
+              <div class="package-body">
+                <ul class="package-features">
+                  <li><span class="check">✓</span> Khám tổng quát</li>
+                  <li><span class="check">✓</span> Công thức máu</li>
+                  <li><span class="check">✓</span> Đường huyết, Mỡ máu</li>
+                  <li><span class="check">✓</span> Chức năng gan, thận</li>
+                  <li><span class="check">✓</span> Tổng phân tích nước tiểu</li>
+                  <li><span class="check">✓</span> X-quang ngực</li>
+                  <li><span class="check">✓</span> Điện tim</li>
+                  <li class="disabled"><span class="cross">✗</span> Siêu âm bụng</li>
+                  <li class="disabled"><span class="cross">✗</span> Siêu âm tuyến giáp</li>
+                  <li class="disabled"><span class="cross">✗</span> Tầm soát ung thư</li>
+                </ul>
+                <div class="package-info">
+                  <p><strong>Đối tượng:</strong> Nam/Nữ từ 18-40 tuổi</p>
+                  <p><strong>Thời gian:</strong> 2-3 giờ</p>
+                </div>
+                <a href="#" class="btn-package">Đặt lịch khám</a>
+              </div>
+            </div>
+
+            <div class="package-card featured">
+              <div class="package-header standard">
+                <span class="package-badge">Phổ biến</span>
+                <h3>Gói Silver</h3>
+                <div class="package-price">
+                  <span class="price">2.800.000</span>
+                  <span class="currency">VNĐ</span>
+                </div>
+              </div>
+              <div class="package-body">
+                <ul class="package-features">
+                  <li><span class="check">✓</span> Khám tổng quát</li>
+                  <li><span class="check">✓</span> Công thức máu</li>
+                  <li><span class="check">✓</span> Đường huyết, Mỡ máu, HbA1c</li>
+                  <li><span class="check">✓</span> Chức năng gan, thận</li>
+                  <li><span class="check">✓</span> Tổng phân tích nước tiểu</li>
+                  <li><span class="check">✓</span> X-quang ngực</li>
+                  <li><span class="check">✓</span> Điện tim</li>
+                  <li><span class="check">✓</span> Siêu âm bụng tổng quát</li>
+                  <li><span class="check">✓</span> Siêu âm tuyến giáp</li>
+                  <li class="disabled"><span class="cross">✗</span> Tầm soát ung thư</li>
+                </ul>
+                <div class="package-info">
+                  <p><strong>Đối tượng:</strong> Nam/Nữ từ 30-50 tuổi</p>
+                  <p><strong>Thời gian:</strong> 3-4 giờ</p>
+                </div>
+                <a href="#" class="btn-package">Đặt lịch khám</a>
+              </div>
+            </div>
+
+            <div class="package-card">
+              <div class="package-header premium">
+                <span class="package-badge">Cao cấp</span>
+                <h3>Gói Gold</h3>
+                <div class="package-price">
+                  <span class="price">4.500.000</span>
+                  <span class="currency">VNĐ</span>
+                </div>
+              </div>
+              <div class="package-body">
+                <ul class="package-features">
+                  <li><span class="check">✓</span> Khám tổng quát VIP</li>
+                  <li><span class="check">✓</span> Công thức máu đầy đủ</li>
+                  <li><span class="check">✓</span> Đường huyết, Mỡ máu, HbA1c</li>
+                  <li><span class="check">✓</span> Chức năng gan, thận, tuyến giáp</li>
+                  <li><span class="check">✓</span> Tổng phân tích nước tiểu</li>
+                  <li><span class="check">✓</span> X-quang ngực</li>
+                  <li><span class="check">✓</span> Điện tim + Siêu âm tim</li>
+                  <li><span class="check">✓</span> Siêu âm bụng + tuyến giáp</li>
+                  <li><span class="check">✓</span> Viêm gan B, C</li>
+                  <li><span class="check">✓</span> Tầm soát ung thư (AFP, CEA, PSA/CA125)</li>
+                </ul>
+                <div class="package-info">
+                  <p><strong>Đối tượng:</strong> Nam/Nữ trên 40 tuổi</p>
+                  <p><strong>Thời gian:</strong> 4-5 giờ</p>
+                </div>
+                <a href="#" class="btn-package">Đặt lịch khám</a>
+              </div>
+            </div>
+
+            <div class="package-card">
+              <div class="package-header vip">
+                <span class="package-badge">VIP</span>
+                <h3>Gói Platinum</h3>
+                <div class="package-price">
+                  <span class="price">8.000.000</span>
+                  <span class="currency">VNĐ</span>
+                </div>
+              </div>
+              <div class="package-body">
+                <ul class="package-features">
+                  <li><span class="check">✓</span> Tất cả dịch vụ Gói Gold</li>
+                  <li><span class="check">✓</span> CT Scanner ngực liều thấp</li>
+                  <li><span class="check">✓</span> Nội soi dạ dày</li>
+                  <li><span class="check">✓</span> Đo loãng xương</li>
+                  <li><span class="check">✓</span> Khám Mắt, TMH chuyên sâu</li>
+                  <li><span class="check">✓</span> Tầm soát ung thư toàn diện</li>
+                  <li><span class="check">✓</span> Tư vấn dinh dưỡng</li>
+                  <li><span class="check">✓</span> Bác sĩ riêng hướng dẫn</li>
+                  <li><span class="check">✓</span> Phòng nghỉ VIP</li>
+                  <li><span class="check">✓</span> Bữa ăn nhẹ</li>
+                </ul>
+                <div class="package-info">
+                  <p><strong>Đối tượng:</strong> Khách hàng cao cấp</p>
+                  <p><strong>Thời gian:</strong> 1 ngày</p>
+                </div>
+                <a href="#" class="btn-package">Đặt lịch khám</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Dịch vụ chuyên khoa -->
+      <section class="specialty-services">
+        <div class="container">
+          <h2 class="section-title">Dịch vụ chuyên khoa nổi bật</h2>
+          <div class="specialty-grid">
+            
+            <div class="specialty-card">
+              <div class="specialty-icon">
+                <span>❤️</span>
+              </div>
+              <div class="specialty-content">
+                <h3>Tim mạch - Can thiệp</h3>
+                <p>Chẩn đoán và điều trị các bệnh lý tim mạch với công nghệ can thiệp hiện đại</p>
+                <ul class="specialty-list">
+                  <li>Đặt stent động mạch vành</li>
+                  <li>Nong mạch vành qua da</li>
+                  <li>Cấy máy tạo nhịp tim</li>
+                  <li>Triệt đốt rối loạn nhịp tim</li>
+                </ul>
+                <div class="specialty-stats">
+                  <span><strong>2,500+</strong> ca/năm</span>
+                  <span><strong>98%</strong> thành công</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="specialty-card">
+              <div class="specialty-icon">
+                <span>🧠</span>
+              </div>
+              <div class="specialty-content">
+                <h3>Thần kinh - Đột quỵ</h3>
+                <p>Trung tâm đột quỵ hoạt động 24/7, can thiệp cấp cứu trong "giờ vàng"</p>
+                <ul class="specialty-list">
+                  <li>Can thiệp lấy huyết khối</li>
+                  <li>Tiêu sợi huyết đường tĩnh mạch</li>
+                  <li>Phẫu thuật u não</li>
+                  <li>Phục hồi chức năng thần kinh</li>
+                </ul>
+                <div class="specialty-stats">
+                  <span><strong>850+</strong> ca đột quỵ/năm</span>
+                  <span><strong>< 45 phút</strong> door-to-needle</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="specialty-card">
+              <div class="specialty-icon">
+                <span>🦴</span>
+              </div>
+              <div class="specialty-content">
+                <h3>Chấn thương chỉnh hình</h3>
+                <p>Phẫu thuật xương khớp với kỹ thuật nội soi và thay khớp nhân tạo</p>
+                <ul class="specialty-list">
+                  <li>Thay khớp háng, khớp gối</li>
+                  <li>Nội soi khớp vai, khớp gối</li>
+                  <li>Kết hợp xương gãy</li>
+                  <li>Điều trị thoát vị đĩa đệm</li>
+                </ul>
+                <div class="specialty-stats">
+                  <span><strong>1,200+</strong> ca phẫu thuật/năm</span>
+                  <span><strong>95%</strong> hồi phục tốt</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="specialty-card">
+              <div class="specialty-icon">
+                <span>👶</span>
+              </div>
+              <div class="specialty-content">
+                <h3>Sản phụ khoa - Hiếm muộn</h3>
+                <p>Chăm sóc thai sản và điều trị vô sinh hiếm muộn với công nghệ IVF</p>
+                <ul class="specialty-list">
+                  <li>Thụ tinh trong ống nghiệm (IVF)</li>
+                  <li>Bơm tinh trùng vào buồng tử cung (IUI)</li>
+                  <li>Theo dõi thai kỳ nguy cơ cao</li>
+                  <li>Sinh thường - Sinh mổ an toàn</li>
+                </ul>
+                <div class="specialty-stats">
+                  <span><strong>3,000+</strong> ca sinh/năm</span>
+                  <span><strong>45%</strong> tỷ lệ IVF thành công</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="specialty-card">
+              <div class="specialty-icon">
+                <span>🎗️</span>
+              </div>
+              <div class="specialty-content">
+                <h3>Ung bướu - Xạ trị</h3>
+                <p>Chẩn đoán và điều trị ung thư toàn diện với phác đồ chuẩn quốc tế</p>
+                <ul class="specialty-list">
+                  <li>Hóa trị, Miễn dịch trị liệu</li>
+                  <li>Xạ trị VMAT, IMRT</li>
+                  <li>Phẫu thuật ung thư</li>
+                  <li>Chăm sóc giảm nhẹ</li>
+                </ul>
+                <div class="specialty-stats">
+                  <span><strong>1,800+</strong> bệnh nhân/năm</span>
+                  <span><strong>ESMO</strong> chứng nhận</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="specialty-card">
+              <div class="specialty-icon">
+                <span>👁️</span>
+              </div>
+              <div class="specialty-content">
+                <h3>Mắt - Phẫu thuật Laser</h3>
+                <p>Phẫu thuật khúc xạ và điều trị các bệnh lý mắt với công nghệ Laser</p>
+                <ul class="specialty-list">
+                  <li>Phẫu thuật LASIK, SMILE</li>
+                  <li>Phẫu thuật đục thủy tinh thể</li>
+                  <li>Điều trị Glaucoma</li>
+                  <li>Phẫu thuật lác, sụp mí</li>
+                </ul>
+                <div class="specialty-stats">
+                  <span><strong>5,000+</strong> ca Laser/năm</span>
+                  <span><strong>99%</strong> hài lòng</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Quy trình khám bệnh -->
+      <section class="service-process">
+        <div class="container">
+          <h2 class="section-title">Quy trình khám bệnh</h2>
+          <div class="process-timeline">
+            <div class="process-step">
+              <div class="step-number">1</div>
+              <div class="step-content">
+                <h4>Đăng ký - Tiếp nhận</h4>
+                <p>Đăng ký khám qua tổng đài, website hoặc trực tiếp tại quầy. Xuất trình CCCD và thẻ BHYT (nếu có)</p>
+                <span class="step-time">5-10 phút</span>
+              </div>
+            </div>
+            <div class="process-step">
+              <div class="step-number">2</div>
+              <div class="step-content">
+                <h4>Khám lâm sàng</h4>
+                <p>Bác sĩ thăm khám, hỏi bệnh sử và chỉ định các xét nghiệm, chẩn đoán hình ảnh cần thiết</p>
+                <span class="step-time">15-30 phút</span>
+              </div>
+            </div>
+            <div class="process-step">
+              <div class="step-number">3</div>
+              <div class="step-content">
+                <h4>Thực hiện cận lâm sàng</h4>
+                <p>Lấy mẫu xét nghiệm, chụp X-quang, siêu âm theo chỉ định của bác sĩ</p>
+                <span class="step-time">30-60 phút</span>
+              </div>
+            </div>
+            <div class="process-step">
+              <div class="step-number">4</div>
+              <div class="step-content">
+                <h4>Nhận kết quả</h4>
+                <p>Chờ kết quả xét nghiệm. Kết quả được trả qua SMS/Email hoặc nhận trực tiếp</p>
+                <span class="step-time">1-4 giờ</span>
+              </div>
+            </div>
+            <div class="process-step">
+              <div class="step-number">5</div>
+              <div class="step-content">
+                <h4>Tư vấn - Kê đơn</h4>
+                <p>Bác sĩ đọc kết quả, chẩn đoán bệnh và tư vấn phương án điều trị, kê đơn thuốc</p>
+                <span class="step-time">15-20 phút</span>
+              </div>
+            </div>
+            <div class="process-step">
+              <div class="step-number">6</div>
+              <div class="step-content">
+                <h4>Thanh toán - Lấy thuốc</h4>
+                <p>Thanh toán viện phí tại quầy thu ngân hoặc qua ứng dụng. Nhận thuốc tại nhà thuốc bệnh viện</p>
+                <span class="step-time">10-15 phút</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Thông tin liên hệ nhanh -->
+      <section class="quick-contact">
+        <div class="container">
+          <div class="contact-grid">
+            <div class="contact-item">
+              <div class="contact-icon">📞</div>
+              <div class="contact-info">
+                <h4>Tổng đài đặt lịch</h4>
+                <p class="contact-value">1900 1234</p>
+                <span class="contact-note">Miễn phí cuộc gọi</span>
+              </div>
+            </div>
+            <div class="contact-item">
+              <div class="contact-icon">🚑</div>
+              <div class="contact-info">
+                <h4>Cấp cứu 24/7</h4>
+                <p class="contact-value">115 - 028 3855 4269</p>
+                <span class="contact-note">Xe cứu thương miễn phí trong 10km</span>
+              </div>
+            </div>
+            <div class="contact-item">
+              <div class="contact-icon">🕐</div>
+              <div class="contact-info">
+                <h4>Giờ làm việc</h4>
+                <p class="contact-value">7:00 - 17:00</p>
+                <span class="contact-note">Thứ 2 - Thứ 7 (Chủ nhật nghỉ)</span>
+              </div>
+            </div>
+            <div class="contact-item">
+              <div class="contact-icon">📍</div>
+              <div class="contact-info">
+                <h4>Địa chỉ</h4>
+                <p class="contact-value">201 Nguyễn Chí Thanh, Q.5</p>
+                <span class="contact-note">TP. Hồ Chí Minh</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer giữ nguyên -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-col">
+            <h3>Thông tin bệnh viện</h3>
+            <p>Bệnh viện Đa khoa Trung ương - Nơi sức khỏe là ưu tiên hàng đầu</p>
+            <p>Địa chỉ: 201 Nguyễn Chí Thanh, Q.5, TP.HCM</p>
+            <p>Điện thoại: 1900 1234</p>
+            <p>Email: info@benhviendakhoa.vn</p>
+          </div>
+          <div class="footer-col">
+            <h3>Liên kết nhanh</h3>
+            <ul>
+              <li><a href="../index.html">Trang chủ</a></li>
+              <li><a href="./aboutus.html">Giới thiệu</a></li>
+              <li><a href="./departments.html">Khoa phòng</a></li>
+              <li><a href="./services.html">Dịch vụ</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h3>Dịch vụ</h3>
+            <ul>
+              <li><a href="#">Khám tổng quát</a></li>
+              <li><a href="#">Cấp cứu 24/7</a></li>
+              <li><a href="#">Xét nghiệm</a></li>
+              <li><a href="#">Chẩn đoán hình ảnh</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h3>Kết nối với chúng tôi</h3>
+            <div class="social-links">
+              <a href="#" class="social-link">Facebook</a>
+              <a href="#" class="social-link">YouTube</a>
+              <a href="#" class="social-link">Zalo</a>
+            </div>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; 2025 Bệnh viện Đa khoa Trung ương. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      // Tab switching functionality
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+          document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+          btn.classList.add('active');
+          document.getElementById(btn.dataset.tab).classList.add('active');
+        });
+      });
+    </script>
+  </body>
+</html>

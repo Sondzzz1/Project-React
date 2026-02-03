@@ -1,0 +1,36 @@
+.admin-wrapper {
+    display: flex;
+    min-height: 100vh;
+    background: #f4f7f6;
+}
+
+.content {
+    margin-left: 260px;
+    padding: 25px;
+    width: calc(100% - 260px);
+    transition: all 0.3s ease;
+}
+
+.page-content {
+    animation: fadeIn 0.4s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .content {
+        margin-left: 0;
+        width: 100%;
+    }
+}

@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bệnh viện Đa khoa Hoàn Mỹ - Hệ thống Quản lý</title>
+    <link rel="stylesheet" href="./css/style.css" />
+  </head>
+  <body>
+    <header class="header">
+      <div class="header-top">
+        <div class="logo">
+          <img src="./images/logo.jpg" alt="Hospital Logo" />
+        </div>
+      </div>
+      <nav class="navbar">
+        <ul class="nav-list">
+          <li><a href="#" class="nav-list-item">Trang chủ</a></li>
+          <li><a href="./Pages/aboutus.html" class="nav-list-item">Giới thiệu</a></li>
+          <li><a href="./Pages/departments.html" class="nav-list-item">Khoa phòng</a></li>
+          <li><a href="./Pages/services.html" class="nav-list-item">Dịch vụ</a></li>
+          <li><a href="#" class="nav-list-item">Bác sĩ</a></li>
+          <li><a href="#" class="nav-list-item">Đặt lịch hẹn</a></li>
+        </ul>
+      </nav>
+      <div class="header-btn">
+        <a href="./Pages/register.html" class="btn btn-login">Đăng ký</a>
+        <a href="./Pages/login.html" class="btn btn-register">Đăng nhập</a>
+      </div>
+    </header>
+
+    <!-- Hero Section - Slideshow -->
+    <section class="hero-section">
+      <div class="slideshow-container">
+        <div class="slide active">
+          <img src="./images/slide1.webp" alt="Bệnh viện Đa khoa Hoàn Mỹ" />
+          <div class="slide-content">
+            <h1>Bệnh viện Đa khoa Hoàn Mỹ</h1>
+            <p>Chăm sóc sức khỏe toàn diện với đội ngũ 150+ bác sĩ chuyên khoa</p>
+            <a href="#appointment" class="btn-cta">Đặt lịch khám ngay</a>
+          </div>
+        </div>
+        <div class="slide">
+          <img src="./images/slide2.webp" alt="Trang thiết bị y tế hiện đại" />
+          <div class="slide-content">
+            <h1>Trang thiết bị Y tế Hiện đại</h1>
+            <p>Hệ thống MRI 3.0 Tesla, CT Scanner 256 lát cắt, Xét nghiệm tự động</p>
+            <a href="#services" class="btn-cta">Khám phá dịch vụ</a>
+          </div>
+        </div>
+        <div class="slide">
+          <img src="./images/slide3.webp" alt="Đội ngũ y bác sĩ" />
+          <div class="slide-content">
+            <h1>Đội ngũ Chuyên gia Hàng đầu</h1>
+            <p>Giáo sư, Tiến sĩ, Bác sĩ chuyên khoa II từ các bệnh viện lớn</p>
+            <a href="#doctors" class="btn-cta">Xem đội ngũ bác sĩ</a>
+          </div>
+        </div>
+        <button class="slide-btn prev" onclick="changeSlide(-1)">&#10094;</button>
+        <button class="slide-btn next" onclick="changeSlide(1)">&#10095;</button>
+        <div class="slide-dots">
+          <span class="dot active" onclick="currentSlide(1)"></span>
+          <span class="dot" onclick="currentSlide(2)"></span>
+          <span class="dot" onclick="currentSlide(3)"></span>
+        </div>
+      </div>
+    </section>
+    <!-- Dịch vụ nổi bật -->
+    <section id="services" class="services-section">
+      <div class="container">
+        <h2 class="section-title">Dịch vụ Y tế Chuyên nghiệp</h2>
+        <div class="services-grid">
+          <div class="service-card">
+            <div class="service-icon">🩺</div>
+            <h3>Khám Sức khỏe Tổng quát</h3>
+            <p>Gói khám từ cơ bản đến cao cấp với 45+ hạng mục xét nghiệm, siêu âm, X-quang, điện tim</p>
+            <div class="service-price">Từ 1.500.000 VNĐ</div>
+          </div>
+          <div class="service-card">
+            <div class="service-icon">🚑</div>
+            <h3>Cấp cứu 24/7</h3>
+            <p>Phòng cấp cứu 20 giường, xe cứu thương GPS, đội ngũ bác sĩ trực 24/24</p>
+            <div class="service-price">Hotline: 1900 1234</div>
+          </div>
+          <div class="service-card">
+            <div class="service-icon">🔬</div>
+            <h3>Xét nghiệm & Chẩn đoán</h3>
+            <p>Phòng Lab đạt chuẩn ISO 15189, kết quả trong 2-4 giờ, xét nghiệm gene, ung thư</p>
+            <div class="service-price">200+ loại xét nghiệm</div>
+          </div>
+          <div class="service-card">
+            <div class="service-icon">💉</div>
+            <h3>Phẫu thuật Nội soi</h3>
+            <p>8 phòng mổ vô trùng, phẫu thuật nội soi 3D, robot hỗ trợ Da Vinci</p>
+            <div class="service-price">Tỷ lệ thành công 98.5%</div>
+          </div>
+          <div class="service-card">
+            <div class="service-icon">🤰</div>
+            <h3>Thai sản Trọn gói</h3>
+            <p>Khám thai định kỳ, sinh thường, sinh mổ, chăm sóc hậu sản, tiêm chủng trẻ em</p>
+            <div class="service-price">Từ 25.000.000 VNĐ</div>
+          </div>
+          <div class="service-card">
+            <div class="service-icon">❤️</div>
+            <h3>Tim mạch Can thiệp</h3>
+            <p>Đặt stent mạch vành, cấy máy tạo nhịp, siêu âm tim 4D, Holter điện tim</p>
+            <div class="service-price">Chuyên gia đầu ngành</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Khoa & Phòng -->
+    <section class="wards-section">
+      <div class="container">
+        <h2 class="section-title">Hệ thống Khoa Phòng</h2>
+        <div class="wards-grid">
+          <div class="ward-card">
+            <div class="ward-header">
+              <h3>Khoa Nội Tổng hợp</h3>
+              <span class="ward-type">Nội khoa</span>
+            </div>
+            <div class="ward-info">
+              <p><strong>Mã khoa:</strong> NK-001</p>
+              <p><strong>Trưởng khoa:</strong> PGS.TS Nguyễn Văn Minh</p>
+              <p><strong>Số giường:</strong> 60 giường</p>
+              <p><strong>Giường trống:</strong> <span class="available">15 giường</span></p>
+              <p><strong>Bác sĩ:</strong> 12 người</p>
+              <p><strong>Điều dưỡng:</strong> 24 người</p>
+            </div>
+            <a href="./Pages/departments.html?id=NK-001" class="ward-btn">Xem chi tiết</a>
+          </div>
+          <div class="ward-card">
+            <div class="ward-header">
+              <h3>Khoa Ngoại Tổng hợp</h3>
+              <span class="ward-type">Ngoại khoa</span>
+            </div>
+            <div class="ward-info">
+              <p><strong>Mã khoa:</strong> NGK-002</p>
+              <p><strong>Trưởng khoa:</strong> TS.BS Trần Quốc Hùng</p>
+              <p><strong>Số giường:</strong> 50 giường</p>
+              <p><strong>Giường trống:</strong> <span class="available">8 giường</span></p>
+              <p><strong>Bác sĩ:</strong> 15 người</p>
+              <p><strong>Điều dưỡng:</strong> 28 người</p>
+            </div>
+            <a href="./Pages/departments.html?id=NGK-002" class="ward-btn">Xem chi tiết</a>
+          </div>
+          <div class="ward-card">
+            <div class="ward-header">
+              <h3>Khoa Sản</h3>
+              <span class="ward-type">Sản phụ khoa</span>
+            </div>
+            <div class="ward-info">
+              <p><strong>Mã khoa:</strong> SAN-003</p>
+              <p><strong>Trưởng khoa:</strong> TS.BS Lê Thị Hương</p>
+              <p><strong>Số giường:</strong> 45 giường</p>
+              <p><strong>Giường trống:</strong> <span class="warning">3 giường</span></p>
+              <p><strong>Bác sĩ:</strong> 10 người</p>
+              <p><strong>Điều dưỡng:</strong> 20 người</p>
+            </div>
+            <a href="./Pages/departments.html?id=SAN-003" class="ward-btn">Xem chi tiết</a>
+          </div>
+          <div class="ward-card">
+            <div class="ward-header">
+              <h3>Khoa Nhi</h3>
+              <span class="ward-type">Nhi khoa</span>
+            </div>
+            <div class="ward-info">
+              <p><strong>Mã khoa:</strong> NHI-004</p>
+              <p><strong>Trưởng khoa:</strong> PGS.TS Phạm Văn Đức</p>
+              <p><strong>Số giường:</strong> 40 giường</p>
+              <p><strong>Giường trống:</strong> <span class="available">12 giường</span></p>
+              <p><strong>Bác sĩ:</strong> 8 người</p>
+              <p><strong>Điều dưỡng:</strong> 18 người</p>
+            </div>
+            <a href="./Pages/departments.html?id=NHI-004" class="ward-btn">Xem chi tiết</a>
+          </div>
+          <div class="ward-card">
+            <div class="ward-header">
+              <h3>Khoa Cấp cứu</h3>
+              <span class="ward-type urgent">Cấp cứu</span>
+            </div>
+            <div class="ward-info">
+              <p><strong>Mã khoa:</strong> CC-005</p>
+              <p><strong>Trưởng khoa:</strong> TS.BS Hoàng Minh Tuấn</p>
+              <p><strong>Số giường:</strong> 25 giường</p>
+              <p><strong>Giường trống:</strong> <span class="critical">2 giường</span></p>
+              <p><strong>Bác sĩ:</strong> 14 người (trực 24/7)</p>
+              <p><strong>Điều dưỡng:</strong> 30 người</p>
+            </div>
+            <a href="./Pages/departments.html?id=CC-005" class="ward-btn">Xem chi tiết</a>
+          </div>
+          <div class="ward-card">
+            <div class="ward-header">
+              <h3>Khoa Tim mạch</h3>
+              <span class="ward-type">Chuyên khoa</span>
+            </div>
+            <div class="ward-info">
+              <p><strong>Mã khoa:</strong> TM-006</p>
+              <p><strong>Trưởng khoa:</strong> GS.TS Vũ Đình Hải</p>
+              <p><strong>Số giường:</strong> 35 giường</p>
+              <p><strong>Giường trống:</strong> <span class="available">7 giường</span></p>
+              <p><strong>Bác sĩ:</strong> 11 người</p>
+              <p><strong>Điều dưỡng:</strong> 22 người</p>
+            </div>
+            <a href="./Pages/departments.html?id=TM-006" class="ward-btn">Xem chi tiết</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Đội ngũ bác sĩ -->
+    <section id="doctors" class="doctors-section">
+      <div class="container">
+        <h2 class="section-title">Đội ngũ Bác sĩ Chuyên khoa</h2>
+        <div class="doctors-grid">
+          <div class="doctor-card">
+            <div class="doctor-avatar">
+              <img src="/placeholder.svg?height=150&width=150" alt="GS.TS.BS Nguyễn Văn Minh" />
+            </div>
+            <h3>GS.TS.BS Nguyễn Văn Minh</h3>
+            <p class="doctor-specialty">Trưởng khoa Nội Tổng hợp</p>
+            <p class="doctor-experience">30 năm kinh nghiệm</p>
+            <div class="doctor-details">
+              <p class="doctor-contact">📞 0912.345.678</p>
+              <p class="doctor-contact">✉️ nguyenvanminh@hoanmy.vn</p>
+              <p class="doctor-schedule">🕐 T2, T4, T6: 8:00 - 12:00</p>
+            </div>
+            <a href="#" class="doctor-booking-btn">Đặt lịch khám</a>
+          </div>
+          <div class="doctor-card">
+            <div class="doctor-avatar">
+              <img src="/placeholder.svg?height=150&width=150" alt="TS.BS Trần Quốc Hùng" />
+            </div>
+            <h3>TS.BS Trần Quốc Hùng</h3>
+            <p class="doctor-specialty">Trưởng khoa Ngoại Tổng hợp</p>
+            <p class="doctor-experience">22 năm kinh nghiệm</p>
+            <div class="doctor-details">
+              <p class="doctor-contact">📞 0912.345.679</p>
+              <p class="doctor-contact">✉️ tranquochung@hoanmy.vn</p>
+              <p class="doctor-schedule">🕐 T3, T5, T7: 8:00 - 12:00</p>
+            </div>
+            <a href="#" class="doctor-booking-btn">Đặt lịch khám</a>
+          </div>
+          <div class="doctor-card">
+            <div class="doctor-avatar">
+              <img src="/placeholder.svg?height=150&width=150" alt="TS.BS Lê Thị Hương" />
+            </div>
+            <h3>TS.BS Lê Thị Hương</h3>
+            <p class="doctor-specialty">Trưởng khoa Sản</p>
+            <p class="doctor-experience">18 năm kinh nghiệm</p>
+            <div class="doctor-details">
+              <p class="doctor-contact">📞 0912.345.680</p>
+              <p class="doctor-contact">✉️ lethihuong@hoanmy.vn</p>
+              <p class="doctor-schedule">🕐 T2 - T6: 14:00 - 17:00</p>
+            </div>
+            <a href="#" class="doctor-booking-btn">Đặt lịch khám</a>
+          </div>
+          <div class="doctor-card">
+            <div class="doctor-avatar">
+              <img src="/placeholder.svg?height=150&width=150" alt="PGS.TS Phạm Văn Đức" />
+            </div>
+            <h3>PGS.TS Phạm Văn Đức</h3>
+            <p class="doctor-specialty">Trưởng khoa Nhi</p>
+            <p class="doctor-experience">25 năm kinh nghiệm</p>
+            <div class="doctor-details">
+              <p class="doctor-contact">📞 0912.345.681</p>
+              <p class="doctor-contact">✉️ phamvanduc@hoanmy.vn</p>
+              <p class="doctor-schedule">🕐 T2, T4, T6: 14:00 - 17:00</p>
+            </div>
+            <a href="#" class="doctor-booking-btn">Đặt lịch khám</a>
+          </div>
+          <div class="doctor-card">
+            <div class="doctor-avatar">
+              <img src="/placeholder.svg?height=150&width=150" alt="GS.TS Vũ Đình Hải" />
+            </div>
+            <h3>GS.TS Vũ Đình Hải</h3>
+            <p class="doctor-specialty">Trưởng khoa Tim mạch</p>
+            <p class="doctor-experience">35 năm kinh nghiệm</p>
+            <div class="doctor-details">
+              <p class="doctor-contact">📞 0912.345.682</p>
+              <p class="doctor-contact">✉️ vudinhai@hoanmy.vn</p>
+              <p class="doctor-schedule">🕐 T3, T5: 8:00 - 12:00</p>
+            </div>
+            <a href="#" class="doctor-booking-btn">Đặt lịch khám</a>
+          </div>
+          <div class="doctor-card">
+            <div class="doctor-avatar">
+              <img src="/placeholder.svg?height=150&width=150" alt="TS.BS Hoàng Minh Tuấn" />
+            </div>
+            <h3>TS.BS Hoàng Minh Tuấn</h3>
+            <p class="doctor-specialty">Trưởng khoa Cấp cứu</p>
+            <p class="doctor-experience">15 năm kinh nghiệm</p>
+            <div class="doctor-details">
+              <p class="doctor-contact">📞 0912.345.683</p>
+              <p class="doctor-contact">✉️ hoangminhtuan@hoanmy.vn</p>
+              <p class="doctor-schedule">🕐 Trực 24/7</p>
+            </div>
+            <a href="#" class="doctor-booking-btn">Đặt lịch khám</a>
+          </div>
+        </div>
+        <div class="view-all-doctors">
+          <a href="./Pages/doctors.html" class="btn-view-all">Xem tất cả bác sĩ →</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Hệ thống giường bệnh -->
+    <section class="beds-section">
+      <div class="container">
+        <h2 class="section-title">Thống kê Hệ thống Giường bệnh</h2>
+        <div class="beds-stats">
+          <div class="stat-card">
+            <div class="stat-icon">🛏️</div>
+            <h3>350</h3>
+            <p>Tổng số giường</p>
+          </div>
+          <div class="stat-card stat-available">
+            <div class="stat-icon">✅</div>
+            <h3>47</h3>
+            <p>Giường trống</p>
+          </div>
+          <div class="stat-card stat-occupied">
+            <div class="stat-icon">🏥</div>
+            <h3>303</h3>
+            <p>Đang sử dụng</p>
+          </div>
+          <div class="stat-card stat-rate">
+            <div class="stat-icon">📊</div>
+            <h3>86.6%</h3>
+            <p>Tỷ lệ sử dụng</p>
+          </div>
+        </div>
+        
+        <!-- Bảng chi tiết giường theo khoa -->
+        <div class="beds-detail-table">
+          <h3 class="table-title">Chi tiết theo Khoa</h3>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Mã khoa</th>
+                <th>Tên khoa</th>
+                <th>Tổng giường</th>
+                <th>Đang dùng</th>
+                <th>Còn trống</th>
+                <th>Tỷ lệ</th>
+                <th>Trạng thái</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>NK-001</td>
+                <td>Khoa Nội Tổng hợp</td>
+                <td>60</td>
+                <td>45</td>
+                <td>15</td>
+                <td>75%</td>
+                <td><span class="status-badge status-normal">Bình thường</span></td>
+              </tr>
+              <tr>
+                <td>NGK-002</td>
+                <td>Khoa Ngoại Tổng hợp</td>
+                <td>50</td>
+                <td>42</td>
+                <td>8</td>
+                <td>84%</td>
+                <td><span class="status-badge status-warning">Gần đầy</span></td>
+              </tr>
+              <tr>
+                <td>SAN-003</td>
+                <td>Khoa Sản</td>
+                <td>45</td>
+                <td>42</td>
+                <td>3</td>
+                <td>93%</td>
+                <td><span class="status-badge status-critical">Quá tải</span></td>
+              </tr>
+              <tr>
+                <td>NHI-004</td>
+                <td>Khoa Nhi</td>
+                <td>40</td>
+                <td>28</td>
+                <td>12</td>
+                <td>70%</td>
+                <td><span class="status-badge status-normal">Bình thường</span></td>
+              </tr>
+              <tr>
+                <td>CC-005</td>
+                <td>Khoa Cấp cứu</td>
+                <td>25</td>
+                <td>23</td>
+                <td>2</td>
+                <td>92%</td>
+                <td><span class="status-badge status-critical">Quá tải</span></td>
+              </tr>
+              <tr>
+                <td>TM-006</td>
+                <td>Khoa Tim mạch</td>
+                <td>35</td>
+                <td>28</td>
+                <td>7</td>
+                <td>80%</td>
+                <td><span class="status-badge status-warning">Gần đầy</span></td>
+              </tr>
+              <tr>
+                <td>TK-007</td>
+                <td>Khoa Thần kinh</td>
+                <td>30</td>
+                <td>25</td>
+                <td>5</td>
+                <td>83%</td>
+                <td><span class="status-badge status-warning">Gần đầy</span></td>
+              </tr>
+              <tr>
+                <td>CX-008</td>
+                <td>Khoa Chấn thương - Chỉnh hình</td>
+                <td>35</td>
+                <td>30</td>
+                <td>5</td>
+                <td>86%</td>
+                <td><span class="status-badge status-warning">Gần đầy</span></td>
+              </tr>
+              <tr>
+                <td>HSCC-009</td>
+                <td>Khoa Hồi sức Cấp cứu (ICU)</td>
+                <td>20</td>
+                <td>18</td>
+                <td>2</td>
+                <td>90%</td>
+                <td><span class="status-badge status-critical">Quá tải</span></td>
+              </tr>
+              <tr>
+                <td>UB-010</td>
+                <td>Khoa Ung bướu</td>
+                <td>25</td>
+                <td>22</td>
+                <td>3</td>
+                <td>88%</td>
+                <td><span class="status-badge status-warning">Gần đầy</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Lịch khám hôm nay -->
+    <section class="today-appointments-section">
+      <div class="container">
+        <h2 class="section-title">Lịch khám Hôm nay</h2>
+        <div class="appointments-summary">
+          <div class="summary-card">
+            <div class="summary-icon">📅</div>
+            <div class="summary-content">
+              <h4>Tổng lịch hẹn</h4>
+              <p class="summary-number">156</p>
+            </div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-icon">⏳</div>
+            <div class="summary-content">
+              <h4>Đang chờ khám</h4>
+              <p class="summary-number waiting">42</p>
+            </div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-icon">🩺</div>
+            <div class="summary-content">
+              <h4>Đang khám</h4>
+              <p class="summary-number in-progress">18</p>
+            </div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-icon">✅</div>
+            <div class="summary-content">
+              <h4>Hoàn thành</h4>
+              <p class="summary-number completed">96</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Danh sách lịch hẹn gần nhất -->
+        <div class="appointments-list">
+          <h3 class="list-title">Lịch hẹn sắp tới</h3>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Mã lịch hẹn</th>
+                <th>Bệnh nhân</th>
+                <th>Bác sĩ</th>
+                <th>Khoa</th>
+                <th>Giờ hẹn</th>
+                <th>Trạng thái</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>LH-20251210-001</td>
+                <td>Nguyễn Thị Mai Anh</td>
+                <td>GS.TS Nguyễn Văn Minh</td>
+                <td>Nội Tổng hợp</td>
+                <td>14:00</td>
+                <td><span class="status-badge status-waiting">Đang chờ</span></td>
+              </tr>
+              <tr>
+                <td>LH-20251210-002</td>
+                <td>Trần Văn Bình</td>
+                <td>TS.BS Trần Quốc Hùng</td>
+                <td>Ngoại Tổng hợp</td>
+                <td>14:15</td>
+                <td><span class="status-badge status-waiting">Đang chờ</span></td>
+              </tr>
+              <tr>
+                <td>LH-20251210-003</td>
+                <td>Lê Thị Cẩm Tú</td>
+                <td>TS.BS Lê Thị Hương</td>
+                <td>Sản</td>
+                <td>14:30</td>
+                <td><span class="status-badge status-in-progress">Đang khám</span></td>
+              </tr>
+              <tr>
+                <td>LH-20251210-004</td>
+                <td>Phạm Minh Đức (3 tuổi)</td>
+                <td>PGS.TS Phạm Văn Đức</td>
+                <td>Nhi</td>
+                <td>14:45</td>
+                <td><span class="status-badge status-waiting">Đang chờ</span></td>
+              </tr>
+              <tr>
+                <td>LH-20251210-005</td>
+                <td>Hoàng Văn Hải</td>
+                <td>GS.TS Vũ Đình Hải</td>
+                <td>Tim mạch</td>
+                <td>15:00</td>
+                <td><span class="status-badge status-waiting">Đang chờ</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Đặt lịch khám -->
+    <section id="appointment" class="appointment-section">
+      <div class="container">
+        <div class="appointment-content">
+          <h2>Đặt lịch khám Online</h2>
+          <p>Đặt lịch hẹn khám bệnh trực tuyến dễ dàng, nhanh chóng. Không cần xếp hàng, tiết kiệm thời gian chờ đợi.</p>
+          <div class="appointment-steps">
+            <div class="step">
+              <span class="step-number">1</span>
+              <p>Chọn khoa & bác sĩ</p>
+            </div>
+            <div class="step">
+              <span class="step-number">2</span>
+              <p>Chọn ngày giờ khám</p>
+            </div>
+            <div class="step">
+              <span class="step-number">3</span>
+              <p>Điền thông tin bệnh nhân</p>
+            </div>
+            <div class="step">
+              <span class="step-number">4</span>
+              <p>Xác nhận & thanh toán</p>
+            </div>
+          </div>
+          <a href="./Pages/booking.html" class="btn-appointment">Đặt lịch ngay</a>
+          <p class="appointment-note">💡 Mang theo CCCD/CMND và thẻ BHYT khi đến khám</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-col">
+            <h3>Bệnh viện Đa khoa Hoàn Mỹ</h3>
+            <p>Thành lập năm 2000, Bệnh viện Đa khoa Hoàn Mỹ là một trong những cơ sở y tế hàng đầu tại Việt Nam.</p>
+            <p>Với hơn 25 năm kinh nghiệm, chúng tôi cam kết mang đến dịch vụ y tế chất lượng cao, tận tâm với từng bệnh nhân.</p>
+            <p><strong>Giấy phép hoạt động:</strong> Số 123/GP-BYT</p>
+          </div>
+          <div class="footer-col">
+            <h3>Liên hệ</h3>
+            <p>📍 123 Nguyễn Văn Linh, Quận 7, TP. Hồ Chí Minh</p>
+            <p>📞 Hotline: 1900 1234 (24/7)</p>
+            <p>📞 Đặt lịch: (028) 3776 8899</p>
+            <p>📠 Fax: (028) 3776 8800</p>
+            <p>✉️ Email: contact@hoanmy.vn</p>
+            <p>🌐 Website: www.hoanmy.vn</p>
+          </div>
+          <div class="footer-col">
+            <h3>Điều hướng nhanh</h3>
+            <ul>
+              <li><a href="#">Trang chủ</a></li>
+              <li><a href="./Pages/aboutus.html">Giới thiệu</a></li>
+              <li><a href="./Pages/departments.html">Khoa phòng</a></li>
+              <li><a href="./Pages/services.html">Dịch vụ</a></li>
+              <li><a href="./Pages/doctors.html">Đội ngũ bác sĩ</a></li>
+              <li><a href="./Pages/booking.html">Đặt lịch hẹn</a></li>
+              <li><a href="./Pages/contact.html">Liên hệ</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h3>Giờ làm việc</h3>
+            <p><strong>Khám bệnh:</strong></p>
+            <p>Thứ 2 - Thứ 6: 7:00 - 17:00</p>
+            <p>Thứ 7: 7:00 - 12:00</p>
+            <p>Chủ nhật: Nghỉ</p>
+            <p><strong>Cấp cứu:</strong> 24/7</p>
+            <p><strong>Nhà thuốc:</strong> 6:00 - 22:00</p>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; 2025 Bệnh viện Đa khoa Hoàn Mỹ. Bản quyền thuộc về bệnh viện.</p>
+          <div class="social-links">
+            <a href="#" aria-label="Facebook">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+              </svg>
+            </a>
+            <a href="#" aria-label="Zalo">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.568 14.655c-.398.199-.83.332-1.28.398a3.07 3.07 0 01-.465.034c-.93 0-1.663-.465-2.13-1.163-.398-.598-.63-1.362-.63-2.192 0-.83.232-1.594.63-2.193.467-.697 1.2-1.163 2.13-1.163.155 0 .31.011.465.034.45.066.882.2 1.28.398.2.1.332.299.332.532 0 .332-.265.598-.598.598-.1 0-.2-.034-.298-.066a2.13 2.13 0 00-.716-.166c-.598 0-1.063.332-1.362.83-.232.398-.365.896-.365 1.461s.133 1.063.365 1.461c.299.498.764.83 1.362.83.232 0 .465-.066.716-.166.098-.033.199-.066.298-.066.333 0 .598.266.598.598 0 .233-.132.432-.332.531zM9.5 8.903c0-.332.266-.598.598-.598h.83c.332 0 .598.266.598.598v6.194c0 .332-.266.598-.598.598h-.83c-.332 0-.598-.266-.598-.598V8.903zm-3.568 4.59c-.332 0-.598-.266-.598-.598V8.903c0-.332.266-.598.598-.598h2.26c.332 0 .598.266.598.598 0 .332-.266.598-.598.598H6.53v1.362h1.461c.332 0 .598.266.598.598 0 .332-.266.598-.598.598H6.53v1.362h1.662c.332 0 .598.266.598.598 0 .332-.266.598-.598.598H5.932v-.026z"/>
+              </svg>
+            </a>
+            <a href="#" aria-label="YouTube">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+              </svg>
+            </a>
+            <a href="#" aria-label="LinkedIn">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <script src="./js/index.js"></script>
+  </body>
+</html>

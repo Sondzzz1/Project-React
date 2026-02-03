@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập - Bệnh Viện Đa Khoa</title>
+    
+    <link rel="stylesheet" href="../icon/themify-icons/themify-icons.css">
+    <link rel="stylesheet" href="../css/login.css">
+    <!-- AngularJS -->
+    <script src="../angular/angular.min.js"></script>
+    <script src="../js/api.service.js"></script>
+</head>
+<body>
+    <div class="login-container" ng-controller="LoginController">
+        <div class="login-box">
+            <div class="login-header">
+                <div class="logo-icon">
+                    <i class="ti-pulse"></i>
+                </div>
+                <h2>Bệnh Viện Đa Khoa</h2>
+                <p>Hệ thống quản lý bệnh viện</p>
+            </div>
+            
+            <!-- Error Message -->
+            <div class="error-message-box" ng-if="errorMessage">
+                <i class="ti-alert"></i> {{errorMessage}}
+            </div>
+            
+            <form id="loginForm" ng-submit="handleLogin()">
+                <div class="form-group">
+                    <label for="username">
+                        <i class="ti-user"></i> Tên đăng nhập
+                    </label>
+                    <input 
+                        type="text" 
+                        id="username" 
+                        name="username"
+                        ng-model="credentials.username"
+                        ng-change="clearError()"
+                        required 
+                        placeholder="Nhập tên đăng nhập"
+                        autocomplete="username"
+                    >
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">
+                        <i class="ti-lock"></i> Mật khẩu
+                    </label>
+                    <div class="password-input-wrapper">
+                        <input 
+                            type="{{showPassword ? 'text' : 'password'}}" 
+                            id="password" 
+                            name="password"
+                            ng-model="credentials.password"
+                            ng-change="clearError()"
+                            required 
+                            placeholder="Nhập mật khẩu"
+                            autocomplete="current-password"
+                        >
+                        <button type="button" class="toggle-password" ng-click="togglePassword()">
+                            <i ng-class="showPassword ? 'ti-eye-close' : 'ti-eye'"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="role">
+                        <i class="ti-id-badge"></i> Vai trò / Quyền truy cập
+                    </label>
+                    <div class="select-wrapper">
+                        <select id="role" name="role" ng-model="credentials.role" required>
+                            <option value="">-- Chọn vai trò --</option>
+                            <option value="admin">
+                                👨‍💼 Quản trị viên (Admin)
+                            </option>
+                            <option value="doctor">
+                                👨‍⚕️ Bác sĩ
+                            </option>
+                            <option value="nurse">
+                                👩‍⚕️ Y tá
+                            </option>
+                            <option value="caregiver">
+                                🏥 Điều dưỡng
+                            </option>
+                            <option value="accountant">
+                                💰 Kế toán
+                            </option>
+                            <option value="patient">
+                                👤 Bệnh nhân
+                            </option>
+                        </select>
+                        <i class="ti-angle-down select-arrow"></i>
+                    </div>
+                    <small class="form-hint">Vui lòng chọn vai trò của bạn trong hệ thống</small>
+                </div>
+                
+                <div class="form-options">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="rememberMe" ng-model="rememberMe">
+                        <span>Ghi nhớ đăng nhập</span>
+                    </label>
+                    <a href="forgot_password.html" class="forgot-password">Quên mật khẩu?</a>
+                </div>
+                
+                <button type="submit" class="btn-login" ng-class="{'loading': isLoading}" ng-disabled="isLoading">
+                    <i ng-class="isLoading ? 'ti-reload' : 'ti-unlock'"></i>
+                    <span>{{isLoading ? 'Đang đăng nhập...' : 'Đăng nhập'}}</span>
+                </button>
+            
+            <div class="login-footer">
+                <p>Chưa có tài khoản? <a href="./register.html">Đăng ký ngay</a></p>
+            </div>
+        </div>
+    </div>
+    
+    <script src="../js/auth.js"></script>
+    <script>
+        /**
+         * =============================================
+         * LOGIN PAGE ANGULAR CONTROLLER
+         * =============================================
+         */
+        
+        // Extend hospitalApp module với LoginController
+        angular.module('hospitalApp')
+        .controller('LoginController', [
+            '$scope',
+            '$window',
+            'AuthService',
+            function($scope, $window, AuthService) {
+                
+                // ============================================
+                // SCOPE VARIABLES
+                // ============================================
+                
+                $scope.credentials = {
+                    username: '',
+                    password: '',
+                    role: ''
+                };
+                
+                $scope.rememberMe = false;
+                $scope.isLoading = false;
+                $scope.errorMessage = '';
+                $scope.showPassword = false;
+                
+                // ============================================
+                // INITIALIZATION
+                // ============================================
+                
+                function init() {
+                    // KHÔNG tự động redirect - luôn ở lại trang login
+                    // Xóa hết data cũ để tránh vòng lặp
+                    $window.localStorage.removeItem('jwt_token');
+                    $window.localStorage.removeItem('current_user');
+                    $window.sessionStorage.removeItem('currentUser');
+                    
+                    console.log('Login page initialized - all old session data cleared');
+                    
+                    // Load remembered username (chỉ username, không redirect)
+                    loadRememberedUser();
+                }
+                
+                function loadRememberedUser() {
+                    var remembered = $window.localStorage.getItem('rememberUser');
+                    if (remembered) {
+                        try {
+                            var user = JSON.parse(remembered);
+                            $scope.credentials.username = user.username || '';
+                            $scope.credentials.role = user.role || '';
+                            $scope.rememberMe = true;
+                        } catch (e) {
+                            // Ignore
+                        }
+                    }
+                }
+                
+                // ============================================
+                // LOGIN FUNCTION
+                // ============================================
+                
+                $scope.handleLogin = function() {
+                    // Validate
+                    if (!$scope.credentials.username || 
+                        !$scope.credentials.password || 
+                        !$scope.credentials.role) {
+                        $scope.errorMessage = 'Vui lòng điền đầy đủ thông tin đăng nhập!';
+                        return;
+                    }
+                    
+                    $scope.errorMessage = '';
+                    $scope.isLoading = true;
+                    
+                    // Thử gọi API thực
+                    AuthService.login(
+                        $scope.credentials.username,
+                        $scope.credentials.password
+                    )
+                    .then(function(response) {
+                        // Đăng nhập thành công với API
+                        handleLoginSuccess(response);
+                    })
+                    .catch(function(error) {
+                        // API trả về lỗi
+                        console.error('Login failed:', error);
+                        $scope.isLoading = false;
+                        $scope.errorMessage = error.data?.message || 
+                            'Đăng nhập thất bại! Sai tên đăng nhập hoặc mật khẩu.';
+                    });
+                };
+                
+                function handleLoginSuccess(response) {
+                    console.log('Login response:', response);
+                    
+                    // Lưu remember me
+                    if ($scope.rememberMe) {
+                        $window.localStorage.setItem('rememberUser', JSON.stringify({
+                            username: $scope.credentials.username,
+                            role: $scope.credentials.role
+                        }));
+                    } else {
+                        $window.localStorage.removeItem('rememberUser');
+                    }
+                    
+                    // Lấy user info từ response
+                    // Response format: { success, message, data: { token, ... } }
+                    var userData = response.data || response;
+                    console.log('User data:', userData);
+                    
+                    var userInfo = {
+                        id: userData.maNguoiDung || userData.id,
+                        username: userData.tenDangNhap || $scope.credentials.username,
+                        hoTen: userData.hoTen || userData.tenDangNhap || $scope.credentials.username,
+                        role: userData.vaiTro || $scope.credentials.role,
+                        email: userData.email
+                    };
+                    
+                    console.log('Saving user info:', userInfo);
+                    $window.sessionStorage.setItem('currentUser', JSON.stringify(userInfo));
+                    
+                    // Redirect
+                    $window.location.href = 'admin.html';
+                }
+                
+                // ============================================
+                // UI HELPERS
+                // ============================================
+                
+                $scope.togglePassword = function() {
+                    $scope.showPassword = !$scope.showPassword;
+                };
+                
+                $scope.clearError = function() {
+                    $scope.errorMessage = '';
+                };
+                
+                // ============================================
+                // INIT
+                // ============================================
+                
+                init();
+            }
+        ]);
+        
+        // Bootstrap Angular app manually sau khi DOM loaded
+        angular.element(document).ready(function() {
+            // Check if already bootstrapped
+            if (!angular.element(document.querySelector('.login-container')).scope()) {
+                angular.bootstrap(document, ['hospitalApp']);
+            }
+        });
+    </script>
+    
+    <style>
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .error-message-box {
+            background-color: #ffe6e6;
+            border: 1px solid #ff4444;
+            color: #cc0000;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            text-align: center;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .btn-login.loading {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        
+        .btn-login.loading i {
+            animation: spin 1s linear infinite;
+        }
+    </style>
+</body>
+</html>
+
