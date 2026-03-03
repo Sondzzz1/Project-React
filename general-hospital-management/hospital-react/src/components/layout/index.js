@@ -1,3 +1,4 @@
-export { Sidebar } from './Sidebar';
-export { Header } from './Header';
-export { AdminLayout } from './AdminLayout';
+export { default as AdminLayout } from './AdminLayout';
+export { default as PublicLayout } from './PublicLayout';
+export { default as Header } from './Header';
+export { default as Sidebar } from './Sidebar';

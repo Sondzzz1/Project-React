@@ -1,32 +1,18 @@
-import { Outlet, Navigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
-import { Sidebar } from './Sidebar';
-import { Header } from './Header';
-import { Loading } from '../common/Loading';
+import { Outlet } from 'react-router-dom';
+import Sidebar from './Sidebar';
+import Header from './Header';
 import './AdminLayout.css';
 
-export function AdminLayout() {
-    const { isAuthenticated, loading } = useAuth();
-
-    if (loading) {
-        return <Loading fullPage text="Đang kiểm tra đăng nhập..." />;
-    }
-
-    if (!isAuthenticated) {
-        return <Navigate to="/login" replace />;
-    }
-
+export default function AdminLayout() {
     return (
-        <div className="admin-wrapper">
+        <div className="admin-layout">
             <Sidebar />
-            <main className="content">
+            <div className="admin-main-area">
                 <Header />
-                <div className="page-content">
+                <main className="admin-content">
                     <Outlet />
-                </div>
-            </main>
+                </main>
+            </div>
         </div>
     );
 }
-
-export default AdminLayout;

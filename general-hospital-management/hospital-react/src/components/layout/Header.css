@@ -1,42 +1,82 @@
-.topbar {
-    background: #fff;
-    padding: 15px 25px;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+/* ================================
+   ADMIN HEADER STYLES
+   ================================ */
+
+.admin-header {
     display: flex;
-    justify-content: flex-end;
     align-items: center;
-    margin-bottom: 30px;
+    justify-content: space-between;
+    padding: 0 32px;
+    height: 64px;
+    background: #fff;
+    border-bottom: 1px solid #e8ecf1;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
 }
 
-.user-info {
+.admin-header-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #1a1a2e;
+    margin: 0;
+}
+
+.admin-header-right {
     display: flex;
     align-items: center;
     gap: 20px;
 }
 
-.user-info>i.ti-bell {
-    font-size: 20px;
-    color: #666;
-    cursor: pointer;
-    position: relative;
-}
-
-.user-info>i.ti-bell::after {
-    content: '';
-    position: absolute;
-    top: -2px;
-    right: -2px;
-    width: 8px;
-    height: 8px;
-    background: red;
-    border-radius: 50%;
-}
-
-.admin-profile {
+.admin-user-info {
     display: flex;
     align-items: center;
     gap: 10px;
+}
+
+.admin-user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #2196c8, #1a73a7);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.admin-user-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-user-name {
+    font-size: 0.85rem;
     font-weight: 600;
-    color: #0056b3;
+    color: #1a1a2e;
+}
+
+.admin-user-role {
+    font-size: 0.72rem;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.admin-logout-btn {
+    padding: 6px 14px;
+    background: none;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    color: #6b7280;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.admin-logout-btn:hover {
+    background: #fee2e2;
+    border-color: #fca5a5;
+    color: #dc2626;
 }
