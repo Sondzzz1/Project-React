@@ -1,0 +1,193 @@
+.news-hero {
+    background: linear-gradient(135deg, #0f4c81, #2196c8);
+    color: #fff;
+    text-align: center;
+    padding: 60px 40px;
+}
+
+.news-hero h1 {
+    font-size: 2.2rem;
+    margin-bottom: 8px;
+}
+
+.news-hero p {
+    opacity: 0.85;
+    font-size: 1.05rem;
+}
+
+.news-content {
+    padding: 40px;
+}
+
+/* Featured */
+.news-featured {
+    display: flex;
+    gap: 32px;
+    align-items: center;
+    background: linear-gradient(135deg, #e0f2fe, #dbeafe);
+    border-radius: 20px;
+    padding: 40px;
+    margin-bottom: 40px;
+    border: 1px solid #bae6fd;
+}
+
+.news-featured-icon {
+    font-size: 4rem;
+    flex-shrink: 0;
+}
+
+.news-featured-body h2 {
+    font-size: 1.4rem;
+    color: #1a1a2e;
+    margin: 8px 0 12px;
+}
+
+.news-featured-body p {
+    color: #4b5563;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    margin-bottom: 16px;
+}
+
+/* Category Filter */
+.news-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 32px;
+}
+
+.news-filter-btn {
+    padding: 8px 20px;
+    border: 1.5px solid #d1d5db;
+    border-radius: 24px;
+    background: #fff;
+    cursor: pointer;
+    font-size: 0.88rem;
+    color: #4b5563;
+    transition: all 0.25s;
+}
+
+.news-filter-btn:hover {
+    border-color: #2196c8;
+    color: #2196c8;
+}
+
+.news-filter-btn.active {
+    background: #2196c8;
+    color: #fff;
+    border-color: #2196c8;
+}
+
+/* Category Badges */
+.news-cat-badge {
+    display: inline-block;
+    padding: 3px 12px;
+    border-radius: 12px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badge-featured {
+    background: #fbbf24;
+    color: #92400e;
+}
+
+.badge-tin.tức,
+[class*="badge-tin"] {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.badge-sự.kiện,
+[class*="badge-sự"] {
+    background: #fce7f3;
+    color: #be185d;
+}
+
+.badge-y.học,
+[class*="badge-y"] {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.badge-tuyển.dụng,
+[class*="badge-tuyển"] {
+    background: #ede9fe;
+    color: #5b21b6;
+}
+
+.badge-khuyến.mãi,
+[class*="badge-khuyến"] {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+/* News Grid */
+.news-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+}
+
+.news-card {
+    background: #fff;
+    border-radius: 16px;
+    border: 1px solid #e8ecf1;
+    display: flex;
+    gap: 20px;
+    padding: 28px;
+    transition: all 0.3s;
+}
+
+.news-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+    border-color: #2196c8;
+}
+
+.news-card-icon {
+    font-size: 2.5rem;
+    flex-shrink: 0;
+    margin-top: 4px;
+}
+
+.news-card-body h3 {
+    font-size: 1rem;
+    color: #1a1a2e;
+    margin: 8px 0;
+    line-height: 1.4;
+}
+
+.news-card-body p {
+    color: #6b7280;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    margin-bottom: 12px;
+}
+
+.news-meta {
+    display: flex;
+    gap: 16px;
+    font-size: 0.78rem;
+    color: #9ca3af;
+}
+
+@media (max-width: 1024px) {
+    .news-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .news-featured {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .news-card {
+        flex-direction: column;
+    }
+}

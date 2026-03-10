@@ -1,0 +1,84 @@
+.svc-hero {
+    background: linear-gradient(135deg, #0f4c81, #2196c8);
+    color: #fff;
+    text-align: center;
+    padding: 60px 40px;
+}
+
+.svc-hero h1 {
+    font-size: 2.2rem;
+    margin-bottom: 8px;
+}
+
+.svc-hero p {
+    opacity: 0.85;
+    font-size: 1.05rem;
+}
+
+.svc-content {
+    padding: 40px;
+}
+
+.svc-category {
+    margin-bottom: 48px;
+}
+
+.svc-cat-title {
+    font-size: 1.4rem;
+    color: #1a1a2e;
+    margin-bottom: 24px;
+    padding-bottom: 8px;
+    border-bottom: 3px solid #2196c8;
+    display: inline-block;
+}
+
+.svc-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
+.svc-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 32px 24px;
+    text-align: center;
+    border: 1px solid #e8ecf1;
+    transition: all 0.3s;
+}
+
+.svc-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+    border-color: #2196c8;
+}
+
+.svc-icon {
+    font-size: 2.5rem;
+    margin-bottom: 16px;
+}
+
+.svc-card h3 {
+    font-size: 1.05rem;
+    color: #1a1a2e;
+    margin-bottom: 8px;
+}
+
+.svc-card p {
+    color: #6b7280;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    margin-bottom: 12px;
+}
+
+.svc-price {
+    color: #2196c8;
+    font-weight: 700;
+    font-size: 0.88rem;
+}
+
+@media (max-width: 768px) {
+    .svc-grid {
+        grid-template-columns: 1fr;
+    }
+}

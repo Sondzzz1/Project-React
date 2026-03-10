@@ -1,0 +1,243 @@
+/* ================================
+   PUBLIC LAYOUT STYLES
+   ================================ */
+
+.public-layout {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+.pub-header {
+    background: linear-gradient(135deg, #0f4c81 0%, #1a73a7 50%, #2196c8 100%);
+    color: #fff;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.15);
+}
+
+.pub-header-top {
+    padding: 12px 40px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.pub-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: #fff;
+}
+
+.pub-logo-icon {
+    font-size: 2rem;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.pub-logo h1 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: -0.01em;
+}
+
+.pub-logo span {
+    font-size: 0.75rem;
+    opacity: 0.8;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.pub-logo-text {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Navbar */
+.pub-navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+}
+
+.pub-nav-list {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 4px;
+}
+
+.pub-nav-item {
+    display: block;
+    padding: 14px 20px;
+    color: rgba(255, 255, 255, 0.85);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+    border-bottom: 3px solid transparent;
+}
+
+.pub-nav-item:hover,
+.pub-nav-item.active {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.1);
+    border-bottom-color: #64d8ff;
+}
+
+.pub-header-btn {
+    display: flex;
+    gap: 10px;
+}
+
+.pub-btn {
+    padding: 8px 22px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+    border: 2px solid transparent;
+}
+
+.pub-btn-outline {
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.5);
+    background: transparent;
+}
+
+.pub-btn-outline:hover {
+    border-color: #fff;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.pub-btn-primary {
+    background: #fff;
+    color: #0f4c81;
+}
+
+.pub-btn-primary:hover {
+    background: #e8f4fd;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.pub-btn-appointment {
+    background: linear-gradient(135deg, #059669, #10b981);
+    color: #fff;
+    border-color: transparent;
+    animation: pulse-btn 2s infinite;
+}
+
+.pub-btn-appointment:hover {
+    background: linear-gradient(135deg, #047857, #059669);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(5, 150, 105, 0.4);
+}
+
+@keyframes pulse-btn {
+
+    0%,
+    100% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+    }
+}
+
+/* Main */
+.pub-main {
+    flex: 1;
+}
+
+/* Footer */
+.pub-footer {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    color: rgba(255, 255, 255, 0.8);
+    padding: 60px 40px 0;
+}
+
+.pub-footer-content {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-bottom: 40px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.pub-footer-col h3 {
+    color: #fff;
+    font-size: 1.05rem;
+    margin-bottom: 16px;
+    position: relative;
+    padding-bottom: 10px;
+}
+
+.pub-footer-col h3::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 40px;
+    height: 2px;
+    background: #2196c8;
+}
+
+.pub-footer-col p {
+    font-size: 0.88rem;
+    line-height: 1.7;
+    margin: 4px 0;
+}
+
+.pub-footer-col ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.pub-footer-col ul li {
+    margin: 6px 0;
+}
+
+.pub-footer-col ul a {
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    font-size: 0.88rem;
+    transition: color 0.2s;
+}
+
+.pub-footer-col ul a:hover {
+    color: #64d8ff;
+}
+
+.pub-footer-bottom {
+    text-align: center;
+    padding: 20px 0;
+    font-size: 0.8rem;
+    opacity: 0.6;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .pub-navbar {
+        flex-direction: column;
+        padding: 0 16px;
+    }
+
+    .pub-footer-content {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .pub-header-top {
+        padding: 10px 16px;
+    }
+}

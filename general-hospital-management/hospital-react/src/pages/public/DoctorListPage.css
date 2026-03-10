@@ -1,0 +1,226 @@
+.doclist-hero {
+    background: linear-gradient(135deg, #0f4c81, #2196c8);
+    color: #fff;
+    text-align: center;
+    padding: 60px 40px;
+}
+
+.doclist-hero h1 {
+    font-size: 2.2rem;
+    margin-bottom: 8px;
+}
+
+.doclist-hero p {
+    opacity: 0.85;
+    font-size: 1.05rem;
+}
+
+.doclist-content {
+    padding: 40px;
+}
+
+/* Filters */
+.doclist-filters {
+    margin-bottom: 32px;
+}
+
+.doclist-search input {
+    width: 100%;
+    padding: 14px 20px;
+    border: 2px solid #e8ecf1;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+    outline: none;
+}
+
+.doclist-search input:focus {
+    border-color: #2196c8;
+}
+
+.doclist-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.doclist-tag {
+    padding: 8px 18px;
+    border: 1.5px solid #d1d5db;
+    border-radius: 24px;
+    background: #fff;
+    cursor: pointer;
+    font-size: 0.88rem;
+    color: #4b5563;
+    transition: all 0.25s;
+}
+
+.doclist-tag:hover {
+    border-color: #2196c8;
+    color: #2196c8;
+}
+
+.doclist-tag.active {
+    background: #2196c8;
+    color: #fff;
+    border-color: #2196c8;
+}
+
+.doclist-count {
+    color: #6b7280;
+    font-size: 0.92rem;
+    margin-bottom: 24px;
+}
+
+/* Card Grid */
+.doclist-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+}
+
+.doclist-card {
+    background: #fff;
+    border-radius: 16px;
+    border: 1px solid #e8ecf1;
+    overflow: hidden;
+    transition: all 0.3s;
+    display: flex;
+    flex-direction: column;
+}
+
+.doclist-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 48px rgba(15, 76, 129, 0.12);
+    border-color: #2196c8;
+}
+
+.doclist-card-top {
+    background: linear-gradient(135deg, #e0f2fe, #dbeafe);
+    padding: 32px 24px;
+    text-align: center;
+    position: relative;
+}
+
+.doclist-avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #0f4c81, #2196c8);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin: 0 auto;
+    box-shadow: 0 4px 16px rgba(33, 150, 200, 0.3);
+}
+
+.doclist-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: #2196c8;
+    color: #fff;
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.doclist-card-body {
+    padding: 24px;
+    flex: 1;
+}
+
+.doclist-card-body h3 {
+    font-size: 1.05rem;
+    color: #1a1a2e;
+    margin-bottom: 4px;
+}
+
+.doclist-title {
+    color: #2196c8;
+    font-weight: 600;
+    font-size: 0.88rem;
+    margin-bottom: 12px;
+}
+
+.doclist-bio {
+    color: #6b7280;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    margin-bottom: 16px;
+}
+
+.doclist-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.doclist-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.82rem;
+    color: #4b5563;
+}
+
+.meta-icon {
+    font-size: 0.9rem;
+}
+
+.doclist-card-actions {
+    display: flex;
+    gap: 8px;
+    padding: 16px 24px;
+    border-top: 1px solid #f0f0f0;
+}
+
+.doclist-btn {
+    flex: 1;
+    padding: 10px 0;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+    transition: all 0.25s;
+    cursor: pointer;
+    border: none;
+}
+
+.doclist-btn-outline {
+    background: #fff;
+    color: #2196c8;
+    border: 1.5px solid #2196c8;
+}
+
+.doclist-btn-outline:hover {
+    background: #e0f2fe;
+}
+
+.doclist-btn-primary {
+    background: linear-gradient(135deg, #0f4c81, #2196c8);
+    color: #fff;
+}
+
+.doclist-btn-primary:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+@media (max-width: 1024px) {
+    .doclist-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 640px) {
+    .doclist-grid {
+        grid-template-columns: 1fr;
+    }
+}
