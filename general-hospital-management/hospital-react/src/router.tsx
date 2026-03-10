@@ -17,6 +17,7 @@ import DoctorListPage from './pages/public/DoctorListPage';
 import ContactPage from './pages/public/ContactPage';
 import AppointmentPage from './pages/public/AppointmentPage';
 import NewsPage from './pages/public/NewsPage';
+import NotFoundPage from './pages/public/NotFoundPage';
 
 // Admin Pages (TypeScript)
 import Dashboard from './pages/admin/Dashboard';
@@ -78,6 +79,9 @@ export default function AppRouter() {
                         <Route path="reports" element={<Reports />} />
                         <Route path="audit" element={<Audit />} />
                     </Route>
+
+                    {/* 404 Catch-all */}
+                    <Route path="*" element={<NotFoundPage />} />
                 </Routes>
             </BrowserRouter>
         </AuthProvider>
