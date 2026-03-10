@@ -25,6 +25,7 @@ export interface Permission {
     canEdit: boolean;
     canDelete: boolean;
     canExport: boolean;
+    profile: boolean;
 }
 
 export interface SidebarItem {
@@ -51,37 +52,37 @@ export const PERMISSIONS: Record<Role, Permission> = {
         dashboard: true, appointments: true, patients: true, beds: true,
         surgery: true, records: true, doctors: true, nurses: true,
         admissions: true, billing: true, reports: true, audit: true,
-        settings: true, canAdd: true, canEdit: true, canDelete: true, canExport: true,
+        settings: true, canAdd: true, canEdit: true, canDelete: true, canExport: true, profile: true,
     },
     doctor: {
         dashboard: true, appointments: true, patients: true, beds: false,
         surgery: true, records: true, doctors: false, nurses: false,
         admissions: false, billing: false, reports: false, audit: false,
-        settings: false, canAdd: true, canEdit: true, canDelete: false, canExport: false,
+        settings: false, canAdd: true, canEdit: true, canDelete: false, canExport: false, profile: true,
     },
     nurse: {
         dashboard: true, appointments: true, patients: true, beds: true,
         surgery: false, records: true, doctors: false, nurses: false,
         admissions: true, billing: false, reports: false, audit: false,
-        settings: false, canAdd: true, canEdit: true, canDelete: false, canExport: false,
+        settings: false, canAdd: true, canEdit: true, canDelete: false, canExport: false, profile: true,
     },
     caregiver: {
         dashboard: true, appointments: true, patients: true, beds: true,
         surgery: false, records: true, doctors: false, nurses: false,
         admissions: true, billing: false, reports: false, audit: false,
-        settings: false, canAdd: true, canEdit: true, canDelete: false, canExport: false,
+        settings: false, canAdd: true, canEdit: true, canDelete: false, canExport: false, profile: true,
     },
     accountant: {
         dashboard: true, appointments: false, patients: false, beds: false,
         surgery: false, records: false, doctors: false, nurses: false,
         admissions: false, billing: true, reports: true, audit: false,
-        settings: false, canAdd: true, canEdit: true, canDelete: false, canExport: true,
+        settings: false, canAdd: true, canEdit: true, canDelete: false, canExport: true, profile: true,
     },
     patient: {
         dashboard: true, appointments: true, patients: false, beds: false,
         surgery: false, records: true, doctors: false, nurses: false,
         admissions: false, billing: true, reports: false, audit: false,
-        settings: false, canAdd: false, canEdit: false, canDelete: false, canExport: false,
+        settings: false, canAdd: false, canEdit: false, canDelete: false, canExport: false, profile: true,
     },
 };
 
@@ -106,4 +107,5 @@ export const SIDEBAR_MENU: SidebarItem[] = [
     { id: 'billing', label: 'Hóa đơn', icon: '💰', path: '/admin/billing', permission: 'billing' },
     { id: 'reports', label: 'Báo cáo', icon: '📈', path: '/admin/reports', permission: 'reports' },
     { id: 'audit', label: 'Nhật ký', icon: '🔍', path: '/admin/audit', permission: 'audit' },
+    { id: 'profile', label: 'Tài khoản', icon: '👤', path: '/admin/profile', permission: 'profile' },
 ];

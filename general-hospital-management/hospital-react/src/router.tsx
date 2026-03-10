@@ -31,6 +31,7 @@ import Admission from './pages/admin/Admission';
 import Billing from './pages/admin/Billing';
 import Reports from './pages/admin/Reports';
 import Audit from './pages/admin/Audit';
+import ProfilePage from './pages/admin/ProfilePage';
 
 /**
  * Centralized Route Configuration
@@ -78,6 +79,7 @@ export default function AppRouter() {
                         <Route path="billing" element={<Billing />} />
                         <Route path="reports" element={<Reports />} />
                         <Route path="audit" element={<Audit />} />
+                        <Route path="profile" element={<ProfilePage />} />
                     </Route>
 
                     {/* 404 Catch-all */}
