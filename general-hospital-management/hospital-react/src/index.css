@@ -2,19 +2,20 @@
    GLOBAL APP STYLES
    ================================ */
 
-* {
+*, *::before, *::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
 body {
-  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', 'Oxygen', sans-serif;
+  font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #1a1a2e;
-  line-height: 1.5;
-  background: #f5f7fa;
+  line-height: 1.6;
+  background: #f0f4f8;
+  font-size: 15px;
 }
 
 a {
@@ -27,30 +28,31 @@ img {
   display: block;
 }
 
-button {
+button, input, select, textarea {
   font-family: inherit;
 }
 
-input,
-select,
-textarea {
-  font-family: inherit;
-}
-
-/* Scrollbar */
+/* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 7px;
+  height: 7px;
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: #f0f4f8;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #c4c8cf;
-  border-radius: 3px;
+  background: #c4cdd8;
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #a0a4ab;
+  background: #96a0ae;
+}
+
+/* Selection */
+::selection {
+  background: rgba(33, 150, 200, 0.2);
+  color: #0f4c81;
 }

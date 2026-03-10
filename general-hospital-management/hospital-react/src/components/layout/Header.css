@@ -8,16 +8,22 @@
     justify-content: space-between;
     padding: 0 32px;
     height: 64px;
-    background: #fff;
-    border-bottom: 1px solid #e8ecf1;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    position: sticky;
+    top: 0;
+    z-index: 40;
 }
 
 .admin-header-title {
-    font-size: 1.05rem;
+    font-size: 1rem;
     font-weight: 600;
-    color: #1a1a2e;
+    color: #374151;
     margin: 0;
+    letter-spacing: 0.01em;
 }
 
 .admin-header-right {
@@ -33,16 +39,17 @@
 }
 
 .admin-user-avatar {
-    width: 36px;
-    height: 36px;
+    width: 38px;
+    height: 38px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #2196c8, #1a73a7);
+    background: linear-gradient(135deg, #1e6fb0, #2196c8);
     color: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 700;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
+    box-shadow: 0 2px 8px rgba(33, 150, 200, 0.35);
 }
 
 .admin-user-details {
@@ -54,29 +61,30 @@
     font-size: 0.85rem;
     font-weight: 600;
     color: #1a1a2e;
+    line-height: 1.2;
 }
 
 .admin-user-role {
-    font-size: 0.72rem;
+    font-size: 0.7rem;
     color: #6b7280;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.05em;
 }
 
 .admin-logout-btn {
-    padding: 6px 14px;
+    padding: 7px 16px;
     background: none;
-    border: 1px solid #e5e7eb;
-    border-radius: 6px;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 8px;
     color: #6b7280;
     cursor: pointer;
-    font-size: 0.8rem;
-    font-weight: 500;
+    font-size: 0.82rem;
+    font-weight: 600;
     transition: all 0.2s;
 }
 
 .admin-logout-btn:hover {
-    background: #fee2e2;
+    background: #fff1f2;
     border-color: #fca5a5;
     color: #dc2626;
 }
