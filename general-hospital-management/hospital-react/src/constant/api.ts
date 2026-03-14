@@ -19,8 +19,8 @@ export const ENDPOINTS = {
 
     // Operations
     ADMISSION: '/api/nhapvien',
-    SURGERY: '/api/surgery',
-    MEDICAL_RECORD: '/api/medicalrecord',
+    SURGERY: '/api/phauthuat',
+    MEDICAL_RECORD: '/api/benhan',
     BILLING: '/api/hoadon',
 
     // Admin
