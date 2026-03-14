@@ -4,6 +4,7 @@ import { doctorApi, Doctor } from '../../services';
 import { bedApi, Bed } from '../../services';
 import { nurseApi, Nurse } from '../../services';
 import AdminTasks from '../../components/common/AdminTasks';
+import StatCard from '../../components/common/StatCard';
 import '../../assets/css/admin/admin.css';
 
 interface DashStats {
@@ -11,13 +12,6 @@ interface DashStats {
     beds: number;
     doctors: number;
     nurses: number;
-}
-
-interface DashCard {
-    icon: string;
-    label: string;
-    value: number;
-    color: string;
 }
 
 export default function DashboardPage() {
@@ -50,7 +44,7 @@ export default function DashboardPage() {
         }
     };
 
-    const dashCards: DashCard[] = [
+    const dashCards = [
         { icon: '🏥', label: 'Bệnh nhân', value: stats.patients, color: '#2196c8' },
         { icon: '🛏️', label: 'Giường bệnh', value: stats.beds, color: '#059669' },
         { icon: '👨‍⚕️', label: 'Bác sĩ', value: stats.doctors, color: '#7c3aed' },
@@ -68,13 +62,13 @@ export default function DashboardPage() {
             ) : (
                 <div className="dash-stats-grid">
                     {dashCards.map((card, i) => (
-                        <div key={i} className="dash-stat-card" style={{ borderLeftColor: card.color }}>
-                            <div className="dash-stat-icon" style={{ background: card.color + '15', color: card.color }}>{card.icon}</div>
-                            <div className="dash-stat-info">
-                                <span className="dash-stat-value">{card.value}</span>
-                                <span className="dash-stat-label">{card.label}</span>
-                            </div>
-                        </div>
+                        <StatCard 
+                            key={i}
+                            icon={card.icon}
+                            label={card.label}
+                            value={card.value}
+                            color={card.color}
+                        />
                     ))}
                 </div>
             )}
