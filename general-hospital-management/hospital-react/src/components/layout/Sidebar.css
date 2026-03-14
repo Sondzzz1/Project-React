@@ -89,3 +89,44 @@
     white-space: nowrap;
     letter-spacing: 0.01em;
 }
+
+/* ─── Recoil: Sidebar Collapsed State ──────────────────────────────────────── */
+.sidebar-collapsed {
+    width: 68px;
+}
+
+.sidebar-collapsed .sidebar-brand {
+    justify-content: center;
+    padding: 22px 10px 18px;
+}
+
+.sidebar-collapsed .sidebar-nav li {
+    margin: 2px 6px;
+}
+
+.sidebar-collapsed .sidebar-link {
+    justify-content: center;
+    padding: 10px;
+}
+
+/* ─── Toggle Button ─────────────────────────────────────────────────────────── */
+.sidebar-toggle-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 8px auto;
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+    font-size: 0.75rem;
+    transition: all 0.2s ease;
+}
+
+.sidebar-toggle-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+}
