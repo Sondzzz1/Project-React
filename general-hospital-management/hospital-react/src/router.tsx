@@ -1,11 +1,11 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 
-// Layouts
+// Layout Components
 import { PublicLayout, AdminLayout } from './components/layout';
 import ProtectedRoute from './components/common/ProtectedRoute';
 
-// Public Pages
+// Public Facing Pages
 import HomePage from './pages/public/HomePage';
 import LoginPage from './pages/public/LoginPage';
 import RegisterPage from './pages/public/RegisterPage';
@@ -19,7 +19,7 @@ import AppointmentPage from './pages/public/AppointmentPage';
 import NewsPage from './pages/public/NewsPage';
 import NotFoundPage from './pages/public/NotFoundPage';
 
-// Admin Pages (TypeScript)
+// Admin Dashboard Pages (TypeScript)
 import Dashboard from './pages/admin/Dashboard';
 import Patient from './pages/admin/Patient';
 import Bed from './pages/admin/Bed';
