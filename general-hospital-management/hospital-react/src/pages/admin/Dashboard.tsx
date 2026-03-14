@@ -3,6 +3,7 @@ import { patientApi, Patient } from '../../services';
 import { doctorApi, Doctor } from '../../services';
 import { bedApi, Bed } from '../../services';
 import { nurseApi, Nurse } from '../../services';
+import AdminTasks from '../../components/common/AdminTasks';
 import '../../assets/css/admin/admin.css';
 
 interface DashStats {
@@ -77,6 +78,9 @@ export default function DashboardPage() {
                     ))}
                 </div>
             )}
+            
+            {/* Danh sách công việc Admin (Áp dụng Recoil Todo-App) */}
+            <AdminTasks />
         </div>
     );
 }

@@ -89,3 +89,101 @@
     border-color: #fca5a5;
     color: #dc2626;
 }
+
+/* ─── Recoil Notifications ─────────────────────────────────────────────────── */
+.header-notifications {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.notif-bell-btn {
+    background: none;
+    border: none;
+    font-size: 1.3rem;
+    cursor: pointer;
+    position: relative;
+    padding: 5px;
+    border-radius: 50%;
+    transition: background 0.2s;
+    margin-right: 15px;
+}
+
+.notif-bell-btn:hover {
+    background: rgba(0,0,0,0.05);
+}
+
+.notif-badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: #e11d48;
+    color: white;
+    font-size: 0.65rem;
+    font-weight: bold;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid white;
+}
+
+.notif-dropdown {
+    position: absolute;
+    top: 130%;
+    right: 0;
+    width: 300px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    border: 1px solid rgba(0,0,0,0.05);
+    z-index: 100;
+    overflow: hidden;
+    animation: slideIn 0.2s ease-out;
+}
+
+.notif-header {
+    background: #f8fafc;
+    padding: 12px 16px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    border-bottom: 1px solid #f1f5f9;
+    color: #334155;
+}
+
+.notif-body {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.notif-empty {
+    padding: 20px;
+    text-align: center;
+    color: #94a3b8;
+    font-size: 0.85rem;
+}
+
+.notif-item {
+    padding: 12px 16px;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 0.85rem;
+    color: #334155;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.notif-item:last-child {
+    border-bottom: none;
+}
+
+.notif-item.notif-success {
+    border-left: 3px solid #10b981;
+}
+
+.notif-time {
+    font-size: 0.7rem;
+    color: #94a3b8;
+}
