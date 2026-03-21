@@ -4,28 +4,32 @@
 
 export const API_BASE_URL: string =
     (import.meta as ImportMeta & { env: { VITE_API_URL?: string } }).env.VITE_API_URL ||
-    'http://localhost:5076/gateway';
+    'http://localhost:5076/gateway/api';
 
 export const ENDPOINTS = {
     // Auth
-    AUTH: '/api/auth',
+    AUTH: '/auth',
 
     // Core entities
-    PATIENT: '/api/benhnhan',
-    DOCTOR: '/api/bacsi',
-    NURSE: '/api/yta',
-    BED: '/api/giuongbenh',
-    DEPARTMENT: '/api/khoaphong',
+    PATIENT: '/benhnhan',
+    BHYT: '/bhyt',
+    DOCTOR: '/bacsi',
+    NURSE: '/yta',
+    BED: '/giuongbenh',
+    DEPARTMENT: '/khoaphong',
 
     // Operations
-    ADMISSION: '/api/nhapvien',
-    SURGERY: '/api/phauthuat',
-    MEDICAL_RECORD: '/api/benhan',
-    BILLING: '/api/hoadon',
+    ADMISSION: '/nhapvien',
+    DISCHARGE: '/xuatvien',
+    SURGERY: '/surgery',
+    MEDICAL_RECORD: '/medicalrecord',
+    LABTEST: '/labtest',
+    BILLING: '/hoadon',
 
     // Admin
-    REPORT: '/api/report',
-    AUDIT: '/api/audit',
+    USER_MANAGEMENT: '/usermanagement',
+    REPORT: '/report',
+    AUDIT: '/audit',
 } as const;
 
 export type EndpointKey = keyof typeof ENDPOINTS;

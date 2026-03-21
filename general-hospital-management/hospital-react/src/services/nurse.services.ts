@@ -1,5 +1,6 @@
 import axiosInstance from './axiosInstance';
 import { ENDPOINTS } from '../constant/api';
+import { ApiResponse } from './auth.services';
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
@@ -14,35 +15,36 @@ export interface Nurse {
 
 // ─── Service Functions ──────────────────────────────────────────────────────────
 
-export const getNurses = async (): Promise<Nurse[]> => {
-    const response = await axiosInstance.get<Nurse[]>(`${ENDPOINTS.NURSE}/get-all`);
+export const getNurses = async (): Promise<ApiResponse<Nurse[]>> => {
+    const response = await axiosInstance.get<ApiResponse<Nurse[]>>(`${ENDPOINTS.NURSE}/get-all`);
     return response.data;
 };
 
-export const getNurseById = async (id: number): Promise<Nurse> => {
-    const response = await axiosInstance.get<Nurse>(`${ENDPOINTS.NURSE}/get-by-id/${id}`);
+export const getNurseById = async (id: number): Promise<ApiResponse<Nurse>> => {
+    const response = await axiosInstance.get<ApiResponse<Nurse>>(`${ENDPOINTS.NURSE}/get-by-id/${id}`);
     return response.data;
 };
 
-export const searchNurses = async (params: object): Promise<Nurse[]> => {
-    const response = await axiosInstance.post<Nurse[]>(`${ENDPOINTS.NURSE}/search`, params);
+export const createNurse = async (nurseData: any): Promise<ApiResponse<Nurse>> => {
+    const response = await axiosInstance.post<ApiResponse<Nurse>>(`${ENDPOINTS.NURSE}/create`, nurseData);
     return response.data;
 };
 
-export const createNurse = async (nurseData: Omit<Nurse, 'id'>): Promise<Nurse> => {
-    const response = await axiosInstance.post<Nurse>(`${ENDPOINTS.NURSE}/create`, nurseData);
+export const updateNurse = async (id: number, nurseData: any): Promise<ApiResponse<Nurse>> => {
+    const response = await axiosInstance.put<ApiResponse<Nurse>>(`${ENDPOINTS.NURSE}/update`, { ...nurseData, id });
     return response.data;
 };
 
-export const updateNurse = async (id: number, nurseData: Partial<Nurse>): Promise<Nurse> => {
-    const response = await axiosInstance.put<Nurse>(`${ENDPOINTS.NURSE}/update`, { id, ...nurseData });
+export const deleteNurse = async (id: number): Promise<ApiResponse<void>> => {
+    const response = await axiosInstance.delete<ApiResponse<void>>(`${ENDPOINTS.NURSE}/delete/${id}`);
     return response.data;
 };
 
-export const deleteNurse = async (id: number): Promise<void> => {
-    await axiosInstance.delete(`${ENDPOINTS.NURSE}/delete/${id}`);
+export const searchNurses = async (searchData: any): Promise<ApiResponse<Nurse[]>> => {
+    const response = await axiosInstance.post<ApiResponse<Nurse[]>>(`${ENDPOINTS.NURSE}/search`, searchData);
+    return response.data;
 };
 
 // Legacy object export
-export const nurseApi = { getAll: getNurses, getById: getNurseById, search: searchNurses, create: createNurse, update: updateNurse, delete: deleteNurse };
+export const nurseApi = { getAll: getNurses, getById: getNurseById, create: createNurse, update: updateNurse, delete: deleteNurse, search: searchNurses };
 export default nurseApi;

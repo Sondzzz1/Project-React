@@ -4,50 +4,51 @@ import { ENDPOINTS } from '../constant/api';
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
 export interface LoginRequest {
-    tenDangNhap: string;
-    matKhau: string;
+    username: string;
+    password: string;
 }
 
 export interface AuthUser {
     id: number;
-    tenDangNhap: string;
-    hoTen: string;
+    username: string;
+    fullName: string;
     email: string;
     role: string;
-    vaiTro?: string;
 }
 
-export interface LoginResponse extends AuthUser {
+export interface ApiResponse<T> {
+    success: boolean;
+    data: T;
+    message?: string;
+}
+
+export interface LoginData {
     token: string;
-}
-
-export interface RegisterRequest {
-    tenDangNhap: string;
-    matKhau: string;
-    hoTen: string;
-    email: string;
+    user?: AuthUser;
 }
 
 // ─── Service Functions ──────────────────────────────────────────────────────────
 
-export const login = async (tenDangNhap: string, matKhau: string): Promise<LoginResponse> => {
-    const response = await axiosInstance.post<LoginResponse>(`${ENDPOINTS.AUTH}/login`, { tenDangNhap, matKhau });
+export const login = async (username: string, password: string): Promise<ApiResponse<LoginData>> => {
+    const response = await axiosInstance.post<ApiResponse<LoginData>>(`${ENDPOINTS.AUTH}/login`, { username, password });
     return response.data;
 };
 
-export const register = async (userData: RegisterRequest): Promise<AuthUser> => {
-    const response = await axiosInstance.post<AuthUser>(`${ENDPOINTS.AUTH}/register`, userData);
+export const register = async (userData: any): Promise<ApiResponse<any>> => {
+    const response = await axiosInstance.post<ApiResponse<any>>(`${ENDPOINTS.AUTH}/register`, userData);
     return response.data;
 };
 
-export const changePassword = async (oldPassword: string, newPassword: string): Promise<void> => {
-    await axiosInstance.post(`${ENDPOINTS.AUTH}/change-password`, { oldPassword, newPassword });
+export const getMe = async (): Promise<ApiResponse<AuthUser>> => {
+    const response = await axiosInstance.get<ApiResponse<AuthUser>>(`${ENDPOINTS.AUTH}/me`);
+    return response.data;
 };
 
-export const requestPasswordReset = async (email: string): Promise<void> => {
-    await axiosInstance.post(`${ENDPOINTS.AUTH}/forgot-password`, { email });
+export const changePassword = async (oldPassword: string, newPassword: string): Promise<ApiResponse<void>> => {
+    const response = await axiosInstance.post<ApiResponse<void>>(`${ENDPOINTS.AUTH}/change-password`, { oldPassword, newPassword });
+    return response.data;
 };
 
 // Legacy object export for backward compatibility
-export const authApi = { login, register, changePassword, requestPasswordReset };
+export const authApi = { login, register, getMe, changePassword };
 export default authApi;

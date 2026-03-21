@@ -1,5 +1,6 @@
 import axiosInstance from './axiosInstance';
 import { ENDPOINTS } from '../constant/api';
+import { ApiResponse } from './auth.services';
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
@@ -13,50 +14,38 @@ export interface Doctor {
     tenKhoa?: string;
 }
 
-export interface DoctorSearchParams {
-    keyword?: string;
-    chuyenKhoa?: string;
-    khoaId?: number;
-    pageIndex?: number;
-    pageSize?: number;
-}
-
 // ─── Service Functions ──────────────────────────────────────────────────────────
 
-export const getDoctors = async (): Promise<Doctor[]> => {
-    const response = await axiosInstance.get<Doctor[]>(`${ENDPOINTS.DOCTOR}/get-all`);
+export const getDoctors = async (): Promise<ApiResponse<Doctor[]>> => {
+    const response = await axiosInstance.get<ApiResponse<Doctor[]>>(`${ENDPOINTS.DOCTOR}/doctors`);
     return response.data;
 };
 
-export const getDoctorById = async (id: number): Promise<Doctor> => {
-    const response = await axiosInstance.get<Doctor>(`${ENDPOINTS.DOCTOR}/get-by-id/${id}`);
+export const getDoctorById = async (id: number): Promise<ApiResponse<Doctor>> => {
+    const response = await axiosInstance.get<ApiResponse<Doctor>>(`${ENDPOINTS.DOCTOR}/${id}`);
     return response.data;
 };
 
-export const getDoctorsByDepartment = async (departmentId: number): Promise<Doctor[]> => {
-    const response = await axiosInstance.get<Doctor[]>(`${ENDPOINTS.DOCTOR}/by-department/${departmentId}`);
+export const createDoctor = async (doctorData: any): Promise<ApiResponse<Doctor>> => {
+    const response = await axiosInstance.post<ApiResponse<Doctor>>(`${ENDPOINTS.DOCTOR}`, doctorData);
     return response.data;
 };
 
-export const searchDoctors = async (params: DoctorSearchParams): Promise<Doctor[]> => {
-    const response = await axiosInstance.post<Doctor[]>(`${ENDPOINTS.DOCTOR}/search`, params);
+export const updateDoctor = async (id: number, doctorData: any): Promise<ApiResponse<Doctor>> => {
+    const response = await axiosInstance.put<ApiResponse<Doctor>>(`${ENDPOINTS.DOCTOR}/${id}`, doctorData);
     return response.data;
 };
 
-export const createDoctor = async (doctorData: Omit<Doctor, 'id'>): Promise<Doctor> => {
-    const response = await axiosInstance.post<Doctor>(`${ENDPOINTS.DOCTOR}/create`, doctorData);
+export const deleteDoctor = async (id: number): Promise<ApiResponse<void>> => {
+    const response = await axiosInstance.delete<ApiResponse<void>>(`${ENDPOINTS.DOCTOR}/${id}`);
     return response.data;
 };
 
-export const updateDoctor = async (id: number, doctorData: Partial<Doctor>): Promise<Doctor> => {
-    const response = await axiosInstance.put<Doctor>(`${ENDPOINTS.DOCTOR}/update`, { id, ...doctorData });
+export const searchDoctors = async (searchData: any): Promise<ApiResponse<Doctor[]>> => {
+    const response = await axiosInstance.post<ApiResponse<Doctor[]>>(`${ENDPOINTS.DOCTOR}/search`, searchData);
     return response.data;
-};
-
-export const deleteDoctor = async (id: number): Promise<void> => {
-    await axiosInstance.delete(`${ENDPOINTS.DOCTOR}/delete/${id}`);
 };
 
 // Legacy object export
-export const doctorApi = { getAll: getDoctors, getById: getDoctorById, getByDepartment: getDoctorsByDepartment, search: searchDoctors, create: createDoctor, update: updateDoctor, delete: deleteDoctor };
+export const doctorApi = { getAll: getDoctors, getById: getDoctorById, create: createDoctor, update: updateDoctor, delete: deleteDoctor, search: searchDoctors };
 export default doctorApi;

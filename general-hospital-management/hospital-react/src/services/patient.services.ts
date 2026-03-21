@@ -1,5 +1,6 @@
 import axiosInstance from './axiosInstance';
 import { ENDPOINTS } from '../constant/api';
+import { ApiResponse } from './auth.services';
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
@@ -24,80 +25,38 @@ export interface PatientSearchParams {
     pageSize?: number;
 }
 
-export interface CreatePatientRequest {
-    hoTen: string;
-    ngaySinh: string;
-    gioiTinh: string;
-    diaChi: string;
-    soTheBaoHiem?: string;
-    mucHuong?: number;
-    hanTheBHYT?: string | null;
-    trangThai: string;
-}
-
 // ─── Service Functions ──────────────────────────────────────────────────────────
 
-export const getPatients = async (): Promise<Patient[]> => {
-    const response = await axiosInstance.get<Patient[]>(`${ENDPOINTS.PATIENT}/get-all`);
+export const getPatients = async (): Promise<ApiResponse<Patient[]>> => {
+    const response = await axiosInstance.get<ApiResponse<Patient[]>>(`${ENDPOINTS.PATIENT}/get-all`);
     return response.data;
 };
 
-export const getPatientById = async (id: number): Promise<Patient> => {
-    const response = await axiosInstance.get<Patient>(`${ENDPOINTS.PATIENT}/get-by-id/${id}`);
+export const getPatientById = async (id: number): Promise<ApiResponse<Patient>> => {
+    const response = await axiosInstance.get<ApiResponse<Patient>>(`${ENDPOINTS.PATIENT}/get-by-id/${id}`);
     return response.data;
 };
 
-export const searchPatients = async (params: PatientSearchParams): Promise<{ data: Patient[] } | Patient[]> => {
-    const response = await axiosInstance.post(`${ENDPOINTS.PATIENT}/search`, {
-        HoTen: params.hoTen || params.keyword || null,
-        DiaChi: params.diaChi || null,
-        SoTheBaoHiem: params.soTheBaoHiem || null,
-        pageIndex: params.pageIndex || 1,
-        pageSize: params.pageSize || 10,
-    });
+export const createPatient = async (patientData: any): Promise<ApiResponse<Patient>> => {
+    const response = await axiosInstance.post<ApiResponse<Patient>>(`${ENDPOINTS.PATIENT}/create`, patientData);
     return response.data;
 };
 
-const formatPatientDate = (dateStr?: string): string => {
-    if (!dateStr) return '';
-    return new Date(dateStr).toISOString().split('T')[0];
-};
-
-export const createPatient = async (patient: CreatePatientRequest): Promise<Patient> => {
-    const requestData = {
-        hoTen: patient.hoTen || '',
-        ngaySinh: formatPatientDate(patient.ngaySinh),
-        gioiTinh: patient.gioiTinh || '',
-        diaChi: patient.diaChi || '',
-        soTheBaoHiem: patient.soTheBaoHiem || '',
-        mucHuong: patient.mucHuong,
-        hanTheBHYT: patient.hanTheBHYT ? new Date(patient.hanTheBHYT).toISOString() : null,
-        trangThai: patient.trangThai || 'Đang điều trị',
-    };
-    const response = await axiosInstance.post<Patient>(`${ENDPOINTS.PATIENT}/create`, requestData);
+export const updatePatient = async (id: number, patientData: any): Promise<ApiResponse<Patient>> => {
+    const response = await axiosInstance.put<ApiResponse<Patient>>(`${ENDPOINTS.PATIENT}/update`, { ...patientData, id });
     return response.data;
 };
 
-export const updatePatient = async (id: number, patient: Partial<CreatePatientRequest>): Promise<Patient> => {
-    const requestData = {
-        id,
-        hoTen: patient.hoTen || '',
-        ngaySinh: formatPatientDate(patient.ngaySinh),
-        gioiTinh: patient.gioiTinh || '',
-        diaChi: patient.diaChi || '',
-        soTheBaoHiem: patient.soTheBaoHiem || '',
-        mucHuong: patient.mucHuong,
-        hanTheBHYT: patient.hanTheBHYT ? new Date(patient.hanTheBHYT).toISOString() : null,
-        trangThai: patient.trangThai || 'Đang điều trị',
-    };
-    const response = await axiosInstance.put<Patient>(`${ENDPOINTS.PATIENT}/update`, requestData);
+export const deletePatient = async (id: number): Promise<ApiResponse<void>> => {
+    const response = await axiosInstance.delete<ApiResponse<void>>(`${ENDPOINTS.PATIENT}/delete/${id}`);
     return response.data;
 };
 
-export const deletePatient = async (id: number): Promise<void> => {
-    await axiosInstance.delete(`${ENDPOINTS.PATIENT}/delete/${id}`);
+export const searchPatients = async (searchData: any): Promise<ApiResponse<Patient[]>> => {
+    const response = await axiosInstance.post<ApiResponse<Patient[]>>(`${ENDPOINTS.PATIENT}/search`, searchData);
+    return response.data;
 };
 
 // Legacy object export
-export const patientApi = { getAll: getPatients, getById: getPatientById, search: searchPatients, create: createPatient, update: updatePatient, delete: deletePatient };
+export const patientApi = { getAll: getPatients, getById: getPatientById, create: createPatient, update: updatePatient, delete: deletePatient, search: searchPatients };
 export default patientApi;
