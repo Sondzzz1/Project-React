@@ -30,7 +30,11 @@ export interface LoginData {
 // ─── Service Functions ──────────────────────────────────────────────────────────
 
 export const login = async (username: string, password: string): Promise<ApiResponse<LoginData>> => {
-    const response = await axiosInstance.post<ApiResponse<LoginData>>(`${ENDPOINTS.AUTH}/login`, { username, password });
+    // Backend expect tiếng Việt: tenDangNhap và matKhau
+    const response = await axiosInstance.post<ApiResponse<LoginData>>(`${ENDPOINTS.AUTH}/login`, {
+        tenDangNhap: username,
+        matKhau: password
+    });
     return response.data;
 };
 
@@ -49,6 +53,16 @@ export const changePassword = async (oldPassword: string, newPassword: string): 
     return response.data;
 };
 
+export const requestPasswordReset = async (email: string): Promise<ApiResponse<void>> => {
+    const response = await axiosInstance.post<ApiResponse<void>>(`${ENDPOINTS.AUTH}/forgot-password`, { email });
+    return response.data;
+};
+
+export const resetPassword = async (token: string, newPassword: string): Promise<ApiResponse<void>> => {
+    const response = await axiosInstance.post<ApiResponse<void>>(`${ENDPOINTS.AUTH}/reset-password`, { token, newPassword });
+    return response.data;
+};
+
 // Legacy object export for backward compatibility
-export const authApi = { login, register, getMe, changePassword };
+export const authApi = { login, register, getMe, changePassword, requestPasswordReset, resetPassword };
 export default authApi;

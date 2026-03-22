@@ -5,7 +5,7 @@
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-export type Role = 'admin' | 'doctor' | 'nurse' | 'caregiver' | 'accountant' | 'patient';
+export type Role = 'admin' | 'doctor' | 'nurse' | 'caregiver' | 'accountant' | 'patient' | 'nhanvien';
 
 export interface Permission {
     dashboard: boolean;
@@ -45,10 +45,18 @@ export const ROLES: Record<string, Role> = {
     CAREGIVER: 'caregiver',
     ACCOUNTANT: 'accountant',
     PATIENT: 'patient',
+    NHANVIEN: 'nhanvien',
 };
 
 export const PERMISSIONS: Record<Role, Permission> = {
     admin: {
+        dashboard: true, appointments: true, patients: true, beds: true,
+        surgery: true, records: true, doctors: true, nurses: true,
+        admissions: true, billing: true, reports: true, audit: true,
+        settings: true, canAdd: true, canEdit: true, canDelete: true, canExport: true, profile: true,
+    },
+    nhanvien: {
+        // Nhân viên có quyền tương tự admin
         dashboard: true, appointments: true, patients: true, beds: true,
         surgery: true, records: true, doctors: true, nurses: true,
         admissions: true, billing: true, reports: true, audit: true,
@@ -88,6 +96,7 @@ export const PERMISSIONS: Record<Role, Permission> = {
 
 export const ROLE_LABELS: Record<Role, string> = {
     admin: 'Quản trị viên',
+    nhanvien: 'Nhân viên',
     doctor: 'Bác sĩ',
     nurse: 'Y tá',
     caregiver: 'Điều dưỡng',

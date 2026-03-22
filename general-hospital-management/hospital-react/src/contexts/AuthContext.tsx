@@ -44,7 +44,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const login = useCallback(async (tenDangNhap: string, matKhau: string) => {
         try {
             const response = await authApi.login(tenDangNhap, matKhau);
-            const { token: newToken, ...userData } = response;
+            // API trả về: { success: true, data: { token, user } }
+            const apiData = response.data || response;
+            const newToken = apiData.token;
+            let userData = apiData.user || apiData;
+
+            // Normalize role về lowercase vì backend trả về "Admin" nhưng frontend expect "admin"
+            if (userData.role) {
+                userData = { ...userData, role: userData.role.toLowerCase() };
+            }
+            if (userData.vaiTro) {
+                userData = { ...userData, role: userData.vaiTro.toLowerCase() };
+            }
 
             localStorage.setItem(APP_CONFIG.TOKEN_KEY, newToken);
             localStorage.setItem(APP_CONFIG.USER_KEY, JSON.stringify(userData));
