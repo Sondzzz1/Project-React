@@ -32,6 +32,8 @@ import Billing from './pages/admin/Billing';
 import Reports from './pages/admin/Reports';
 import Audit from './pages/admin/Audit';
 import ProfilePage from './pages/admin/ProfilePage';
+import UserManagement from './pages/admin/UserManagement';
+import LabTest from './pages/admin/LabTest';
 
 /**
  * Centralized Route Configuration
@@ -79,6 +81,8 @@ export default function AppRouter() {
                         <Route path="billing" element={<Billing />} />
                         <Route path="reports" element={<Reports />} />
                         <Route path="audit" element={<Audit />} />
+                        <Route path="users" element={<UserManagement />} />
+                        <Route path="labtests" element={<LabTest />} />
                         <Route path="profile" element={<ProfilePage />} />
                     </Route>
 

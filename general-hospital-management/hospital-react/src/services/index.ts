@@ -41,3 +41,9 @@ export { default as auditApi } from './audit.services';
 
 export * from './userManagement.services';
 export { default as userManagementApi } from './userManagement.services';
+
+export * from './labtest.services';
+export { default as labTestApi } from './labtest.services';
+
+export * from './bhyt.services';
+export { default as bhytApi } from './bhyt.services';

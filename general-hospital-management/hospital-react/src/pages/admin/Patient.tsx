@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { patientApi, Patient } from '../../services';
+import { patientApi, Patient, bhytApi } from '../../services';
 import { usePermissions } from '../../hooks/usePermissions';
 import { formatDate } from '../../utils/formatters';
 import '../../assets/css/admin/admin.css';
@@ -13,6 +13,8 @@ export default function PatientPage() {
     const [formData, setFormData] = useState<Partial<Patient>>({});
     const [saving, setSaving] = useState<boolean>(false);
     const [error, setError] = useState<string>('');
+    const [checkingBHYT, setCheckingBHYT] = useState<boolean>(false);
+    const [bhytInfo, setBhytInfo] = useState<string>('');
     const { canAdd, canEdit, canDelete } = usePermissions();
 
     const loadPatients = useCallback(async () => {
