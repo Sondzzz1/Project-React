@@ -37,7 +37,7 @@ export default function AdmissionPage() {
                         <tbody>{filtered.map(a => (
                             <tr key={a.id}>
                                 <td>{a.id}</td><td>{a.tenBenhNhan}</td><td>{a.tenGiuong || a.giuongId}</td><td>{a.tenKhoa || a.khoaId}</td>
-                                <td>{formatDate(a.ngayNhapVien)}</td>
+                                <td>{formatDate(a.ngayNhap)}</td>
                                 <td><span className="status-badge badge-primary">{a.trangThai}</span></td>
                             </tr>
                         ))}</tbody>

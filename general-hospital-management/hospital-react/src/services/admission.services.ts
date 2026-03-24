@@ -4,55 +4,104 @@ import { ENDPOINTS } from '../constant/api';
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
 export interface Admission {
-    id: number;
-    benhNhanId: number;
+    id: string;         // Guid từ backend
+    benhNhanId: string;
     tenBenhNhan: string;
-    giuongId: number;
+    giuongId: string;
     tenGiuong?: string;
-    khoaId: number;
+    khoaId: string;
     tenKhoa?: string;
-    ngayNhapVien: string;
-    ngayXuatVien?: string;
+    lyDoNhap?: string;
+    ngayNhap: string;   // Đổi từ ngayNhapVien → ngayNhap (khớp NhapVienViewDTO)
+    ngayXuat?: string;  // Đổi từ ngayXuatVien → ngayXuat
     trangThai: string;
+    isDungTuyen?: boolean;
 }
 
 export interface CreateAdmissionRequest {
-    benhNhanId: number;
-    giuongId: number;
-    khoaId: number;
-    ngayNhapVien?: string;
+    benhNhanId: string; // Guid
+    giuongId: string;   // Guid
+    khoaId: string;     // Guid
+    lyDoNhap: string;
+    isDungTuyen?: boolean;
+}
+
+export interface UpdateAdmissionRequest {
+    id: string;
+    lyDoNhap?: string;
+    trangThai?: string;
+    ngayXuat?: string;
+}
+
+export interface TransferBedRequest {
+    nhapVienId: string;
+    giuongMoiId: string;
+    lyDoChuyenGiuong: string;
 }
 
 // ─── Service Functions ──────────────────────────────────────────────────────────
 
+// GET /api/nhapvien/danh-sach
 export const getAdmissions = async (): Promise<Admission[]> => {
-    const response = await axiosInstance.get<Admission[]>(`${ENDPOINTS.ADMISSION}/get-all`);
+    const response = await axiosInstance.get<Admission[]>(`${ENDPOINTS.ADMISSION}/danh-sach`);
     return response.data;
 };
 
-export const getAdmissionById = async (id: number): Promise<Admission> => {
-    const response = await axiosInstance.get<Admission>(`${ENDPOINTS.ADMISSION}/get-by-id/${id}`);
+// GET /api/nhapvien/chi-tiet/{id}
+export const getAdmissionById = async (id: string): Promise<Admission> => {
+    const response = await axiosInstance.get<Admission>(`${ENDPOINTS.ADMISSION}/chi-tiet/${id}`);
     return response.data;
 };
 
-export const createAdmission = async (admissionData: CreateAdmissionRequest): Promise<Admission> => {
-    const response = await axiosInstance.post<Admission>(`${ENDPOINTS.ADMISSION}/create`, admissionData);
+// POST /api/nhapvien/nhap-vien-moi
+export const createAdmission = async (admissionData: CreateAdmissionRequest): Promise<{ message: string }> => {
+    const response = await axiosInstance.post<{ message: string }>(`${ENDPOINTS.ADMISSION}/nhap-vien-moi`, admissionData);
     return response.data;
 };
 
-export const transferBed = async (nhapVienId: number, newBedId: number, reason: string): Promise<void> => {
-    await axiosInstance.post(`${ENDPOINTS.ADMISSION}/transfer-bed`, { nhapVienId, giuongMoiId: newBedId, lyDo: reason });
+// PUT /api/nhapvien/cap-nhat
+export const updateAdmission = async (data: UpdateAdmissionRequest): Promise<{ message: string }> => {
+    const response = await axiosInstance.put<{ message: string }>(`${ENDPOINTS.ADMISSION}/cap-nhat`, data);
+    return response.data;
 };
 
-export const dischargePatient = async (nhapVienId: number): Promise<void> => {
-    await axiosInstance.post(`${ENDPOINTS.ADMISSION}/xuat-vien/${nhapVienId}`);
+// PUT /api/nhapvien/chuyen-giuong
+export const transferBed = async (nhapVienId: string, giuongMoiId: string, lyDoChuyenGiuong: string): Promise<{ message: string }> => {
+    const response = await axiosInstance.put<{ message: string }>(`${ENDPOINTS.ADMISSION}/chuyen-giuong`, {
+        nhapVienId,
+        giuongMoiId,
+        lyDoChuyenGiuong,
+    });
+    return response.data;
 };
 
-export const getReadyForDischarge = async (): Promise<Admission[]> => {
-    const response = await axiosInstance.get<Admission[]>(`${ENDPOINTS.ADMISSION}/ready-for-discharge`);
+// DELETE /api/nhapvien/xoa/{id}
+export const deleteAdmission = async (id: string): Promise<{ message: string }> => {
+    const response = await axiosInstance.delete<{ message: string }>(`${ENDPOINTS.ADMISSION}/xoa/${id}`);
+    return response.data;
+};
+
+// POST /api/nhapvien/tim-kiem
+export const searchAdmissions = async (params: {
+    tenBenhNhan?: string;
+    khoaId?: string;
+    trangThai?: string;
+    tuNgay?: string;
+    denNgay?: string;
+    isDungTuyen?: boolean;
+}): Promise<Admission[]> => {
+    const response = await axiosInstance.post<Admission[]>(`${ENDPOINTS.ADMISSION}/tim-kiem`, params);
     return response.data;
 };
 
 // Legacy object export
-export const admissionApi = { getAll: getAdmissions, getById: getAdmissionById, create: createAdmission, transferBed, discharge: dischargePatient, getReadyForDischarge };
+export const admissionApi = {
+    getAll: getAdmissions,
+    getById: getAdmissionById,
+    create: createAdmission,
+    update: updateAdmission,
+    transferBed,
+    delete: deleteAdmission,
+    search: searchAdmissions,
+};
 export default admissionApi;

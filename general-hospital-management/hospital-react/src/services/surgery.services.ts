@@ -17,7 +17,7 @@ export interface Surgery {
 // ─── Service Functions ──────────────────────────────────────────────────────────
 
 export const getSurgeries = async (): Promise<Surgery[]> => {
-    const response = await axiosInstance.get<Surgery[]>(ENDPOINTS.SURGERY);
+    const response = await axiosInstance.get<Surgery[]>(`${ENDPOINTS.SURGERY}/get-all-surgery`);
     return response.data;
 };
 

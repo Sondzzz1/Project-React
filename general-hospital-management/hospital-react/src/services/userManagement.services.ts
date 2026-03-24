@@ -2,7 +2,9 @@ import axiosInstance from './axiosInstance';
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
-const USER_URL = '/api/usermanagement';
+import { ENDPOINTS } from '../constant/api';
+
+const USER_URL = ENDPOINTS.USER_MANAGEMENT;
 
 export interface ManagedUser {
     id: number;

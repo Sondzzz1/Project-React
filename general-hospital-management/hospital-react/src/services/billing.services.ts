@@ -21,12 +21,12 @@ export interface PaymentRequest {
 // ─── Service Functions ──────────────────────────────────────────────────────────
 
 export const getInvoices = async (): Promise<Invoice[]> => {
-    const response = await axiosInstance.get<Invoice[]>(`${ENDPOINTS.BILLING}/get-all`);
+    const response = await axiosInstance.get<Invoice[]>(`${ENDPOINTS.BILLING}/lay-tat-ca`);
     return response.data;
 };
 
 export const getInvoiceById = async (id: number): Promise<Invoice> => {
-    const response = await axiosInstance.get<Invoice>(`${ENDPOINTS.BILLING}/get-by-id/${id}`);
+    const response = await axiosInstance.get<Invoice>(`${ENDPOINTS.BILLING}/chi-tiet/${id}`);
     return response.data;
 };
 
@@ -41,7 +41,7 @@ export const exportInvoiceExcel = async (id: number): Promise<Blob> => {
 };
 
 export const payInvoice = async (id: number, paymentData: PaymentRequest): Promise<Invoice> => {
-    const response = await axiosInstance.post<Invoice>(`${ENDPOINTS.BILLING}/thanh-toan/${id}`, paymentData);
+    const response = await axiosInstance.put<Invoice>(`${ENDPOINTS.BILLING}/thanh-toan`, { id, ...paymentData });
     return response.data;
 };
 

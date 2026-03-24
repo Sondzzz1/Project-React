@@ -22,12 +22,18 @@ export interface AuditLogParams {
 // ─── Service Functions ──────────────────────────────────────────────────────────
 
 export const getAuditLogs = async (params?: AuditLogParams): Promise<AuditLog[]> => {
-    const response = await axiosInstance.get<AuditLog[]>(`${ENDPOINTS.AUDIT}/logs`, { params });
+    const bodyArgs = {
+        PageNumber: params?.page ?? 1,
+        PageSize: params?.pageSize ?? 50,
+        TuNgay: params?.fromDate,
+        DenNgay: params?.toDate
+    };
+    const response = await axiosInstance.post<AuditLog[]>(`${ENDPOINTS.AUDIT}/system-logs`, bodyArgs);
     return response.data;
 };
 
-export const getMedicalRecordAudit = async (recordId: number): Promise<AuditLog[]> => {
-    const response = await axiosInstance.get<AuditLog[]>(`${ENDPOINTS.AUDIT}/medical-record/${recordId}`);
+export const getMedicalRecordAudit = async (recordId: string): Promise<AuditLog[]> => {
+    const response = await axiosInstance.post<AuditLog[]>(`${ENDPOINTS.AUDIT}/medical-record-logs`, { HoSoBenhAnId: recordId });
     return response.data;
 };
 
