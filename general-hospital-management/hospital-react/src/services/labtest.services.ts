@@ -5,20 +5,22 @@ import { ApiResponse } from './auth.services';
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
 export interface LabTest {
-    id: number;
-    tenXetNghiem: string;
-    ketQua: string;
-    donVi: string;
-    khoangThamChieu: string;
-    ngayXetNghiem: string;
-    benhNhanId: number;
-    bacSiChiDinhId: number;
+    id: string;
+    nhapVienId?: string;
+    bacSiId?: string;
+    loaiXetNghiem: string;
+    ketQua?: string;
+    ngay?: string;
+    donGia?: number;
+    tenBenhNhan?: string;
+    ngaySinhBenhNhan?: string;
+    benhNhanId?: string;
 }
 
 // ─── Service Functions ──────────────────────────────────────────────────────────
 
-export const getLabTests = async (): Promise<ApiResponse<LabTest[]>> => {
-    const response = await axiosInstance.get<ApiResponse<LabTest[]>>(`${ENDPOINTS.LABTEST}/get-all-labtest`);
+export const getLabTests = async (): Promise<LabTest[]> => {
+    const response = await axiosInstance.get<LabTest[]>(`${ENDPOINTS.LABTEST}/get-all-labtest`);
     return response.data;
 };
 
@@ -27,12 +29,12 @@ export const createLabTest = async (testData: any): Promise<ApiResponse<LabTest>
     return response.data;
 };
 
-export const updateLabTest = async (id: number, testData: any): Promise<ApiResponse<LabTest>> => {
+export const updateLabTest = async (id: string, testData: any): Promise<ApiResponse<LabTest>> => {
     const response = await axiosInstance.put<ApiResponse<LabTest>>(`${ENDPOINTS.LABTEST}/${id}`, testData);
     return response.data;
 };
 
-export const deleteLabTest = async (id: number): Promise<ApiResponse<void>> => {
+export const deleteLabTest = async (id: string): Promise<ApiResponse<void>> => {
     const response = await axiosInstance.delete<ApiResponse<void>>(`${ENDPOINTS.LABTEST}/${id}`);
     return response.data;
 };

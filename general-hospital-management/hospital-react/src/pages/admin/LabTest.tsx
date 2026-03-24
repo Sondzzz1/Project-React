@@ -23,7 +23,7 @@ export default function LabTestPage() {
         try {
             setLoading(true);
             const response = await labTestApi.getAll();
-            const data = response.data || [];
+            const data = response || [];
             setLabTests(data);
         } catch (err) {
             console.error('Load lab tests error:', err);
@@ -36,20 +36,18 @@ export default function LabTestPage() {
     const openModal = (test: LabTest | null = null) => {
         setEditingTest(test);
         setFormData(test ? { ...test } : {
-            tenXetNghiem: '',
+            loaiXetNghiem: '',
             ketQua: '',
-            donVi: '',
-            khoangThamChieu: '',
-            ngayXetNghiem: new Date().toISOString().split('T')[0],
-            benhNhanId: 0,
-            bacSiChiDinhId: 0
+            ngay: new Date().toISOString().split('T')[0],
+            benhNhanId: '',
+            bacSiId: ''
         });
         setError('');
         setShowModal(true);
     };
 
     const handleSave = async () => {
-        if (!formData.tenXetNghiem || !formData.benhNhanId) {
+        if (!formData.loaiXetNghiem || !formData.benhNhanId) {
             setError('Vui lòng nhập đầy đủ thông tin');
             return;
         }
@@ -71,7 +69,7 @@ export default function LabTestPage() {
     };
 
     const handleDelete = async (test: LabTest) => {
-        if (!window.confirm(`Xóa xét nghiệm "${test.tenXetNghiem}"?`)) return;
+        if (!window.confirm(`Xóa xét nghiệm "${test.loaiXetNghiem}"?`)) return;
         try {
             await labTestApi.delete(test.id);
             loadLabTests();
@@ -83,18 +81,10 @@ export default function LabTestPage() {
 
     const filteredTests = labTests.filter(t =>
         !search ||
-        t.tenXetNghiem.toLowerCase().includes(search.toLowerCase()) ||
-        t.ketQua.toLowerCase().includes(search.toLowerCase())
+        (t.loaiXetNghiem || '').toLowerCase().includes(search.toLowerCase()) ||
+        (t.ketQua || '').toLowerCase().includes(search.toLowerCase()) ||
+        (t.tenBenhNhan || '').toLowerCase().includes(search.toLowerCase())
     );
-
-    const isAbnormal = (ketQua: string, khoangThamChieu: string): boolean => {
-        if (!khoangThamChieu || !ketQua) return false;
-        const match = khoangThamChieu.match(/(\d+\.?\d*)\s*-\s*(\d+\.?\d*)/);
-        if (!match) return false;
-        const [, min, max] = match;
-        const value = parseFloat(ketQua);
-        return !isNaN(value) && (value < parseFloat(min) || value > parseFloat(max));
-    };
 
     return (
         <div className="admin-page">
@@ -126,10 +116,9 @@ export default function LabTestPage() {
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>Tên xét nghiệm</th>
+                                <th>Tên Bệnh Nhân</th>
+                                <th>Loại xét nghiệm</th>
                                 <th>Kết quả</th>
-                                <th>Đơn vị</th>
-                                <th>Khoảng tham chiếu</th>
                                 <th>Ngày XN</th>
                                 <th>Bệnh nhân ID</th>
                                 <th>Thao tác</th>
@@ -138,16 +127,15 @@ export default function LabTestPage() {
                         <tbody>
                             {filteredTests.map(t => (
                                 <tr key={t.id}>
-                                    <td>{t.id}</td>
-                                    <td><strong>{t.tenXetNghiem}</strong></td>
+                                    <td>{t.id.substring(0,8)}...</td>
+                                    <td>{t.tenBenhNhan}</td>
+                                    <td><strong>{t.loaiXetNghiem}</strong></td>
                                     <td>
-                                        <span className={isAbnormal(t.ketQua, t.khoangThamChieu) ? 'status-badge badge-danger' : ''}>
+                                        <span className="status-badge badge-primary">
                                             {t.ketQua}
                                         </span>
                                     </td>
-                                    <td>{t.donVi}</td>
-                                    <td>{t.khoangThamChieu}</td>
-                                    <td>{formatDate(t.ngayXetNghiem)}</td>
+                                    <td>{formatDate(t.ngay || '')}</td>
                                     <td>{t.benhNhanId}</td>
                                     <td>
                                         <div className="action-btns">
@@ -169,10 +157,10 @@ export default function LabTestPage() {
                         {error && <div className="login-error">{error}</div>}
                         
                         <div className="form-group">
-                            <label>Tên xét nghiệm *</label>
+                            <label>Loại xét nghiệm *</label>
                             <input 
-                                value={formData.tenXetNghiem || ''} 
-                                onChange={e => setFormData({ ...formData, tenXetNghiem: e.target.value })}
+                                value={formData.loaiXetNghiem || ''} 
+                                onChange={e => setFormData({ ...formData, loaiXetNghiem: e.target.value })}
                                 placeholder="Ví dụ: Glucose máu"
                             />
                         </div>
@@ -183,54 +171,36 @@ export default function LabTestPage() {
                                 <input 
                                     value={formData.ketQua || ''} 
                                     onChange={e => setFormData({ ...formData, ketQua: e.target.value })}
-                                    placeholder="Ví dụ: 5.5"
+                                    placeholder="Ví dụ: 5.5 mmol/L"
                                 />
                             </div>
-                            <div className="form-group">
-                                <label>Đơn vị</label>
-                                <input 
-                                    value={formData.donVi || ''} 
-                                    onChange={e => setFormData({ ...formData, donVi: e.target.value })}
-                                    placeholder="Ví dụ: mmol/L"
-                                />
-                            </div>
-                        </div>
-
-                        <div className="form-group">
-                            <label>Khoảng tham chiếu</label>
-                            <input 
-                                value={formData.khoangThamChieu || ''} 
-                                onChange={e => setFormData({ ...formData, khoangThamChieu: e.target.value })}
-                                placeholder="Ví dụ: 3.9 - 6.1"
-                            />
-                        </div>
-
-                        <div className="form-row">
                             <div className="form-group">
                                 <label>Ngày xét nghiệm</label>
                                 <input 
                                     type="date"
-                                    value={formData.ngayXetNghiem?.split('T')[0] || ''} 
-                                    onChange={e => setFormData({ ...formData, ngayXetNghiem: e.target.value })}
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label>Bệnh nhân ID *</label>
-                                <input 
-                                    type="number"
-                                    value={formData.benhNhanId || ''} 
-                                    onChange={e => setFormData({ ...formData, benhNhanId: parseInt(e.target.value) })}
+                                    value={formData.ngay?.split('T')[0] || ''} 
+                                    onChange={e => setFormData({ ...formData, ngay: e.target.value })}
                                 />
                             </div>
                         </div>
+                        <div className="form-row">
+                            <div className="form-group">
+                                <label>Bệnh nhân ID *</label>
+                                <input 
+                                    type="text"
+                                    value={formData.benhNhanId || ''} 
+                                    onChange={e => setFormData({ ...formData, benhNhanId: e.target.value })}
+                                />
+                            </div>
 
-                        <div className="form-group">
-                            <label>Bác sĩ chỉ định ID</label>
-                            <input 
-                                type="number"
-                                value={formData.bacSiChiDinhId || ''} 
-                                onChange={e => setFormData({ ...formData, bacSiChiDinhId: parseInt(e.target.value) })}
-                            />
+                            <div className="form-group">
+                                <label>Bác sĩ chỉ định ID</label>
+                                <input 
+                                    type="text"
+                                    value={formData.bacSiId || ''} 
+                                    onChange={e => setFormData({ ...formData, bacSiId: e.target.value })}
+                                />
+                            </div>
                         </div>
 
                         <div className="modal-actions">
