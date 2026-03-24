@@ -22,12 +22,12 @@ export default function AuditPage() {
                     <div className="empty-state"><div className="empty-state-icon">🔍</div><p>Chưa có nhật ký</p></div>
                 ) : (
                     <table className="data-table">
-                        <thead><tr><th>Thời gian</th><th>Người dùng</th><th>Hành động</th><th>Đối tượng</th><th>Chi tiết</th></tr></thead>
+                        <thead><tr><th>Thời gian</th><th>Người dùng</th><th>Hành động</th><th>Chi tiết</th></tr></thead>
                         <tbody>{logs.map((log, i) => (
                             <tr key={i}>
-                                <td>{formatDate(log.timestamp, 'full')}</td><td>{log.userName}</td>
-                                <td><span className="status-badge badge-info">{log.action}</span></td>
-                                <td>{log.entity}</td><td>{log.details}</td>
+                                <td>{formatDate(log.thoiGian || '', 'full')}</td><td>{log.tenNguoiDung}</td>
+                                <td><span className="status-badge badge-info">{log.hanhDong}</span></td>
+                                <td>{log.moTa}</td>
                             </tr>
                         ))}</tbody>
                     </table>

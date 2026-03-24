@@ -4,12 +4,12 @@ import { ENDPOINTS } from '../constant/api';
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
 export interface AuditLog {
-    id?: number;
-    timestamp: string;
-    userName: string;
-    action: string;
-    entity: string;
-    details: string;
+    id: string;
+    nguoiDungId?: string;
+    tenNguoiDung?: string;
+    hanhDong?: string;
+    thoiGian?: string;
+    moTa?: string;
 }
 
 export interface AuditLogParams {
@@ -28,13 +28,15 @@ export const getAuditLogs = async (params?: AuditLogParams): Promise<AuditLog[]>
         TuNgay: params?.fromDate,
         DenNgay: params?.toDate
     };
-    const response = await axiosInstance.post<AuditLog[]>(`${ENDPOINTS.AUDIT}/system-logs`, bodyArgs);
-    return response.data;
+    const response = await axiosInstance.post<any>(`${ENDPOINTS.AUDIT}/system-logs`, bodyArgs);
+    const apiData = response.data?.data;
+    return apiData?.data || apiData || [];
 };
 
 export const getMedicalRecordAudit = async (recordId: string): Promise<AuditLog[]> => {
-    const response = await axiosInstance.post<AuditLog[]>(`${ENDPOINTS.AUDIT}/medical-record-logs`, { HoSoBenhAnId: recordId });
-    return response.data;
+    const response = await axiosInstance.post<any>(`${ENDPOINTS.AUDIT}/medical-record-logs`, { HoSoBenhAnId: recordId });
+    const apiData = response.data?.data;
+    return apiData?.data || apiData || [];
 };
 
 // Legacy object export

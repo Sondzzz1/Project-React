@@ -7,7 +7,7 @@ import { ENDPOINTS } from '../constant/api';
 const USER_URL = ENDPOINTS.USER_MANAGEMENT;
 
 export interface ManagedUser {
-    id: number;
+    id: string;
     tenDangNhap: string;
     hoTen: string;
     email: string;
@@ -25,34 +25,34 @@ export interface CreateUserRequest {
 // ─── Service Functions ──────────────────────────────────────────────────────────
 
 export const getUsers = async (params?: object): Promise<ManagedUser[]> => {
-    const response = await axiosInstance.get<ManagedUser[]>(USER_URL, { params });
-    return response.data;
+    const response = await axiosInstance.get<any>(USER_URL, { params });
+    return response.data?.data || response.data || [];
 };
 
-export const getUserById = async (id: number): Promise<ManagedUser> => {
-    const response = await axiosInstance.get<ManagedUser>(`${USER_URL}/${id}`);
-    return response.data;
+export const getUserById = async (id: string): Promise<ManagedUser> => {
+    const response = await axiosInstance.get<any>(`${USER_URL}/${id}`);
+    return response.data?.data || response.data;
 };
 
 export const createUser = async (userData: CreateUserRequest): Promise<ManagedUser> => {
-    const response = await axiosInstance.post<ManagedUser>(USER_URL, userData);
-    return response.data;
+    const response = await axiosInstance.post<any>(USER_URL, userData);
+    return response.data?.data || response.data;
 };
 
-export const updateUser = async (id: number, userData: Partial<CreateUserRequest>): Promise<ManagedUser> => {
-    const response = await axiosInstance.put<ManagedUser>(`${USER_URL}/${id}`, userData);
-    return response.data;
+export const updateUser = async (id: string, userData: Partial<CreateUserRequest>): Promise<ManagedUser> => {
+    const response = await axiosInstance.put<any>(`${USER_URL}/${id}`, userData);
+    return response.data?.data || response.data;
 };
 
-export const deleteUser = async (id: number): Promise<void> => {
+export const deleteUser = async (id: string): Promise<void> => {
     await axiosInstance.delete(`${USER_URL}/${id}`);
 };
 
-export const resetPassword = async (userId: number): Promise<void> => {
-    await axiosInstance.post(`${USER_URL}/${userId}/reset-password`);
+export const resetPassword = async (userId: string): Promise<void> => {
+    await axiosInstance.post(`${USER_URL}/reset-password`, { id: userId });
 };
 
-export const assignRole = async (userId: number, roleId: string): Promise<void> => {
+export const assignRole = async (userId: string, roleId: string): Promise<void> => {
     await axiosInstance.post(`${USER_URL}/${userId}/assign-role`, { roleId });
 };
 
