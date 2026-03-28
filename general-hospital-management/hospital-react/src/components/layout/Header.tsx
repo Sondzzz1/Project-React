@@ -14,6 +14,7 @@ export default function Header() {
 
     const userRole = (user?.role || (user as { vaiTro?: string } | null)?.vaiTro) as Role | undefined;
     const roleName = (userRole && ROLE_LABELS[userRole]) || 'Nhân viên';
+    const userName = user?.fullName || (user as { hoTen?: string } | null)?.hoTen || 'Người dùng';
 
     return (
         <header className="admin-header">
@@ -23,10 +24,10 @@ export default function Header() {
             <div className="admin-header-right">
                 <div className="admin-user-info">
                     <div className="admin-user-avatar">
-                        {(user?.hoTen || 'U').charAt(0).toUpperCase()}
+                        {userName.charAt(0).toUpperCase()}
                     </div>
                     <div className="admin-user-details">
-                        <span className="admin-user-name">{user?.hoTen || 'Người dùng'}</span>
+                        <span className="admin-user-name">{userName}</span>
                         <span className="admin-user-role">{roleName}</span>
                     </div>
                 </div>

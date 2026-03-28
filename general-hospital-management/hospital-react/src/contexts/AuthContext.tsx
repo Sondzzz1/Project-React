@@ -45,7 +45,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         try {
             const response = await authApi.login(tenDangNhap, matKhau);
             // API trả về: { success: true, data: { token, user } }
-            const apiData = response.data || response;
+            const apiData = (response.data || response) as any;
             const newToken = apiData.token;
             let userData = apiData.user || apiData;
 
@@ -77,7 +77,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const register = useCallback(async (userData: object) => {
         try {
             const response = await authApi.register(userData as Parameters<typeof authApi.register>[0]);
-            return { success: true, data: response };
+            return { success: true, data: response.data as AuthUser };
         } catch (error: unknown) {
             console.error('Registration failed:', error);
             const axiosErr = error as { response?: { data?: { message?: string } } };

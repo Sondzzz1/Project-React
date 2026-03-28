@@ -23,7 +23,7 @@ export default function PatientPage() {
             const result = search
                 ? await patientApi.search({ keyword: search, pageIndex: 1, pageSize: 100 })
                 : await patientApi.getAll();
-            const data = (result as { data?: Patient[] })?.data || (result as Patient[]) || [];
+            const data = (result as unknown as { data?: Patient[] })?.data || (result as unknown as Patient[]) || [];
             setPatients(data as Patient[]);
         } catch (err) {
             console.error('Load patients error:', err);
