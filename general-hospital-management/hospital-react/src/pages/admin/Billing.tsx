@@ -17,13 +17,13 @@ export default function BillingPage() {
         })();
     }, []);
 
-    const handleExportPdf = async (id: number) => {
-        try { const blob = await billingApi.exportPdf(id); downloadBlob(blob, `hoadon_${id}.pdf`); }
+    const handleExportPdf = async (id: string) => {
+        try { const blob = await billingApi.exportPdf(id); downloadBlob(blob, `hoadon_${id.substring(0,8)}.pdf`); }
         catch { alert('Xuất PDF thất bại'); }
     };
 
-    const handleExportExcel = async (id: number) => {
-        try { const blob = await billingApi.exportExcel(id); downloadBlob(blob, `hoadon_${id}.xlsx`); }
+    const handleExportExcel = async (id: string) => {
+        try { const blob = await billingApi.exportExcel(id); downloadBlob(blob, `hoadon_${id.substring(0,8)}.xlsx`); }
         catch { alert('Xuất Excel thất bại'); }
     };
 
@@ -39,8 +39,8 @@ export default function BillingPage() {
                         <thead><tr><th>ID</th><th>Bệnh nhân</th><th>Tổng tiền</th><th>BHYT chi trả</th><th>Còn phải trả</th><th>Ngày tạo</th><th>Trạng thái</th><th>Xuất</th></tr></thead>
                         <tbody>{invoices.map(inv => (
                             <tr key={inv.id}>
-                                <td>{inv.id}</td><td>{inv.tenBenhNhan}</td><td>{formatCurrency(inv.tongTien)}</td><td>{formatCurrency(inv.bhytChiTra)}</td>
-                                <td>{formatCurrency(inv.conPhaiTra)}</td><td>{formatDate(inv.ngayTao)}</td>
+                                <td>{inv.id.substring(0,8)}...</td><td>{inv.tenBenhNhan}</td><td>{formatCurrency(inv.tongTien)}</td><td>{formatCurrency(inv.baoHiemChiTra)}</td>
+                                <td>{formatCurrency(inv.benhNhanThanhToan)}</td><td>{formatDate(inv.ngay || '')}</td>
                                 <td><span className={`status-badge badge-${inv.trangThai === 'Đã thanh toán' ? 'success' : 'warning'}`}>{inv.trangThai}</span></td>
                                 <td><div className="action-btns">{canExport && (<>
                                     <button className="btn-action btn-view" onClick={() => handleExportPdf(inv.id)}>PDF</button>

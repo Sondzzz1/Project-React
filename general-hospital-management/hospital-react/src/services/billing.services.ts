@@ -4,14 +4,17 @@ import { ENDPOINTS } from '../constant/api';
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
 export interface Invoice {
-    id: number;
-    benhNhanId: number;
+    id: string;
+    benhNhanId: string;
+    nhapVienId?: string;
     tenBenhNhan: string;
     tongTien: number;
-    bhytChiTra: number;
-    conPhaiTra: number;
-    ngayTao: string;
-    trangThai: 'Đã thanh toán' | 'Chưa thanh toán';
+    baoHiemChiTra: number;
+    benhNhanThanhToan: number;
+    ngay: string;
+    ngayNhapVien?: string;
+    ngayXuatVien?: string;
+    trangThai: string;
 }
 
 export interface PaymentRequest {
@@ -25,22 +28,22 @@ export const getInvoices = async (): Promise<Invoice[]> => {
     return response.data;
 };
 
-export const getInvoiceById = async (id: number): Promise<Invoice> => {
+export const getInvoiceById = async (id: string): Promise<Invoice> => {
     const response = await axiosInstance.get<Invoice>(`${ENDPOINTS.BILLING}/chi-tiet/${id}`);
     return response.data;
 };
 
-export const exportInvoicePdf = async (id: number): Promise<Blob> => {
+export const exportInvoicePdf = async (id: string): Promise<Blob> => {
     const response = await axiosInstance.get<Blob>(`${ENDPOINTS.BILLING}/export-pdf/${id}`, { responseType: 'blob' });
     return response.data;
 };
 
-export const exportInvoiceExcel = async (id: number): Promise<Blob> => {
+export const exportInvoiceExcel = async (id: string): Promise<Blob> => {
     const response = await axiosInstance.get<Blob>(`${ENDPOINTS.BILLING}/export-excel/${id}`, { responseType: 'blob' });
     return response.data;
 };
 
-export const payInvoice = async (id: number, paymentData: PaymentRequest): Promise<Invoice> => {
+export const payInvoice = async (id: string, paymentData: PaymentRequest): Promise<Invoice> => {
     const response = await axiosInstance.put<Invoice>(`${ENDPOINTS.BILLING}/thanh-toan`, { id, ...paymentData });
     return response.data;
 };
