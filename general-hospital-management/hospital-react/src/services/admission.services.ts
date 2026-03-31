@@ -43,8 +43,9 @@ export interface TransferBedRequest {
 
 // GET /api/nhapvien/danh-sach
 export const getAdmissions = async (): Promise<Admission[]> => {
-    const response = await axiosInstance.get<Admission[]>(`${ENDPOINTS.ADMISSION}/danh-sach`);
-    return response.data;
+    const response = await axiosInstance.get<{ success: boolean; data: Admission[] }>(`${ENDPOINTS.ADMISSION}/danh-sach`);
+    // API trả về { success: true, data: [] }
+    return response.data.data || [];
 };
 
 // GET /api/nhapvien/chi-tiet/{id}
@@ -67,12 +68,12 @@ export const updateAdmission = async (data: UpdateAdmissionRequest): Promise<{ m
 
 // PUT /api/nhapvien/chuyen-giuong
 export const transferBed = async (nhapVienId: string, giuongMoiId: string, lyDoChuyenGiuong: string): Promise<{ message: string }> => {
-    const response = await axiosInstance.put<{ message: string }>(`${ENDPOINTS.ADMISSION}/chuyen-giuong`, {
+    const response = await axiosInstance.put<{ success: boolean; message: string }>(`${ENDPOINTS.ADMISSION}/chuyen-giuong`, {
         nhapVienId,
         giuongMoiId,
         lyDoChuyenGiuong,
     });
-    return response.data;
+    return { message: response.data.message };
 };
 
 // DELETE /api/nhapvien/xoa/{id}

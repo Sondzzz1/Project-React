@@ -16,8 +16,9 @@ export interface Nurse {
 // ─── Service Functions ──────────────────────────────────────────────────────────
 
 export const getNurses = async (): Promise<ApiResponse<Nurse[]>> => {
-    const response = await axiosInstance.get<ApiResponse<Nurse[]>>(`${ENDPOINTS.NURSE}/get-all`);
-    return response.data;
+    const response = await axiosInstance.get<Nurse[]>(`${ENDPOINTS.NURSE}/get-all`);
+    // API trả về array trực tiếp, không có wrapper
+    return { data: response.data, success: true };
 };
 
 export const getNurseById = async (id: number): Promise<ApiResponse<Nurse>> => {

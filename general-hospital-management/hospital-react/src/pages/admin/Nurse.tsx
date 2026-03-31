@@ -23,14 +23,29 @@ export default function NursePage() {
                 departmentApi.getAll()
             ]);
             
-            setNurses(nursesRes.status === 'fulfilled'
-                ? (nursesRes.value.data || [])
-                : []);
-            setDepartments(deptRes.status === 'fulfilled'
-                ? ((deptRes.value as { data?: Department[] })?.data || (deptRes.value as Department[]) || [])
-                : []);
+            console.log('Nurses Response:', nursesRes);
+            console.log('Departments Response:', deptRes);
+            
+            if (nursesRes.status === 'fulfilled') {
+                const data = nursesRes.value.data || [];
+                console.log('Nurses data:', data);
+                setNurses(data);
+            } else {
+                console.error('Nurses error:', nursesRes.reason);
+                setNurses([]);
+            }
+            
+            if (deptRes.status === 'fulfilled') {
+                const data = deptRes.value;
+                const departments = (data as { data?: Department[] })?.data || (Array.isArray(data) ? data : []);
+                console.log('Departments data:', departments);
+                setDepartments(departments);
+            } else {
+                console.error('Departments error:', deptRes.reason);
+                setDepartments([]);
+            }
         } catch (e) {
-            console.error(e);
+            console.error('Load data error:', e);
         } finally {
             setLoading(false);
         }

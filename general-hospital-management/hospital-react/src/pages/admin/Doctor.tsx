@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { doctorApi, Doctor, departmentApi, Department } from '../../services';
 import { usePermissions } from '../../hooks/usePermissions';
+import Pagination from '../../components/common/Pagination';
 import '../../assets/css/admin/admin.css';
 
 export default function DoctorPage() {
@@ -13,6 +14,11 @@ export default function DoctorPage() {
     const [formData, setFormData] = useState<Partial<Doctor>>({});
     const [saving, setSaving] = useState<boolean>(false);
     const [error, setError] = useState<string>('');
+    
+    // Pagination
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const [pageSize, setPageSize] = useState<number>(10);
+    
     const { canAdd, canEdit, canDelete } = usePermissions();
 
     const loadData = useCallback(async () => {
@@ -52,6 +58,11 @@ export default function DoctorPage() {
         (d.hoTen || '').toLowerCase().includes(search.toLowerCase()) ||
         (d.chuyenKhoa || '').toLowerCase().includes(search.toLowerCase())
     );
+
+    const totalPages = Math.ceil(filtered.length / pageSize);
+    const paginated = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
+    useEffect(() => { setCurrentPage(1); }, [search]);
 
     const openModal = (doctor: Doctor | null = null) => {
         setEditingDoctor(doctor);
@@ -125,20 +136,21 @@ export default function DoctorPage() {
                         <p>Chưa có dữ liệu bác sĩ</p>
                     </div>
                 ) : (
-                    <table className="data-table">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Họ tên</th>
-                                <th>Chuyên khoa</th>
-                                <th>Khoa</th>
-                                <th>SĐT</th>
-                                <th>Email</th>
-                                <th>Thao tác</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {filtered.map(d => (
+                    <>
+                        <table className="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Họ tên</th>
+                                    <th>Chuyên khoa</th>
+                                    <th>Khoa</th>
+                                    <th>SĐT</th>
+                                    <th>Email</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {paginated.map(d => (
                                 <tr key={d.id}>
                                     <td>{d.id}</td>
                                     <td><strong>{d.hoTen}</strong></td>
@@ -170,6 +182,15 @@ export default function DoctorPage() {
                             ))}
                         </tbody>
                     </table>
+                    <Pagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        totalItems={filtered.length}
+                        pageSize={pageSize}
+                        onPageChange={setCurrentPage}
+                        onPageSizeChange={(size) => { setPageSize(size); setCurrentPage(1); }}
+                    />
+                </>
                 )}
             </div>
 

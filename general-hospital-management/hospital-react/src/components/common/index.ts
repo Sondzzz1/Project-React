@@ -4,4 +4,5 @@ export { Loading } from './Loading';
 export { Modal } from './Modal';
 export { Table } from './Table';
 export { default as ProtectedRoute } from './ProtectedRoute';
+export { default as Pagination } from './Pagination';
 //Update Sơn
