@@ -12,7 +12,7 @@ export function usePermissions() {
         dashboard: false, appointments: false, patients: false, beds: false,
         surgery: false, records: false, doctors: false, nurses: false,
         admissions: false, billing: false, reports: false, audit: false,
-        settings: false, canAdd: false, canEdit: false, canDelete: false, canExport: false,
+        settings: false, profile: false, canAdd: false, canEdit: false, canDelete: false, canExport: false,
     };
 
     const hasPermission = (feature: keyof Permission): boolean => {

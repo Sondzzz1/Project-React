@@ -25,17 +25,17 @@ export default function DashboardPage() {
     const loadStats = async (): Promise<void> => {
         try {
             const [patients, beds, doctors, nurses] = await Promise.allSettled([
-                patientApi.getAll() as Promise<Patient[]>,
-                bedApi.getAll() as Promise<Bed[]>,
-                doctorApi.getAll() as Promise<Doctor[]>,
-                nurseApi.getAll() as Promise<Nurse[]>,
+                patientApi.getAll(),
+                bedApi.getAll(),
+                doctorApi.getAll(),
+                nurseApi.getAll(),
             ]);
 
             setStats({
-                patients: patients.status === 'fulfilled' ? (patients.value as Patient[]).length : 0,
-                beds: beds.status === 'fulfilled' ? (beds.value as Bed[]).length : 0,
-                doctors: doctors.status === 'fulfilled' ? (doctors.value as Doctor[]).length : 0,
-                nurses: nurses.status === 'fulfilled' ? (nurses.value as Nurse[]).length : 0,
+                patients: patients.status === 'fulfilled' ? (patients.value.data?.length || 0) : 0,
+                beds: beds.status === 'fulfilled' ? (beds.value?.length || 0) : 0,
+                doctors: doctors.status === 'fulfilled' ? (doctors.value.data?.length || 0) : 0,
+                nurses: nurses.status === 'fulfilled' ? (nurses.value.data?.length || 0) : 0,
             });
         } catch (err) {
             console.error('Failed to load stats:', err);

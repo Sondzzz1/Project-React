@@ -11,7 +11,7 @@ export default function NursePage() {
 
     useEffect(() => {
         (async () => {
-            try { const r = await nurseApi.getAll(); setNurses((r as { data?: Nurse[] })?.data || (r as Nurse[]) || []); }
+            try { const r = await nurseApi.getAll(); setNurses(r.data || []); }
             catch (e) { console.error(e); } finally { setLoading(false); }
         })();
     }, []);

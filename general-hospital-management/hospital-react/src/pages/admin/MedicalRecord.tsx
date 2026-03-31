@@ -12,7 +12,7 @@ export default function MedicalRecordPage() {
 
     useEffect(() => {
         (async () => {
-            try { const r = await medicalRecordApi.getAll(); setRecords((r as { data?: MedicalRecord[] })?.data || (r as MedicalRecord[]) || []); }
+            try { const r = await medicalRecordApi.getAll(); setRecords(r.data || []); }
             catch (e) { console.error(e); } finally { setLoading(false); }
         })();
     }, []);
