@@ -12,7 +12,7 @@ export default function AdmissionPage() {
 
     useEffect(() => {
         (async () => {
-            try { const r = await admissionApi.getAll(); setAdmissions((r as { data?: Admission[] })?.data || (r as Admission[]) || []); }
+            try { const r = await admissionApi.getAll(); setAdmissions(r || []); }
             catch (e) { console.error(e); } finally { setLoading(false); }
         })();
     }, []);

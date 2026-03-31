@@ -25,6 +25,7 @@ export const ENDPOINTS = {
     MEDICAL_RECORD: '/medicalrecord',
     LABTEST: '/labtest',
     BILLING: '/hoadon',
+    APPOINTMENT: '/appointment',
 
     // Admin
     USER_MANAGEMENT: '/usermanagement',

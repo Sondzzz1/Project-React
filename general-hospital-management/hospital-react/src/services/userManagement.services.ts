@@ -48,7 +48,7 @@ export const deleteUser = async (id: string): Promise<void> => {
     await axiosInstance.delete(`${USER_URL}/${id}`);
 };
 
-export const resetPassword = async (userId: string): Promise<void> => {
+export const resetUserPassword = async (userId: string): Promise<void> => {
     await axiosInstance.post(`${USER_URL}/reset-password`, { id: userId });
 };
 
@@ -57,5 +57,5 @@ export const assignRole = async (userId: string, roleId: string): Promise<void> 
 };
 
 // Legacy object export
-export const userManagementApi = { getAll: getUsers, getById: getUserById, create: createUser, update: updateUser, delete: deleteUser, resetPassword, assignRole };
+export const userManagementApi = { getAll: getUsers, getById: getUserById, create: createUser, update: updateUser, delete: deleteUser, resetPassword: resetUserPassword, assignRole };
 export default userManagementApi;

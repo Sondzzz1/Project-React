@@ -1,5 +1,6 @@
 import { useState, FormEvent } from 'react';
 import { Link } from 'react-router-dom';
+import { appointmentApi } from '../../services';
 import './AppointmentPage.css';
 
 interface AppointmentForm {
@@ -50,12 +51,42 @@ export default function AppointmentPage() {
         khoaKham: '', bacSi: '', ngayKham: '', gioKham: '', trieuChung: '', bhyt: '',
     });
     const [submitted, setSubmitted] = useState<boolean>(false);
+    const [submitting, setSubmitting] = useState<boolean>(false);
+    const [error, setError] = useState<string>('');
 
     const availableDoctors = form.khoaKham ? (doctorsByDept[form.khoaKham] || []) : [];
 
-    const handleSubmit = (e: FormEvent) => {
+    const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        setSubmitted(true);
+        setSubmitting(true);
+        setError('');
+        
+        try {
+            const result = await appointmentApi.create({
+                hoTen: form.hoTen,
+                soDienThoai: form.soDienThoai,
+                email: form.email || undefined,
+                ngaySinh: form.ngaySinh || undefined,
+                gioiTinh: form.gioiTinh || undefined,
+                khoaKham: form.khoaKham,
+                bacSiId: form.bacSi || undefined,
+                ngayKham: form.ngayKham,
+                gioKham: form.gioKham,
+                trieuChung: form.trieuChung || undefined,
+                soTheBaoHiem: form.bhyt || undefined,
+            });
+            
+            if (result.success) {
+                setSubmitted(true);
+            } else {
+                setError(result.message || 'Đặt lịch thất bại');
+            }
+        } catch (err: unknown) {
+            const axiosErr = err as { response?: { data?: { message?: string } } };
+            setError(axiosErr.response?.data?.message || 'Có lỗi xảy ra khi đặt lịch');
+        } finally {
+            setSubmitting(false);
+        }
     };
 
     const nextStep = () => { if (currentStep < 4) setCurrentStep(currentStep + 1); };
@@ -77,6 +108,7 @@ export default function AppointmentPage() {
                         <div className="appt-success-icon">🎉</div>
                         <h2>Đặt lịch thành công!</h2>
                         <p>Cảm ơn bạn đã đặt lịch khám tại Bệnh viện Hoàn Mỹ.</p>
+                        <p className="appt-note">📱 Xác nhận đã được gửi qua SĐT <strong>{form.soDienThoai}</strong></p>
                         <div className="appt-summary-card">
                             <div className="appt-sum-row"><span>Họ tên:</span><strong>{form.hoTen}</strong></div>
                             <div className="appt-sum-row"><span>Khoa:</span><strong>{departments.find(d => d.id === form.khoaKham)?.name}</strong></div>
@@ -84,7 +116,9 @@ export default function AppointmentPage() {
                             <div className="appt-sum-row"><span>Ngày khám:</span><strong>{form.ngayKham}</strong></div>
                             <div className="appt-sum-row"><span>Giờ khám:</span><strong>{form.gioKham}</strong></div>
                         </div>
-                        <p className="appt-note">📱 Xác nhận sẽ được gửi qua SĐT <strong>{form.soDienThoai}</strong></p>
+                        <p style={{ marginTop: '1rem', fontSize: '0.9rem', color: '#64748b' }}>
+                            💡 Vui lòng mang theo CCCD/CMND và thẻ BHYT (nếu có) khi đến khám
+                        </p>
                         <Link to="/" className="appt-back-btn">← Về trang chủ</Link>
                     </div>
                 </div>
@@ -111,6 +145,18 @@ export default function AppointmentPage() {
                 </div>
 
                 <form className="appt-form" onSubmit={handleSubmit}>
+                    {error && (
+                        <div style={{ 
+                            padding: '1rem', 
+                            background: '#fee2e2', 
+                            color: '#991b1b', 
+                            borderRadius: '8px', 
+                            marginBottom: '1rem' 
+                        }}>
+                            {error}
+                        </div>
+                    )}
+                    
                     {/* Step 1: Choose Department & Doctor */}
                     {currentStep === 1 && (
                         <div className="appt-step-content">
@@ -216,7 +262,9 @@ export default function AppointmentPage() {
                         {currentStep < 4 ? (
                             <button type="button" className="appt-nav-btn appt-btn-next" onClick={nextStep} disabled={!canNext()}>Tiếp theo →</button>
                         ) : (
-                            <button type="submit" className="appt-nav-btn appt-btn-submit">✅ Xác nhận đặt lịch</button>
+                            <button type="submit" className="appt-nav-btn appt-btn-submit" disabled={submitting}>
+                                {submitting ? '⏳ Đang xử lý...' : '✅ Xác nhận đặt lịch'}
+                            </button>
                         )}
                     </div>
                 </form>

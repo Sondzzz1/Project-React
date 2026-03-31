@@ -1,7 +1,7 @@
 /**
  * Services Barrel — Single import point for all services
  * Usage: import { patientApi, doctorApi } from '../services';
- */
+*/
 
 export * from './auth.services';
 export { default as authApi } from './auth.services';
@@ -47,3 +47,6 @@ export { default as labTestApi } from './labtest.services';
 
 export * from './bhyt.services';
 export { default as bhytApi } from './bhyt.services';
+
+export * from './appointment.services';
+export { default as appointmentApi } from './appointment.services';
