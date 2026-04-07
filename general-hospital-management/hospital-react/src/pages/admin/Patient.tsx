@@ -231,7 +231,10 @@ export default function PatientPage() {
                                 <div style={{ display: 'flex', gap: '0.5rem' }}>
                                     <input 
                                         value={formData.soTheBaoHiem || ''} 
-                                        onChange={e => setFormData({ ...formData, soTheBaoHiem: e.target.value })}
+                                        onChange={e => {
+                                            const value = e.target.value.toUpperCase();
+                                            setFormData({ ...formData, soTheBaoHiem: value });
+                                        }}
                                         placeholder="VD: DN4010012345678"
                                         style={{ flex: 1 }}
                                     />
@@ -247,6 +250,9 @@ export default function PatientPage() {
                                     >
                                         {checkingBHYT ? '⏳ Đang kiểm tra...' : '🔍 Kiểm tra'}
                                     </button>
+                                </div>
+                                <div style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '0.25rem' }}>
+                                    📝 Nhập số thẻ BHYT. VD: DN4010012345678 (chuẩn 15 ký tự) hoặc DN4087385
                                 </div>
                             </div>
 
