@@ -23,7 +23,7 @@ export default function BillingPage() {
     });
     const { canExport, canEdit } = usePermissions();
 
-    const loadInvoices = async () => {
+    const loadInvoices = useCallback(async () => {
         try {
             setLoading(true);
             const r = await billingApi.getAll();
@@ -33,9 +33,9 @@ export default function BillingPage() {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
 
-    useEffect(() => { loadInvoices(); }, []);
+    useEffect(() => { loadInvoices(); }, [loadInvoices]);
 
     const filtered = invoices.filter(inv =>
         !search ||
@@ -214,16 +214,21 @@ export default function BillingPage() {
                         </div>
 
                         {/* BHYT Calculator Button */}
-                        <div style={{ marginBottom: '1rem' }}>
-                            <button
-                                type="button"
-                                className="btn-save"
-                                onClick={openBHYTCalculator}
-                                style={{ width: '100%', background: '#0284c7' }}
-                            >
-                                🧮 Tính toán chi phí BHYT
-                            </button>
-                        </div>
+                        {selectedInvoice.benhNhanId && (
+                            <div style={{ marginBottom: '1rem' }}>
+                                <button
+                                    type="button"
+                                    className="btn-save"
+                                    onClick={openBHYTCalculator}
+                                    style={{ width: '100%', background: '#0284c7' }}
+                                >
+                                    🧮 Tính toán chi phí BHYT
+                                </button>
+                                <div style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '0.5rem', textAlign: 'center' }}>
+                                    ⚠️ Chỉ áp dụng nếu bệnh nhân có thẻ BHYT hợp lệ
+                                </div>
+                            </div>
+                        )}
 
                         {bhytResult && (
                             <div style={{ 
@@ -316,6 +321,24 @@ export default function BillingPage() {
                         <h2>🧮 Tính toán chi phí BHYT</h2>
                         
                         <div style={{ 
+                            background: '#fef3c7', 
+                            padding: '1rem', 
+                            borderRadius: '8px',
+                            marginBottom: '1rem',
+                            border: '1px solid #fbbf24'
+                        }}>
+                            <div style={{ color: '#92400e', fontSize: '0.9rem', lineHeight: '1.6' }}>
+                                <strong>⚠️ Lưu ý:</strong> BHYT chỉ chi trả khi:
+                                <ul style={{ margin: '0.5rem 0 0 1.5rem', paddingLeft: 0 }}>
+                                    <li>Thẻ BHYT còn hạn</li>
+                                    <li>Dịch vụ thuộc phạm vi BHYT</li>
+                                    <li>Thuốc trong danh mục BHYT</li>
+                                    <li>Không vượt hạn mức chi trả</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div style={{ 
                             background: '#f0f9ff', 
                             padding: '1rem', 
                             borderRadius: '8px',
@@ -355,7 +378,7 @@ export default function BillingPage() {
                                 <span>Trường hợp cấp cứu</span>
                             </label>
                             <div style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '0.25rem', marginLeft: '1.5rem' }}>
-                                Bệnh nhân nhập viện trong tình trạng cấp cứu
+                                Bệnh nhân nhập viện trong tình trạng cấp cứu (được hưởng 100%)
                             </div>
                         </div>
 
@@ -370,19 +393,19 @@ export default function BillingPage() {
                                 <span>Có giấy chuyển viện</span>
                             </label>
                             <div style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '0.25rem', marginLeft: '1.5rem' }}>
-                                Bệnh nhân được chuyển từ bệnh viện khác
+                                Bệnh nhân được chuyển từ bệnh viện khác (được hưởng 100%)
                             </div>
                         </div>
 
                         <div style={{ 
-                            background: '#fef3c7', 
+                            background: '#fee2e2', 
                             padding: '0.75rem', 
                             borderRadius: '6px',
                             fontSize: '0.9rem',
-                            color: '#92400e',
+                            color: '#991b1b',
                             marginTop: '1rem'
                         }}>
-                            💡 <strong>Lưu ý:</strong> Tỷ lệ hưởng BHYT phụ thuộc vào tuyến khám, trường hợp cấp cứu và giấy chuyển viện.
+                            💡 <strong>Quan trọng:</strong> Nếu không thuộc các trường hợp trên, BHYT chỉ chi trả 50% (trái tuyến).
                         </div>
 
                         <div className="modal-actions">

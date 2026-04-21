@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { patientApi, Patient } from '../../services';
 import { doctorApi, Doctor } from '../../services';
 import { bedApi, Bed } from '../../services';
@@ -18,11 +18,7 @@ export default function DashboardPage() {
     const [stats, setStats] = useState<DashStats>({ patients: 0, beds: 0, doctors: 0, nurses: 0 });
     const [loading, setLoading] = useState<boolean>(true);
 
-    useEffect(() => {
-        loadStats();
-    }, []);
-
-    const loadStats = async (): Promise<void> => {
+    const loadStats = useCallback(async (): Promise<void> => {
         try {
             const [patients, beds, doctors, nurses] = await Promise.allSettled([
                 patientApi.getAll(),
@@ -42,7 +38,9 @@ export default function DashboardPage() {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
+
+    useEffect(() => { loadStats(); }, [loadStats]);
 
     const dashCards = [
         { icon: '🏥', label: 'Bệnh nhân', value: stats.patients, color: '#2196c8' },

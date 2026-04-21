@@ -15,11 +15,7 @@ export default function LabTestPage() {
     const [error, setError] = useState<string>('');
     const { canAdd, canEdit, canDelete } = usePermissions();
 
-    useEffect(() => {
-        loadLabTests();
-    }, []);
-
-    const loadLabTests = async () => {
+    const loadLabTests = useCallback(async () => {
         try {
             setLoading(true);
             const response = await labTestApi.getAll();
@@ -31,7 +27,9 @@ export default function LabTestPage() {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
+
+    useEffect(() => { loadLabTests(); }, [loadLabTests]);
 
     const openModal = (test: LabTest | null = null) => {
         setEditingTest(test);
