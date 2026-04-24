@@ -22,7 +22,7 @@ export default function BedPage() {
             const [bedsRes, deptRes] = await Promise.allSettled([bedApi.getAll(), departmentApi.getAll()]);
             setBeds(bedsRes.status === 'fulfilled' ? ((bedsRes.value as { data?: Bed[] })?.data || (bedsRes.value as Bed[]) || []) : []);
             setDepartments(deptRes.status === 'fulfilled' ? ((deptRes.value as { data?: Department[] })?.data || (deptRes.value as Department[]) || []) : []);
-        } catch (err) { console.error(err); } finally { setLoading(false); }
+        } catch (err) { console.error(err); alert('Lỗi khi tải danh sách giường bệnh, vui lòng thử lại!'); } finally { setLoading(false); }
     }, []);
 
     useEffect(() => { loadData(); }, [loadData]);

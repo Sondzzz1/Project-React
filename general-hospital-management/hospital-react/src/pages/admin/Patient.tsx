@@ -34,6 +34,7 @@ export default function PatientPage() {
             setPatients(data as Patient[]);
         } catch (err) {
             console.error('Load patients error:', err);
+            alert('Lỗi khi tải danh sách bệnh nhân, vui lòng thử lại!');
             setPatients([]);
         } finally {
             setLoading(false);

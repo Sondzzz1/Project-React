@@ -23,6 +23,7 @@ export default function LabTestPage() {
             setLabTests(data);
         } catch (err) {
             console.error('Load lab tests error:', err);
+            alert('Lỗi khi tải danh sách xét nghiệm, vui lòng thử lại!');
             setLabTests([]);
         } finally {
             setLoading(false);
