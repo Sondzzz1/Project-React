@@ -21,6 +21,14 @@ export interface PaymentRequest {
     phuongThucThanhToan?: string;
 }
 
+export interface InvoiceCreateRequest {
+    nhapVienId: string;
+    tongTien: number;
+    baoHiemChiTra: number;
+    benhNhanThanhToan: number;
+    dienGiai?: string;
+}
+
 // ─── Service Functions ──────────────────────────────────────────────────────────
 
 export const getInvoices = async (): Promise<Invoice[]> => {
@@ -48,6 +56,30 @@ export const payInvoice = async (id: string, paymentData: PaymentRequest): Promi
     return response.data;
 };
 
+export const getPreview = async (nhapVienId: string): Promise<any> => {
+    const response = await axiosInstance.get<{ success: boolean; data: any }>(`${ENDPOINTS.BILLING}/xem-truoc/${nhapVienId}`);
+    return response.data.data;
+};
+
+export const createInvoice = async (invoiceData: InvoiceCreateRequest): Promise<{ message: string }> => {
+    const response = await axiosInstance.post<{ success: boolean; message: string }>(`${ENDPOINTS.BILLING}/tao-moi`, invoiceData);
+    return response.data;
+};
+
+export const deleteInvoice = async (id: string): Promise<{ message: string }> => {
+    const response = await axiosInstance.delete<{ success: boolean; message: string }>(`${ENDPOINTS.BILLING}/xoa/${id}`);
+    return response.data;
+};
+
 // Legacy object export
-export const billingApi = { getAll: getInvoices, getById: getInvoiceById, exportPdf: exportInvoicePdf, exportExcel: exportInvoiceExcel, pay: payInvoice };
+export const billingApi = { 
+    getAll: getInvoices, 
+    getById: getInvoiceById, 
+    exportPdf: exportInvoicePdf, 
+    exportExcel: exportInvoiceExcel, 
+    pay: payInvoice,
+    getPreview,
+    create: createInvoice,
+    delete: deleteInvoice
+};
 export default billingApi;

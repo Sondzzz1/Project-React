@@ -21,7 +21,14 @@ export default function BillingPage() {
         laCapCuu: false,
         coGiayChuyenVien: false
     });
-    const { canExport, canEdit } = usePermissions();
+    
+    // Create Invoice state
+    const [showCreateModal, setShowCreateModal] = useState<boolean>(false);
+    const [nhapVienId, setNhapVienId] = useState<string>('');
+    const [previewData, setPreviewData] = useState<any>(null);
+    const [creating, setCreating] = useState<boolean>(false);
+    
+    const { canExport, canEdit, canDelete } = usePermissions();
 
     const loadInvoices = useCallback(async () => {
         try {
@@ -115,6 +122,50 @@ export default function BillingPage() {
         }
     };
 
+    const handlePreview = async () => {
+        if (!nhapVienId) return alert('Vui lòng nhập ID Nhập viện');
+        try {
+            const data = await billingApi.getPreview(nhapVienId);
+            setPreviewData(data);
+        } catch (err: any) {
+            alert(err.response?.data?.message || 'Không tìm thấy thông tin để gợi ý');
+            setPreviewData(null);
+        }
+    };
+
+    const handleCreateInvoice = async () => {
+        if (!previewData) return;
+        setCreating(true);
+        try {
+            await billingApi.create({
+                nhapVienId,
+                tongTien: previewData.tongTien,
+                baoHiemChiTra: previewData.baoHiemChiTra,
+                benhNhanThanhToan: previewData.benhNhanThanhToan
+            });
+            alert('Tạo hóa đơn thành công');
+            setShowCreateModal(false);
+            setNhapVienId('');
+            setPreviewData(null);
+            loadInvoices();
+        } catch (err: any) {
+            alert(err.response?.data?.message || 'Tạo hóa đơn thất bại');
+        } finally {
+            setCreating(false);
+        }
+    };
+
+    const handleDelete = async (id: string) => {
+        if (!window.confirm('Bạn có chắc chắn muốn xóa hóa đơn này?')) return;
+        try {
+            await billingApi.delete(id);
+            alert('Xóa thành công');
+            loadInvoices();
+        } catch (err: any) {
+            alert(err.response?.data?.message || 'Xóa thất bại');
+        }
+    };
+
     return (
         <div className="admin-page">
             <div className="page-header">
@@ -129,6 +180,13 @@ export default function BillingPage() {
                         value={search}
                         onChange={e => setSearch(e.target.value)}
                     />
+                </div>
+                <div className="toolbar-right">
+                    {canEdit && (
+                        <button className="btn-add" onClick={() => setShowCreateModal(true)}>
+                            + Tạo hóa đơn
+                        </button>
+                    )}
                 </div>
             </div>
             <div className="data-table-wrap">
@@ -170,13 +228,23 @@ export default function BillingPage() {
                                     <td>
                                         <div className="action-btns">
                                             {inv.trangThai === 'Chưa thanh toán' && canEdit && (
-                                                <button
-                                                    className="btn-action btn-edit"
-                                                    onClick={() => openPaymentModal(inv)}
-                                                    style={{ background: '#059669' }}
-                                                >
-                                                    💳 Thanh toán
-                                                </button>
+                                                <>
+                                                    <button
+                                                        className="btn-action btn-edit"
+                                                        onClick={() => openPaymentModal(inv)}
+                                                        style={{ background: '#059669' }}
+                                                    >
+                                                        💳 Thanh toán
+                                                    </button>
+                                                    {(canDelete || true) && (
+                                                        <button
+                                                            className="btn-action btn-delete"
+                                                            onClick={() => handleDelete(inv.id)}
+                                                        >
+                                                            Xóa
+                                                        </button>
+                                                    )}
+                                                </>
                                             )}
                                             {canExport && (
                                                 <>
@@ -308,6 +376,61 @@ export default function BillingPage() {
                                 style={{ background: '#059669' }}
                             >
                                 {paying ? 'Đang xử lý...' : '💳 Xác nhận thanh toán'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Create Invoice Modal */}
+            {showCreateModal && (
+                <div className="modal-overlay" onClick={() => setShowCreateModal(false)}>
+                    <div className="modal-box" onClick={e => e.stopPropagation()}>
+                        <h2>Tạo hóa đơn mới</h2>
+                        
+                        <div className="form-group">
+                            <label>ID Nhập viện *</label>
+                            <div style={{ display: 'flex', gap: '8px' }}>
+                                <input 
+                                    value={nhapVienId} 
+                                    onChange={e => setNhapVienId(e.target.value)} 
+                                    placeholder="Nhập ID nhập viện..."
+                                    style={{ flex: 1 }}
+                                />
+                                <button className="btn-save" onClick={handlePreview} style={{ background: '#0284c7', width: 'auto', padding: '0 1rem' }}>
+                                    Xem trước
+                                </button>
+                            </div>
+                        </div>
+
+                        {previewData && (
+                            <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '8px', border: '1px solid #e2e8f0', marginBottom: '1rem' }}>
+                                <h3 style={{ margin: '0 0 10px 0', fontSize: '1rem', color: '#0f172a' }}>Chi tiết dự kiến</h3>
+                                <div style={{ display: 'grid', gap: '8px', fontSize: '0.95rem' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                        <span>Bệnh nhân:</span> <strong>{previewData.tenBenhNhan}</strong>
+                                    </div>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                        <span>Tổng chi phí:</span> <strong>{formatCurrency(previewData.tongTien)}</strong>
+                                    </div>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                        <span>BHYT chi trả:</span> <strong style={{ color: '#059669' }}>{formatCurrency(previewData.baoHiemChiTra)}</strong>
+                                    </div>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '8px', borderTop: '1px solid #cbd5e1' }}>
+                                        <span>Bệnh nhân trả:</span> <strong style={{ color: '#dc2626', fontSize: '1.1rem' }}>{formatCurrency(previewData.benhNhanThanhToan)}</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        <div className="modal-actions">
+                            <button className="btn-cancel" onClick={() => setShowCreateModal(false)}>Hủy</button>
+                            <button 
+                                className="btn-save" 
+                                onClick={handleCreateInvoice} 
+                                disabled={!previewData || creating}
+                            >
+                                {creating ? 'Đang tạo...' : 'Tạo hóa đơn'}
                             </button>
                         </div>
                     </div>
