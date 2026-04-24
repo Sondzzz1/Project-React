@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { bedApi, Bed, CreateBedRequest, departmentApi, Department } from '../../services';
 import { usePermissions } from '../../hooks/usePermissions';
 import { getStatusColor } from '../../utils/formatters';
+import { extractArrayData } from '../../utils/helpers';
 import '../../assets/css/admin/admin.css';
 
 export default function BedPage() {
@@ -20,8 +21,8 @@ export default function BedPage() {
         try {
             setLoading(true);
             const [bedsRes, deptRes] = await Promise.allSettled([bedApi.getAll(), departmentApi.getAll()]);
-            setBeds(bedsRes.status === 'fulfilled' ? ((bedsRes.value as { data?: Bed[] })?.data || (bedsRes.value as Bed[]) || []) : []);
-            setDepartments(deptRes.status === 'fulfilled' ? ((deptRes.value as { data?: Department[] })?.data || (deptRes.value as Department[]) || []) : []);
+            setBeds(bedsRes.status === 'fulfilled' ? extractArrayData<Bed>(bedsRes.value) : []);
+            setDepartments(deptRes.status === 'fulfilled' ? extractArrayData<Department>(deptRes.value) : []);
         } catch (err) { console.error(err); alert('Lỗi khi tải danh sách giường bệnh, vui lòng thử lại!'); } finally { setLoading(false); }
     }, []);
 
@@ -33,7 +34,7 @@ export default function BedPage() {
 
     const openModal = (bed: Bed | null = null) => {
         setEditingBed(bed);
-        setFormData(bed ? { ...bed } : { maGiuong: '', tenGiuong: '', khoaId: '', loaiGiuong: 'Thường', giaGiuong: 0, trangThai: 'Trống' });
+        setFormData(bed ? { ...bed } : { maGiuong: `GB${Math.floor(1000 + Math.random() * 9000)}`, tenGiuong: '', khoaId: '', loaiGiuong: 'Thường', giaGiuong: undefined as any, trangThai: 'Trống' });
         setError('');
         setShowModal(true);
     };
@@ -107,7 +108,16 @@ export default function BedPage() {
                             </div>
                         </div>
                         <div className="form-row">
-                            <div className="form-group"><label>Giá giường</label><input type="number" value={formData.giaGiuong || 0} onChange={e => setFormData({ ...formData, giaGiuong: Number(e.target.value) })} /></div>
+                            <div className="form-group">
+                                <label>Giá giường (VNĐ)</label>
+                                <input 
+                                    type="number" 
+                                    value={formData.giaGiuong || ''} 
+                                    onChange={e => setFormData({ ...formData, giaGiuong: e.target.value ? Number(e.target.value) : undefined as any })} 
+                                    placeholder="Ví dụ: 150000"
+                                />
+                                {formData.giaGiuong ? <div style={{ fontSize: '0.85rem', color: '#059669', marginTop: '4px', fontWeight: 'bold' }}>Thực tế: {Number(formData.giaGiuong).toLocaleString('vi-VN')} VNĐ</div> : null}
+                            </div>
                             <div className="form-group"><label>Trạng thái</label>
                                 <select value={formData.trangThai || ''} onChange={e => setFormData({ ...formData, trangThai: e.target.value })}>
                                     <option value="Trống">Trống</option><option value="Đang sử dụng">Đang sử dụng</option><option value="Bảo trì">Bảo trì</option>

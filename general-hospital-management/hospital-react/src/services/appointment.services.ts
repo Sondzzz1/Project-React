@@ -37,29 +37,30 @@ export interface CreateAppointmentRequest {
 
 export const createAppointment = async (appointmentData: CreateAppointmentRequest): Promise<{ success: boolean; message: string; data?: Appointment }> => {
     const response = await axiosInstance.post<{ success: boolean; message: string; data?: Appointment }>(
-        `${ENDPOINTS.APPOINTMENT}/create`,
+        `${ENDPOINTS.APPOINTMENT}/dat-lich`,
         appointmentData
     );
     return response.data;
 };
 
-export const getAppointments = async (): Promise<Appointment[]> => {
-    const response = await axiosInstance.get<Appointment[]>(`${ENDPOINTS.APPOINTMENT}/get-all`);
-    return response.data;
+export const getAppointments = async (searchParams: any = {}): Promise<Appointment[]> => {
+    // Note: The backend uses POST for danh-sach with a SearchLichKhamDTO
+    const response = await axiosInstance.post<{ success: boolean; data: Appointment[] }>(`${ENDPOINTS.APPOINTMENT}/danh-sach`, searchParams);
+    return response.data.data;
 };
 
 export const getAppointmentById = async (id: string): Promise<Appointment> => {
-    const response = await axiosInstance.get<Appointment>(`${ENDPOINTS.APPOINTMENT}/${id}`);
-    return response.data;
+    const response = await axiosInstance.get<{ success: boolean; data: Appointment }>(`${ENDPOINTS.APPOINTMENT}/chi-tiet/${id}`);
+    return response.data.data;
 };
 
 export const updateAppointment = async (id: string, appointmentData: Partial<Appointment>): Promise<Appointment> => {
-    const response = await axiosInstance.put<Appointment>(`${ENDPOINTS.APPOINTMENT}/update`, { id, ...appointmentData });
-    return response.data;
+    const response = await axiosInstance.put<{ success: boolean; message: string; data: Appointment }>(`${ENDPOINTS.APPOINTMENT}/cap-nhat-trang-thai`, { id, ...appointmentData });
+    return response.data.data || appointmentData; // Return data if backend provides it, else return what was sent
 };
 
 export const cancelAppointment = async (id: string): Promise<{ message: string }> => {
-    const response = await axiosInstance.put<{ message: string }>(`${ENDPOINTS.APPOINTMENT}/cancel/${id}`);
+    const response = await axiosInstance.put<{ success: boolean; message: string }>(`${ENDPOINTS.APPOINTMENT}/huy-lich`, { id });
     return response.data;
 };
 

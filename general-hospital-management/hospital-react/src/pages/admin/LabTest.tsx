@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { labTestApi, LabTest } from '../../services/labtest.services';
 import { usePermissions } from '../../hooks/usePermissions';
 import { formatDate } from '../../utils/formatters';

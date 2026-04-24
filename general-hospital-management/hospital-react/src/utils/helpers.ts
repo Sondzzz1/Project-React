@@ -30,3 +30,20 @@ export function truncate(text: string | undefined | null, maxLength = 50): strin
     if (!text) return '';
     return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
 }
+
+/**
+ * Safely extract an array from various API response formats
+ * Helps prevent "filter is not a function" or "map is not a function" errors
+ */
+export function extractArrayData<T>(result: any): T[] {
+    if (!result) return [];
+    if (Array.isArray(result)) return result;
+    if (typeof result === 'object') {
+        if (Array.isArray(result.data)) return result.data;
+        if (result.data && Array.isArray(result.data.$values)) return result.data.$values;
+        if (result.data && Array.isArray(result.data.items)) return result.data.items;
+        if (Array.isArray(result.$values)) return result.$values;
+        if (Array.isArray(result.items)) return result.items;
+    }
+    return [];
+}

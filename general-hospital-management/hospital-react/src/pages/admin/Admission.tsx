@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { admissionApi, Admission, bedApi, Bed } from '../../services';
 import { formatDate } from '../../utils/formatters';
 import { usePermissions } from '../../hooks/usePermissions';
+import { extractArrayData } from '../../utils/helpers';
 import Pagination from '../../components/common/Pagination';
 import '../../assets/css/admin/admin.css';
 
@@ -37,8 +38,7 @@ export default function AdmissionPage() {
             // Đảm bảo admissions luôn là array
             if (admissionsRes.status === 'fulfilled') {
                 const data = admissionsRes.value;
-                console.log('Admissions data:', data);
-                setAdmissions(Array.isArray(data) ? data : []);
+                setAdmissions(extractArrayData<Admission>(data));
             } else {
                 console.error('Admissions error:', admissionsRes.reason);
                 setAdmissions([]);
@@ -47,10 +47,8 @@ export default function AdmissionPage() {
             // Lọc giường trống từ tất cả giường
             if (bedsRes.status === 'fulfilled') {
                 const data = bedsRes.value;
-                const allBeds = (data as { data?: Bed[] })?.data || (Array.isArray(data) ? data : []);
-                console.log('All beds:', allBeds);
+                const allBeds = extractArrayData<Bed>(data);
                 const available = allBeds.filter(bed => bed.trangThai === 'Trống');
-                console.log('Available beds:', available);
                 setAvailableBeds(available);
             } else {
                 console.error('Beds error:', bedsRes.reason);

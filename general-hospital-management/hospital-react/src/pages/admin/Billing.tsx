@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { billingApi, Invoice, bhytApi } from '../../services';
 import { formatDate, formatCurrency } from '../../utils/formatters';
-import { downloadBlob } from '../../utils/helpers';
+import { downloadBlob, extractArrayData } from '../../utils/helpers';
 import { usePermissions } from '../../hooks/usePermissions';
 import '../../assets/css/admin/admin.css';
 
@@ -27,7 +27,7 @@ export default function BillingPage() {
         try {
             setLoading(true);
             const r = await billingApi.getAll();
-            setInvoices((r as { data?: Invoice[] })?.data || (r as Invoice[]) || []);
+            setInvoices(extractArrayData<Invoice>(r));
         } catch (e) {
             console.error(e);
         } finally {
