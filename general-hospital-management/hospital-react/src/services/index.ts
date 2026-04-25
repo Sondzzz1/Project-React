@@ -24,6 +24,9 @@ export { default as departmentApi } from './department.services';
 export * from './admission.services';
 export { default as admissionApi } from './admission.services';
 
+export * from './xuatvien.services';
+export { default as xuatVienApi } from './xuatvien.services';
+
 export * from './billing.services';
 export { default as billingApi } from './billing.services';
 

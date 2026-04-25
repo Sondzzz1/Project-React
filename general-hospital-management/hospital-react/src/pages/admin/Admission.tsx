@@ -5,13 +5,15 @@ import {
     patientApi, Patient,
     departmentApi, Department
 } from '../../services';
+import { xuatVienApi, XuatVienPreview } from '../../services/xuatvien.services';
+import { bhytApi, KetQuaKiemTraBHYT } from '../../services/bhyt.services';
 import { formatDate } from '../../utils/formatters';
 import { getStatusColor } from '../../utils/formatters';
 import { usePermissions } from '../../hooks/usePermissions';
 import Pagination from '../../components/common/Pagination';
 import '../../assets/css/admin/admin.css';
 
-type ModalMode = 'create' | 'update' | 'transfer' | null;
+type ModalMode = 'create' | 'update' | 'transfer' | 'discharge' | null;
 
 export default function AdmissionPage() {
     const [admissions, setAdmissions] = useState<Admission[]>([]);
@@ -30,6 +32,13 @@ export default function AdmissionPage() {
     const [createForm, setCreateForm] = useState<Partial<CreateAdmissionRequest>>({});
     // Form cập nhật nhập viện
     const [updateForm, setUpdateForm] = useState<Partial<UpdateAdmissionRequest>>({});
+    // Discharge state
+    const [dischargePreview, setDischargePreview] = useState<XuatVienPreview | null>(null);
+    const [dischargeLoading, setDischargeLoading] = useState<boolean>(false);
+    const [dischargeGhiChu, setDischargeGhiChu] = useState<string>('');
+    const [bhytResult, setBhytResult] = useState<KetQuaKiemTraBHYT | null>(null);
+    const [bhytChecking, setBhytChecking] = useState<boolean>(false);
+
     // Form chuyển giường
     const [newBedId, setNewBedId] = useState<string>('');
     const [transferReason, setTransferReason] = useState<string>('');
@@ -207,6 +216,57 @@ export default function AdmissionPage() {
         }
     };
 
+    const openDischargeModal = async (a: Admission) => {
+        setSelectedAdmission(a);
+        setDischargeGhiChu('');
+        setBhytResult(null);
+        setError('');
+        setDischargePreview(null);
+        setModalMode('discharge');
+        // Tự động kiểm tra điều kiện xuất viện
+        setDischargeLoading(true);
+        try {
+            const preview = await xuatVienApi.getPreview(a.id);
+            setDischargePreview(preview);
+        } catch {
+            setError('Không thể kiểm tra điều kiện xuất viện');
+        } finally {
+            setDischargeLoading(false);
+        }
+    };
+
+    const handleCheckBHYT = async () => {
+        if (!dischargePreview?.soTheBaoHiem) return;
+        setBhytChecking(true);
+        try {
+            const result = await bhytApi.kiemTraThe(dischargePreview.soTheBaoHiem);
+            setBhytResult(result);
+        } catch {
+            setError('Không thể kiểm tra thẻ BHYT');
+        } finally {
+            setBhytChecking(false);
+        }
+    };
+
+    const handleDischarge = async () => {
+        if (!selectedAdmission) return;
+        if (dischargePreview && !dischargePreview.sanSangXuatVien) {
+            if (!window.confirm('Chưa đủ điều kiện. Bạn vẫn muốn tiếp tục xuất viện?')) return;
+        }
+        setSaving(true);
+        try {
+            await xuatVienApi.xacNhan({ nhapVienId: selectedAdmission.id, ghiChu: dischargeGhiChu });
+            closeModal();
+            loadData();
+            alert('Xuất viện thành công!');
+        } catch (err: unknown) {
+            const axiosErr = err as { response?: { data?: { message?: string } } };
+            setError(axiosErr.response?.data?.message || 'Xuất viện thất bại');
+        } finally {
+            setSaving(false);
+        }
+    };
+
     // ── Render ─────────────────────────────────────────────────────────────────
 
     return (
@@ -287,6 +347,15 @@ export default function AdmissionPage() {
                                                         onClick={() => openTransferModal(a)}
                                                     >
                                                         🔄 Chuyển giường
+                                                    </button>
+                                                )}
+                                                {canEdit && (a.trangThai === 'Đang điều trị' || a.trangThai === 'Chờ xuất viện') && (
+                                                    <button
+                                                        className="btn-action"
+                                                        style={{ background: '#10b981', color: '#fff', border: 'none' }}
+                                                        onClick={() => openDischargeModal(a)}
+                                                    >
+                                                        🏥 Xuất viện
                                                     </button>
                                                 )}
                                                 {canDelete && (
@@ -508,6 +577,88 @@ export default function AdmissionPage() {
                             <button className="btn-cancel" onClick={closeModal}>Hủy</button>
                             <button className="btn-save" onClick={handleTransfer} disabled={saving}>
                                 {saving ? 'Đang chuyển...' : '🔄 Xác nhận chuyển'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {/* ── Modal Xuất viện ──────────────────────────────────────────── */}
+            {modalMode === 'discharge' && selectedAdmission && (
+                <div className="modal-overlay" onClick={closeModal}>
+                    <div className="modal-box" style={{ maxWidth: '560px' }} onClick={e => e.stopPropagation()}>
+                        <h2>🏥 Xuất viện — {selectedAdmission.tenBenhNhan}</h2>
+                        {error && <div className="login-error">{error}</div>}
+
+                        {dischargeLoading ? (
+                            <div className="loading-center">Đang kiểm tra điều kiện...</div>
+                        ) : dischargePreview ? (
+                            <>
+                                {/* Thông tin điều kiện xuất viện */}
+                                <div style={{ background: dischargePreview.sanSangXuatVien ? '#f0fdf4' : '#fef9c3', border: `1px solid ${dischargePreview.sanSangXuatVien ? '#86efac' : '#fde047'}`, borderRadius: '8px', padding: '12px', marginBottom: '12px' }}>
+                                    <div style={{ fontWeight: 'bold', marginBottom: '6px', color: dischargePreview.sanSangXuatVien ? '#16a34a' : '#854d0e' }}>
+                                        {dischargePreview.sanSangXuatVien ? '✅ Đủ điều kiện xuất viện' : '⚠️ Chưa đủ điều kiện'}
+                                    </div>
+                                    {dischargePreview.lyDoChuaSanSang && <div style={{ color: '#92400e', fontSize: '0.9rem' }}>{dischargePreview.lyDoChuaSanSang}</div>}
+                                    <div style={{ marginTop: '8px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px', fontSize: '0.9rem' }}>
+                                        <div>📅 Số ngày nằm viện: <strong>{dischargePreview.soNgayNamVien}</strong></div>
+                                        <div>🧾 Số hóa đơn: <strong>{dischargePreview.soHoaDon}</strong></div>
+                                        <div>💰 Tổng chi phí: <strong>{Number(dischargePreview.tongChiPhiDichVu).toLocaleString('vi-VN')} đ</strong></div>
+                                    </div>
+                                </div>
+
+                                {/* Kiểm tra BHYT nếu có thẻ */}
+                                {dischargePreview.soTheBaoHiem && (
+                                    <div style={{ background: '#f0f9ff', border: '1px solid #bae6fd', borderRadius: '8px', padding: '12px', marginBottom: '12px' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+                                            <span style={{ fontWeight: 'bold', color: '#0369a1' }}>🏷️ Thẻ BHYT: {dischargePreview.soTheBaoHiem}</span>
+                                            <button
+                                                className="btn-action btn-edit"
+                                                onClick={handleCheckBHYT}
+                                                disabled={bhytChecking}
+                                                style={{ padding: '4px 10px', fontSize: '0.85rem' }}
+                                            >
+                                                {bhytChecking ? 'Đang kiểm tra...' : '🔍 Kiểm tra'}
+                                            </button>
+                                        </div>
+                                        {bhytResult && (
+                                            <div style={{ fontSize: '0.85rem', marginTop: '4px' }}>
+                                                <div style={{ color: bhytResult.hopLe ? '#16a34a' : '#dc2626', fontWeight: 'bold' }}>
+                                                    {bhytResult.hopLe ? '✅ Thẻ hợp lệ' : '❌ Thẻ không hợp lệ'} — {bhytResult.thongBao}
+                                                </div>
+                                                {bhytResult.hopLe && (
+                                                    <div style={{ marginTop: '4px', color: '#0369a1' }}>
+                                                        Mức hưởng: <strong>{bhytResult.mucHuong}%</strong>
+                                                        {bhytResult.hanThe && <> | Hạn: <strong>{bhytResult.hanThe}</strong></>}
+                                                        {' | '}{bhytResult.goiYTuyen}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
+                                {/* Ghi chú xuất viện */}
+                                <div className="form-group">
+                                    <label>Ghi chú xuất viện</label>
+                                    <textarea
+                                        rows={2}
+                                        value={dischargeGhiChu}
+                                        onChange={e => setDischargeGhiChu(e.target.value)}
+                                        placeholder="Ghi chú thêm khi xuất viện..."
+                                    />
+                                </div>
+                            </>
+                        ) : null}
+
+                        <div className="modal-actions">
+                            <button className="btn-cancel" onClick={closeModal}>Hủy</button>
+                            <button
+                                className="btn-save"
+                                style={{ background: '#10b981' }}
+                                onClick={handleDischarge}
+                                disabled={saving || dischargeLoading}
+                            >
+                                {saving ? 'Đang xử lý...' : '🏥 Xác nhận xuất viện'}
                             </button>
                         </div>
                     </div>
