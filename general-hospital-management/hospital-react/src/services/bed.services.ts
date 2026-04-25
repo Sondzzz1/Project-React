@@ -4,14 +4,15 @@ import { ENDPOINTS } from '../constant/api';
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
 export interface Bed {
-    id: number;
-    maGiuong: string;
+    id: string | number;
+    maGiuong?: string;
     tenGiuong: string;
     khoaId?: number | string;
     tenKhoa?: string;
-    loaiGiuong: 'Thường' | 'VIP' | 'ICU';
-    giaGiuong: number;
-    trangThai: 'Trống' | 'Đang sử dụng' | 'Bảo trì';
+    loaiGiuong: string;
+    giaGiuong?: number;
+    giaTien?: number;
+    trangThai: string;
 }
 
 export interface CreateBedRequest {
@@ -30,12 +31,12 @@ export const getBeds = async (): Promise<Bed[]> => {
     return response.data;
 };
 
-export const getBedById = async (id: number): Promise<Bed> => {
+export const getBedById = async (id: string | number): Promise<Bed> => {
     const response = await axiosInstance.get<Bed>(`${ENDPOINTS.BED}/get-by-id/${id}`);
     return response.data;
 };
 
-export const getBedsByDepartment = async (khoaId: number): Promise<Bed[]> => {
+export const getBedsByDepartment = async (khoaId: string | number): Promise<Bed[]> => {
     const response = await axiosInstance.get<Bed[]>(`${ENDPOINTS.BED}/by-department/${khoaId}`);
     return response.data;
 };
@@ -50,13 +51,13 @@ export const createBed = async (bedData: CreateBedRequest): Promise<Bed> => {
     return response.data;
 };
 
-export const updateBed = async (id: number, bedData: Partial<CreateBedRequest>): Promise<Bed> => {
-    const response = await axiosInstance.put<Bed>(`${ENDPOINTS.BED}/update`, { id, ...bedData });
+export const updateBed = async (id: string | number, bedData: Partial<CreateBedRequest>): Promise<Bed> => {
+    const response = await axiosInstance.put<Bed>(`${ENDPOINTS.BED}/update-giuong`, { id, ...bedData });
     return response.data;
 };
 
-export const deleteBed = async (id: number): Promise<void> => {
-    await axiosInstance.delete(`${ENDPOINTS.BED}/delete/${id}`);
+export const deleteBed = async (id: string | number): Promise<void> => {
+    await axiosInstance.delete(`${ENDPOINTS.BED}/delete-giuong/${id}`);
 };
 
 // Legacy object export

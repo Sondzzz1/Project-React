@@ -4,14 +4,17 @@ import { ENDPOINTS } from '../constant/api';
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
 export interface Surgery {
-    id: number;
-    tenBenhNhan: string;
-    tenBacSi: string;
-    loaiPhauThuat: string;
-    ngayPhauThuat: string;
-    trangThai: string;
-    benhNhanId?: number;
-    bacSiId?: number;
+    id: string;              // Guid từ backend (PhauThuat.Id)
+    nhapVienId?: string;     // PhauThuat.NhapVienId
+    loaiPhauThuat?: string;  // PhauThuat.LoaiPhauThuat
+    bacSiChinhId?: string;   // PhauThuat.BacSiChinhId
+    tenBacSi?: string;       // join từ BacSi.HoTen
+    tenBenhNhan?: string;    // join từ BenhNhan.HoTen qua NhapVien
+    ekip?: string;           // PhauThuat.Ekip
+    ngay?: string;           // PhauThuat.Ngay
+    phongMo?: string;        // PhauThuat.PhongMo
+    trangThai?: string;      // PhauThuat.TrangThai
+    chiPhi?: number;         // PhauThuat.ChiPhi
 }
 
 // ─── Service Functions ──────────────────────────────────────────────────────────
@@ -21,7 +24,7 @@ export const getSurgeries = async (): Promise<Surgery[]> => {
     return response.data;
 };
 
-export const getSurgeryById = async (id: number): Promise<Surgery> => {
+export const getSurgeryById = async (id: string): Promise<Surgery> => {
     const response = await axiosInstance.get<Surgery>(`${ENDPOINTS.SURGERY}/${id}`);
     return response.data;
 };
@@ -31,22 +34,22 @@ export const getTodaySurgeries = async (): Promise<Surgery[]> => {
     return response.data;
 };
 
-export const getSurgeriesByDoctor = async (doctorId: number): Promise<Surgery[]> => {
+export const getSurgeriesByDoctor = async (doctorId: string): Promise<Surgery[]> => {
     const response = await axiosInstance.get<Surgery[]>(`${ENDPOINTS.SURGERY}/by-doctor/${doctorId}`);
     return response.data;
 };
 
-export const createSurgery = async (surgeryData: Omit<Surgery, 'id'>): Promise<Surgery> => {
+export const createSurgery = async (surgeryData: Partial<Surgery>): Promise<Surgery> => {
     const response = await axiosInstance.post<Surgery>(ENDPOINTS.SURGERY, surgeryData);
     return response.data;
 };
 
-export const updateSurgery = async (id: number, surgeryData: Partial<Surgery>): Promise<Surgery> => {
+export const updateSurgery = async (id: string, surgeryData: Partial<Surgery>): Promise<Surgery> => {
     const response = await axiosInstance.put<Surgery>(`${ENDPOINTS.SURGERY}/${id}`, surgeryData);
     return response.data;
 };
 
-export const deleteSurgery = async (id: number): Promise<void> => {
+export const deleteSurgery = async (id: string): Promise<void> => {
     await axiosInstance.delete(`${ENDPOINTS.SURGERY}/${id}`);
 };
 

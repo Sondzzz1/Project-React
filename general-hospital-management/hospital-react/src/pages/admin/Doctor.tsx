@@ -69,6 +69,7 @@ export default function DoctorPage() {
         setFormData(doctor ? { ...doctor } : {
             hoTen: '',
             chuyenKhoa: '',
+            thongTinLienHe: '',
             soDienThoai: '',
             email: '',
             khoaId: undefined
@@ -222,7 +223,7 @@ export default function DoctorPage() {
                                 <label>Khoa</label>
                                 <select 
                                     value={String(formData.khoaId || '')} 
-                                    onChange={e => setFormData({ ...formData, khoaId: Number(e.target.value) || undefined })}
+                                    onChange={e => setFormData({ ...formData, khoaId: e.target.value || undefined })}
                                 >
                                     <option value="">-- Chọn khoa --</option>
                                     {departments.map(dept => (
@@ -252,6 +253,15 @@ export default function DoctorPage() {
                                     placeholder="doctor@hospital.com"
                                 />
                             </div>
+                        </div>
+
+                        <div className="form-group">
+                            <label>Thông tin liên hệ / Địa chỉ</label>
+                            <input 
+                                value={formData.thongTinLienHe || ''} 
+                                onChange={e => setFormData({ ...formData, thongTinLienHe: e.target.value })}
+                                placeholder="Địa chỉ, phòng khám..."
+                            />
                         </div>
 
                         <div className="modal-actions">

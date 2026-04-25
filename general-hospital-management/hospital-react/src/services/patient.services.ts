@@ -5,15 +5,12 @@ import { ApiResponse } from './auth.services';
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
 export interface Patient {
-    id: number;
-    hoTen: string;
-    ngaySinh: string;
-    gioiTinh: string;
-    diaChi: string;
-    soTheBaoHiem?: string;
-    mucHuong?: number;
-    hanTheBHYT?: string;
-    trangThai: string;
+    id: string;              // Guid từ backend (BenhNhan.Id)
+    hoTen: string;           // BenhNhan.HoTen
+    ngaySinh?: string;       // BenhNhan.NgaySinh (DateOnly)
+    gioiTinh?: string;       // BenhNhan.GioiTinh
+    diaChi?: string;         // BenhNhan.DiaChi
+    soTheBaoHiem?: string;   // BenhNhan.SoTheBaoHiem
 }
 
 export interface PatientSearchParams {
@@ -32,22 +29,22 @@ export const getPatients = async (): Promise<ApiResponse<Patient[]>> => {
     return response.data;
 };
 
-export const getPatientById = async (id: number): Promise<ApiResponse<Patient>> => {
+export const getPatientById = async (id: string): Promise<ApiResponse<Patient>> => {
     const response = await axiosInstance.get<ApiResponse<Patient>>(`${ENDPOINTS.PATIENT}/get-by-id/${id}`);
     return response.data;
 };
 
-export const createPatient = async (patientData: any): Promise<ApiResponse<Patient>> => {
+export const createPatient = async (patientData: Partial<Patient>): Promise<ApiResponse<Patient>> => {
     const response = await axiosInstance.post<ApiResponse<Patient>>(`${ENDPOINTS.PATIENT}/create`, patientData);
     return response.data;
 };
 
-export const updatePatient = async (id: number, patientData: any): Promise<ApiResponse<Patient>> => {
+export const updatePatient = async (id: string, patientData: Partial<Patient>): Promise<ApiResponse<Patient>> => {
     const response = await axiosInstance.put<ApiResponse<Patient>>(`${ENDPOINTS.PATIENT}/update`, { ...patientData, id });
     return response.data;
 };
 
-export const deletePatient = async (id: number): Promise<ApiResponse<void>> => {
+export const deletePatient = async (id: string): Promise<ApiResponse<void>> => {
     const response = await axiosInstance.delete<ApiResponse<void>>(`${ENDPOINTS.PATIENT}/delete/${id}`);
     return response.data;
 };

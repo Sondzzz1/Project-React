@@ -62,9 +62,12 @@ export default function NursePage() {
         setEditingNurse(nurse);
         setFormData(nurse ? { ...nurse } : {
             hoTen: '',
+            ngaySinh: '',
+            gioiTinh: '',
             khoaId: undefined,
             soDienThoai: '',
-            email: ''
+            email: '',
+            chungChiHanhNghe: ''
         });
         setError('');
         setShowModal(true);
@@ -134,20 +137,24 @@ export default function NursePage() {
                             <tr>
                                 <th>ID</th>
                                 <th>Họ tên</th>
+                                <th>Ngày sinh</th>
+                                <th>Giới tính</th>
                                 <th>Khoa</th>
                                 <th>SĐT</th>
-                                <th>Email</th>
+                                <th>Chứng chỉ</th>
                                 <th>Thao tác</th>
                             </tr>
                         </thead>
                         <tbody>
                             {filtered.map(n => (
                                 <tr key={n.id}>
-                                    <td>{n.id}</td>
+                                    <td style={{ fontSize: '0.8em', wordBreak: 'break-all' }}>{n.id}</td>
                                     <td><strong>{n.hoTen}</strong></td>
+                                    <td>{n.ngaySinh || '—'}</td>
+                                    <td>{n.gioiTinh || '—'}</td>
                                     <td>{n.tenKhoa || '—'}</td>
                                     <td>{n.soDienThoai || '—'}</td>
-                                    <td>{n.email || '—'}</td>
+                                    <td>{n.chungChiHanhNghe || '—'}</td>
                                     <td>
                                         <div className="action-btns">
                                             {canEdit && (
@@ -190,11 +197,30 @@ export default function NursePage() {
                             />
                         </div>
 
+                        <div className="form-row">
+                            <div className="form-group">
+                                <label>Ngày sinh</label>
+                                <input 
+                                    type="date"
+                                    value={formData.ngaySinh || ''} 
+                                    onChange={e => setFormData({ ...formData, ngaySinh: e.target.value })}
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>Giới tính</label>
+                                <select value={formData.gioiTinh || ''} onChange={e => setFormData({ ...formData, gioiTinh: e.target.value })}>
+                                    <option value="">-- Chọn --</option>
+                                    <option value="Nam">Nam</option>
+                                    <option value="Nữ">Nữ</option>
+                                </select>
+                            </div>
+                        </div>
+
                         <div className="form-group">
                             <label>Khoa</label>
                             <select 
                                 value={String(formData.khoaId || '')} 
-                                onChange={e => setFormData({ ...formData, khoaId: Number(e.target.value) || undefined })}
+                                onChange={e => setFormData({ ...formData, khoaId: e.target.value || undefined })}
                             >
                                 <option value="">-- Chọn khoa --</option>
                                 {departments.map(dept => (
@@ -215,12 +241,11 @@ export default function NursePage() {
                                 />
                             </div>
                             <div className="form-group">
-                                <label>Email</label>
+                                <label>Chứng chỉ hành nghề</label>
                                 <input 
-                                    type="email"
-                                    value={formData.email || ''} 
-                                    onChange={e => setFormData({ ...formData, email: e.target.value })}
-                                    placeholder="nurse@hospital.com"
+                                    value={formData.chungChiHanhNghe || ''} 
+                                    onChange={e => setFormData({ ...formData, chungChiHanhNghe: e.target.value })}
+                                    placeholder="Số chứng chỉ..."
                                 />
                             </div>
                         </div>

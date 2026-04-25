@@ -5,11 +5,14 @@ import { ApiResponse } from './auth.services';
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
 export interface Nurse {
-    id: number;
-    hoTen: string;
-    khoaId?: number;
-    tenKhoa?: string;
-    soDienThoai?: string;
+    id: string;              // Guid từ backend (Ytum.Id)
+    hoTen: string;           // Ytum.HoTen
+    ngaySinh?: string;       // Ytum.NgaySinh
+    gioiTinh?: string;       // Ytum.GioiTinh
+    khoaId?: string;         // Ytum.KhoaId (Guid)
+    tenKhoa?: string;        // join từ KhoaPhong.TenKhoa
+    soDienThoai?: string;    // Ytum.SoDienThoai
+    chungChiHanhNghe?: string; // Ytum.ChungChiHanhNghe
     email?: string;
 }
 
@@ -21,22 +24,22 @@ export const getNurses = async (): Promise<ApiResponse<Nurse[]>> => {
     return { data: response.data, success: true };
 };
 
-export const getNurseById = async (id: number): Promise<ApiResponse<Nurse>> => {
+export const getNurseById = async (id: string): Promise<ApiResponse<Nurse>> => {
     const response = await axiosInstance.get<ApiResponse<Nurse>>(`${ENDPOINTS.NURSE}/get-by-id/${id}`);
     return response.data;
 };
 
-export const createNurse = async (nurseData: any): Promise<ApiResponse<Nurse>> => {
+export const createNurse = async (nurseData: Partial<Nurse>): Promise<ApiResponse<Nurse>> => {
     const response = await axiosInstance.post<ApiResponse<Nurse>>(`${ENDPOINTS.NURSE}/create`, nurseData);
     return response.data;
 };
 
-export const updateNurse = async (id: number, nurseData: any): Promise<ApiResponse<Nurse>> => {
+export const updateNurse = async (id: string, nurseData: Partial<Nurse>): Promise<ApiResponse<Nurse>> => {
     const response = await axiosInstance.put<ApiResponse<Nurse>>(`${ENDPOINTS.NURSE}/update`, { ...nurseData, id });
     return response.data;
 };
 
-export const deleteNurse = async (id: number): Promise<ApiResponse<void>> => {
+export const deleteNurse = async (id: string): Promise<ApiResponse<void>> => {
     const response = await axiosInstance.delete<ApiResponse<void>>(`${ENDPOINTS.NURSE}/delete/${id}`);
     return response.data;
 };

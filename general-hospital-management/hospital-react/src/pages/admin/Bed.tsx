@@ -29,18 +29,19 @@ export default function BedPage() {
     useEffect(() => { loadData(); }, [loadData]);
 
     const filteredBeds: Bed[] = beds.filter(b =>
-        !search || (b.tenGiuong || '').toLowerCase().includes(search.toLowerCase()) || (b.maGiuong || '').toLowerCase().includes(search.toLowerCase())
+        !search || (b.tenGiuong || '').toLowerCase().includes(search.toLowerCase()) || (b.maGiuong || '').toLowerCase().includes(search.toLowerCase()) || String(b.id).toLowerCase().includes(search.toLowerCase())
     );
 
     const openModal = (bed: Bed | null = null) => {
         setEditingBed(bed);
-        setFormData(bed ? { ...bed } : { maGiuong: `GB${Math.floor(1000 + Math.random() * 9000)}`, tenGiuong: '', khoaId: '', loaiGiuong: 'Thường', giaGiuong: undefined as any, trangThai: 'Trống' });
+        setFormData(bed ? { ...bed, giaTien: bed.giaTien ?? bed.giaGiuong } : { maGiuong: `GB${Math.floor(1000 + Math.random() * 9000)}`, tenGiuong: '', khoaId: '', loaiGiuong: 'Thường', giaTien: undefined as any, trangThai: 'Trống' });
         setError('');
         setShowModal(true);
     };
 
     const handleSave = async () => {
-        if (!formData.maGiuong) { setError('Vui lòng nhập mã giường'); return; }
+        // Chỉ bắt buộc mã giường khi tạo mới, không yêu cầu khi sửa
+        if (!editingBed && !formData.maGiuong) { setError('Vui lòng nhập mã giường'); return; }
         setSaving(true);
         try {
             if (editingBed) { await bedApi.update(editingBed.id, formData); }
@@ -70,11 +71,11 @@ export default function BedPage() {
                     <div className="empty-state"><div className="empty-state-icon">🛏️</div><p>Chưa có dữ liệu giường bệnh</p></div>
                 ) : (
                     <table className="data-table">
-                        <thead><tr><th>Mã giường</th><th>Tên giường</th><th>Khoa</th><th>Loại</th><th>Giá</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
+                        <thead><tr><th>Mã giường</th><th>Tên giường</th><th>Khoa</th><th>Loại</th><th style={{ width: '150px' }}>Giá</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
                         <tbody>{filteredBeds.map(b => (
                             <tr key={b.id}>
-                                <td><strong>{b.maGiuong}</strong></td><td>{b.tenGiuong}</td><td>{b.tenKhoa || b.khoaId}</td><td>{b.loaiGiuong}</td>
-                                <td>{b.giaGiuong?.toLocaleString('vi-VN')} đ</td>
+                                <td><strong style={{ fontSize: '0.85em', wordBreak: 'break-all' }}>{b.id}</strong></td><td>{b.tenGiuong}</td><td>{b.tenKhoa || b.khoaId}</td><td>{b.loaiGiuong}</td>
+                                <td>{(b.giaTien ?? b.giaGiuong)?.toLocaleString('vi-VN')} đ</td>
                                 <td><span className={`status-badge badge-${getStatusColor(b.trangThai)}`}>{b.trangThai}</span></td>
                                 <td><div className="action-btns">
                                     {canEdit && <button className="btn-action btn-edit" onClick={() => openModal(b)}>Sửa</button>}
@@ -91,7 +92,25 @@ export default function BedPage() {
                         <h2>{editingBed ? 'Chỉnh sửa giường' : 'Thêm giường mới'}</h2>
                         {error && <div className="login-error">{error}</div>}
                         <div className="form-row">
-                            <div className="form-group"><label>Mã giường *</label><input value={formData.maGiuong || ''} onChange={e => setFormData({ ...formData, maGiuong: e.target.value })} /></div>
+                            {editingBed ? (
+                                <div className="form-group">
+                                    <label>ID giường (chỉ đọc)</label>
+                                    <input 
+                                        value={String(editingBed.id)} 
+                                        readOnly 
+                                        style={{ background: '#f3f4f6', color: '#6b7280', cursor: 'not-allowed', fontSize: '0.8em' }} 
+                                    />
+                                </div>
+                            ) : (
+                                <div className="form-group">
+                                    <label>Mã giường *</label>
+                                    <input 
+                                        value={formData.maGiuong || ''} 
+                                        onChange={e => setFormData({ ...formData, maGiuong: e.target.value })} 
+                                        placeholder="Ví dụ: G01"
+                                    />
+                                </div>
+                            )}
                             <div className="form-group"><label>Tên giường</label><input value={formData.tenGiuong || ''} onChange={e => setFormData({ ...formData, tenGiuong: e.target.value })} /></div>
                         </div>
                         <div className="form-row">
@@ -112,11 +131,11 @@ export default function BedPage() {
                                 <label>Giá giường (VNĐ)</label>
                                 <input 
                                     type="number" 
-                                    value={formData.giaGiuong || ''} 
-                                    onChange={e => setFormData({ ...formData, giaGiuong: e.target.value ? Number(e.target.value) : undefined as any })} 
+                                    value={formData.giaTien ?? formData.giaGiuong ?? ''} 
+                                    onChange={e => setFormData({ ...formData, giaTien: e.target.value ? Number(e.target.value) : undefined as any, giaGiuong: e.target.value ? Number(e.target.value) : undefined as any })} 
                                     placeholder="Ví dụ: 150000"
                                 />
-                                {formData.giaGiuong ? <div style={{ fontSize: '0.85rem', color: '#059669', marginTop: '4px', fontWeight: 'bold' }}>Thực tế: {Number(formData.giaGiuong).toLocaleString('vi-VN')} VNĐ</div> : null}
+                                {(formData.giaTien ?? formData.giaGiuong) ? <div style={{ fontSize: '0.85rem', color: '#059669', marginTop: '4px', fontWeight: 'bold' }}>Thực tế: {Number(formData.giaTien ?? formData.giaGiuong).toLocaleString('vi-VN')} VNĐ</div> : null}
                             </div>
                             <div className="form-group"><label>Trạng thái</label>
                                 <select value={formData.trangThai || ''} onChange={e => setFormData({ ...formData, trangThai: e.target.value })}>
