@@ -138,10 +138,11 @@ export default function BillingPage() {
         setCreating(true);
         try {
             await billingApi.create({
-                nhapVienId,
-                tongTien: previewData.tongTien,
-                baoHiemChiTra: previewData.baoHiemChiTra,
-                benhNhanThanhToan: previewData.benhNhanThanhToan
+                nhapVienId: previewData.nhapVienId || nhapVienId,
+                benhNhanId: previewData.benhNhanId,
+                tongTien: previewData.tongTienGoiY || previewData.tongTien || 0,
+                baoHiemChiTra: previewData.baoHiemChiTraGoiY || previewData.baoHiemChiTra || 0,
+                ghiChu: 'Tạo tự động từ gợi ý nhập viện'
             });
             alert('Tạo hóa đơn thành công');
             setShowCreateModal(false);
@@ -411,13 +412,13 @@ export default function BillingPage() {
                                         <span>Bệnh nhân:</span> <strong>{previewData.tenBenhNhan}</strong>
                                     </div>
                                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                        <span>Tổng chi phí:</span> <strong>{formatCurrency(previewData.tongTien)}</strong>
+                                        <span>Tổng chi phí:</span> <strong>{formatCurrency(previewData.tongTienGoiY ?? previewData.tongTien)}</strong>
                                     </div>
                                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                        <span>BHYT chi trả:</span> <strong style={{ color: '#059669' }}>{formatCurrency(previewData.baoHiemChiTra)}</strong>
+                                        <span>BHYT chi trả:</span> <strong style={{ color: '#059669' }}>{formatCurrency(previewData.baoHiemChiTraGoiY ?? previewData.baoHiemChiTra)}</strong>
                                     </div>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '8px', borderTop: '1px solid #cbd5e1' }}>
-                                        <span>Bệnh nhân trả:</span> <strong style={{ color: '#dc2626', fontSize: '1.1rem' }}>{formatCurrency(previewData.benhNhanThanhToan)}</strong>
+                                        <span>Bệnh nhân trả:</span> <strong style={{ color: '#dc2626', fontSize: '1.1rem' }}>{formatCurrency(previewData.benhNhanPhaiTraGoiY ?? previewData.benhNhanThanhToan)}</strong>
                                     </div>
                                 </div>
                             </div>

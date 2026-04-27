@@ -22,11 +22,11 @@ export interface PaymentRequest {
 }
 
 export interface InvoiceCreateRequest {
+    benhNhanId: string;
     nhapVienId: string;
     tongTien: number;
-    baoHiemChiTra: number;
-    benhNhanThanhToan: number;
-    dienGiai?: string;
+    baoHiemChiTra?: number;
+    ghiChu?: string;
 }
 
 // ─── Service Functions ──────────────────────────────────────────────────────────

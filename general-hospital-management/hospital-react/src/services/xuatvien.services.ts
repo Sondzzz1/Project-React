@@ -3,18 +3,29 @@ import { ENDPOINTS } from '../constant/api';
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
-/** Dữ liệu xem trước điều kiện xuất viện (từ kiem-tra-dieu-kien/{id}) */
+/** Dữ liệu xem trước điều kiện xuất viện (từ kiem-tra-dieu-kien/{id})
+ *  Tất cả trường đều optional vì chưa biết chính xác backend trả về gì.
+ *  Dùng console.log để xem raw response rồi cập nhật lại. */
 export interface XuatVienPreview {
-    nhapVienId: string;
-    tenBenhNhan: string;
-    ngayNhap: string;
-    soNgayNamVien: number;
-    soHoaDon: number;
-    tongChiPhiDichVu: number;
-    sanSangXuatVien: boolean;
+    // Các trường có thể có từ backend
+    nhapVienId?: string;
+    tenBenhNhan?: string;
+    ngayNhap?: string;
+    ngayXuat?: string;
+    soNgayNamVien?: number;
+    soHoaDon?: number;
+    tongChiPhiDichVu?: number;
+    tongTien?: number;          // alias có thể dùng
+    chiPhi?: number;            // alias có thể dùng
+    sanSangXuatVien?: boolean;
+    coTheXuatVien?: boolean;    // alias có thể dùng
     lyDoChuaSanSang?: string;
+    ghiChu?: string;
     soTheBaoHiem?: string;
     benhNhanId?: string;
+    trangThai?: string;
+    // Raw fallback — tất cả trường khác từ backend
+    [key: string]: any;
 }
 
 /** DTO gửi lên khi xác nhận xuất viện (PUT /xac-nhan) */
@@ -41,6 +52,8 @@ export const getXuatVienPreview = async (nhapVienId: string): Promise<XuatVienPr
     const response = await axiosInstance.get<XuatVienPreview>(
         `${ENDPOINTS.DISCHARGE}/kiem-tra-dieu-kien/${nhapVienId}`
     );
+    // Log để xếm backend trả về đúng tên trường gì
+    console.log('[XuatVienPreview] raw response:', response.data);
     return response.data;
 };
 

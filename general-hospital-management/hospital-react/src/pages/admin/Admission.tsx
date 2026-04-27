@@ -250,7 +250,8 @@ export default function AdmissionPage() {
 
     const handleDischarge = async () => {
         if (!selectedAdmission) return;
-        if (dischargePreview && !dischargePreview.sanSangXuatVien) {
+        const isReady = dischargePreview?.sanSangXuatVien ?? dischargePreview?.coTheXuatVien ?? false;
+        if (dischargePreview && !isReady) {
             if (!window.confirm('Chưa đủ điều kiện. Bạn vẫn muốn tiếp tục xuất viện?')) return;
         }
         setSaving(true);
@@ -594,17 +595,23 @@ export default function AdmissionPage() {
                         ) : dischargePreview ? (
                             <>
                                 {/* Thông tin điều kiện xuất viện */}
-                                <div style={{ background: dischargePreview.sanSangXuatVien ? '#f0fdf4' : '#fef9c3', border: `1px solid ${dischargePreview.sanSangXuatVien ? '#86efac' : '#fde047'}`, borderRadius: '8px', padding: '12px', marginBottom: '12px' }}>
-                                    <div style={{ fontWeight: 'bold', marginBottom: '6px', color: dischargePreview.sanSangXuatVien ? '#16a34a' : '#854d0e' }}>
-                                        {dischargePreview.sanSangXuatVien ? '✅ Đủ điều kiện xuất viện' : '⚠️ Chưa đủ điều kiện'}
+                                <div style={{ background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: '8px', padding: '12px', marginBottom: '12px' }}>
+                                    <div style={{ fontWeight: 'bold', marginBottom: '6px', color: '#0f172a' }}>
+                                        Dữ liệu kiểm tra điều kiện từ hệ thống:
                                     </div>
-                                    {dischargePreview.lyDoChuaSanSang && <div style={{ color: '#92400e', fontSize: '0.9rem' }}>{dischargePreview.lyDoChuaSanSang}</div>}
-                                    <div style={{ marginTop: '8px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px', fontSize: '0.9rem' }}>
-                                        <div>📅 Số ngày nằm viện: <strong>{dischargePreview.soNgayNamVien}</strong></div>
-                                        <div>🧾 Số hóa đơn: <strong>{dischargePreview.soHoaDon}</strong></div>
-                                        <div>💰 Tổng chi phí: <strong>{Number(dischargePreview.tongChiPhiDichVu).toLocaleString('vi-VN')} đ</strong></div>
-                                    </div>
+                                    <pre style={{ background: '#e2e8f0', padding: '8px', borderRadius: '4px', fontSize: '0.85rem', overflowX: 'auto', whiteSpace: 'pre-wrap' }}>
+                                        {JSON.stringify(dischargePreview, null, 2)}
+                                    </pre>
                                 </div>
+                                    <div style={{ marginTop: '8px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px', fontSize: '0.9rem' }}>
+                                        <div>📅 Số ngày nằm viện: <strong>{dischargePreview.soNgayNamVien ?? dischargePreview.ngayNamVien ?? '—'}</strong></div>
+                                        <div>🧾 Số hóa đơn: <strong>{dischargePreview.soHoaDon ?? dischargePreview.hoaDonCount ?? '—'}</strong></div>
+                                        <div>💰 Tổng chi phí: <strong>
+                                            {dischargePreview.tongChiPhiDichVu ?? dischargePreview.tongTien ?? dischargePreview.chiPhi 
+                                                ? Number(dischargePreview.tongChiPhiDichVu ?? dischargePreview.tongTien ?? dischargePreview.chiPhi).toLocaleString('vi-VN') + ' đ' 
+                                                : '—'}
+                                        </strong></div>
+                                    </div>
 
                                 {/* Kiểm tra BHYT nếu có thẻ */}
                                 {dischargePreview.soTheBaoHiem && (
