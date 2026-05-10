@@ -56,8 +56,9 @@ export const payInvoice = async (id: string, paymentData: PaymentRequest): Promi
     return response.data;
 };
 
-export const getPreview = async (nhapVienId: string): Promise<any> => {
-    const response = await axiosInstance.get<{ success: boolean; data: any }>(`${ENDPOINTS.BILLING}/xem-truoc/${nhapVienId}`);
+
+export const getPreviewByPatientId = async (benhNhanId: string): Promise<any> => {
+    const response = await axiosInstance.get<{ success: boolean; data: any }>(`${ENDPOINTS.BILLING}/xem-truoc-benh-nhan/${benhNhanId}`);
     return response.data.data;
 };
 
@@ -78,7 +79,7 @@ export const billingApi = {
     exportPdf: exportInvoicePdf, 
     exportExcel: exportInvoiceExcel, 
     pay: payInvoice,
-    getPreview,
+    getPreviewByPatient: getPreviewByPatientId,
     create: createInvoice,
     delete: deleteInvoice
 };

@@ -24,7 +24,7 @@ export default function BillingPage() {
     
     // Create Invoice state
     const [showCreateModal, setShowCreateModal] = useState<boolean>(false);
-    const [nhapVienId, setNhapVienId] = useState<string>('');
+    const [patientId, setPatientId] = useState<string>('');
     const [previewData, setPreviewData] = useState<any>(null);
     const [creating, setCreating] = useState<boolean>(false);
     
@@ -123,12 +123,12 @@ export default function BillingPage() {
     };
 
     const handlePreview = async () => {
-        if (!nhapVienId) return alert('Vui lòng nhập ID Nhập viện');
+        if (!patientId) return alert('Vui lòng nhập ID Bệnh nhân');
         try {
-            const data = await billingApi.getPreview(nhapVienId);
+            const data = await billingApi.getPreviewByPatient(patientId);
             setPreviewData(data);
         } catch (err: any) {
-            alert(err.response?.data?.message || 'Không tìm thấy thông tin để gợi ý');
+            alert(err.response?.data?.message || 'Không tìm thấy thông tin nhập viện của bệnh nhân này');
             setPreviewData(null);
         }
     };
@@ -146,7 +146,7 @@ export default function BillingPage() {
             });
             alert('Tạo hóa đơn thành công');
             setShowCreateModal(false);
-            setNhapVienId('');
+            setPatientId('');
             setPreviewData(null);
             loadInvoices();
         } catch (err: any) {
@@ -390,12 +390,12 @@ export default function BillingPage() {
                         <h2>Tạo hóa đơn mới</h2>
                         
                         <div className="form-group">
-                            <label>ID Nhập viện *</label>
+                            <label>ID Bệnh nhân *</label>
                             <div style={{ display: 'flex', gap: '8px' }}>
                                 <input 
-                                    value={nhapVienId} 
-                                    onChange={e => setNhapVienId(e.target.value)} 
-                                    placeholder="Nhập ID nhập viện..."
+                                    value={patientId} 
+                                    onChange={e => setPatientId(e.target.value)} 
+                                    placeholder="Nhập ID bệnh nhân..."
                                     style={{ flex: 1 }}
                                 />
                                 <button className="btn-save" onClick={handlePreview} style={{ background: '#0284c7', width: 'auto', padding: '0 1rem' }}>

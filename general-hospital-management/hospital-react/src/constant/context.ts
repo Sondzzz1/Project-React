@@ -56,7 +56,6 @@ export const PERMISSIONS: Record<Role, Permission> = {
         settings: true, canAdd: true, canEdit: true, canDelete: true, canExport: true, profile: true,
     },
     nhanvien: {
-        // Nhân viên có quyền tương tự admin
         dashboard: true, appointments: true, patients: true, beds: true,
         surgery: true, records: true, doctors: true, nurses: true,
         admissions: true, billing: true, reports: true, audit: true,
@@ -70,7 +69,7 @@ export const PERMISSIONS: Record<Role, Permission> = {
     },
     nurse: {
         dashboard: true, appointments: true, patients: true, beds: true,
-        surgery: false, records: true, doctors: false, nurses: false,
+        surgery: false, records: true, doctors: false, nurses: true,
         admissions: true, billing: false, reports: false, audit: false,
         settings: false, canAdd: true, canEdit: true, canDelete: false, canExport: false, profile: true,
     },
@@ -81,10 +80,10 @@ export const PERMISSIONS: Record<Role, Permission> = {
         settings: false, canAdd: true, canEdit: true, canDelete: false, canExport: false, profile: true,
     },
     accountant: {
-        dashboard: true, appointments: false, patients: false, beds: false,
+        dashboard: true, appointments: false, patients: true, beds: false,
         surgery: false, records: false, doctors: false, nurses: false,
-        admissions: false, billing: true, reports: true, audit: false,
-        settings: false, canAdd: true, canEdit: true, canDelete: false, canExport: true, profile: true,
+        admissions: true, billing: true, reports: true, audit: false,
+        settings: false, canAdd: false, canEdit: false, canDelete: false, canExport: true, profile: true,
     },
     patient: {
         dashboard: true, appointments: true, patients: false, beds: false,

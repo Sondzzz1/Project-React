@@ -13,6 +13,7 @@ export interface Bed {
     giaGiuong?: number;
     giaTien?: number;
     trangThai: string;
+    tenBenhNhan?: string;
 }
 
 export interface CreateBedRequest {

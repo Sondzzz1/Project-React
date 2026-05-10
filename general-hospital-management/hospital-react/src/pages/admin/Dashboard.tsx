@@ -1,10 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
-import { patientApi, Patient } from '../../services';
-import { doctorApi, Doctor } from '../../services';
-import { bedApi, Bed } from '../../services';
-import { nurseApi, Nurse } from '../../services';
+import { useAuth } from '../../contexts/AuthContext';
+import { usePermissions } from '../../hooks/usePermissions';
 import AdminTasks from '../../components/common/AdminTasks';
 import StatCard from '../../components/common/StatCard';
+import DoctorDashboard from '../../components/dashboard/DoctorDashboard';
+import NurseDashboard from '../../components/dashboard/NurseDashboard';
+import AccountantDashboard from '../../components/dashboard/AccountantDashboard';
+import { patientApi, doctorApi, bedApi, nurseApi } from '../../services';
 import '../../assets/css/admin/admin.css';
 
 interface DashStats {
@@ -15,6 +17,8 @@ interface DashStats {
 }
 
 export default function DashboardPage() {
+    const { user } = useAuth();
+    const { role } = usePermissions();
     const [stats, setStats] = useState<DashStats>({ patients: 0, beds: 0, doctors: 0, nurses: 0 });
     const [loading, setLoading] = useState<boolean>(true);
 
@@ -40,7 +44,13 @@ export default function DashboardPage() {
         }
     }, []);
 
-    useEffect(() => { loadStats(); }, [loadStats]);
+    useEffect(() => { 
+        if (role === 'admin') {
+            loadStats(); 
+        } else {
+            setLoading(false);
+        }
+    }, [loadStats, role]);
 
     const dashCards = [
         { icon: '🏥', label: 'Bệnh nhân', value: stats.patients, color: '#2196c8' },
@@ -49,30 +59,54 @@ export default function DashboardPage() {
         { icon: '👩‍⚕️', label: 'Y tá', value: stats.nurses, color: '#d97706' },
     ];
 
+    const renderDashboardByRole = () => {
+        switch (role) {
+            case 'doctor':
+                return <DoctorDashboard />;
+            case 'nurse':
+                return <NurseDashboard />;
+            case 'accountant':
+                return <AccountantDashboard />;
+            default:
+                return (
+                    <div className="dash-stats-grid">
+                        {dashCards.map((card, i) => (
+                            <StatCard 
+                                key={i}
+                                icon={card.icon}
+                                label={card.label}
+                                value={card.value}
+                                color={card.color}
+                            />
+                        ))}
+                    </div>
+                );
+        }
+    };
+
+    const getRoleTitle = () => {
+        switch (role) {
+            case 'doctor': return 'Bác sĩ';
+            case 'nurse': return 'Y tá';
+            case 'accountant': return 'Kế toán';
+            default: return 'Quản trị viên';
+        }
+    };
+
     return (
         <div className="admin-page">
             <div className="page-header">
-                <h1>Tổng quan</h1>
-                <p>Thống kê hệ thống bệnh viện</p>
+                <h1>Tổng quan - {getRoleTitle()}</h1>
+                <p>Chào mừng {user?.fullName || user?.username}, chúc bạn một ngày làm việc hiệu quả!</p>
             </div>
+            
             {loading ? (
                 <div className="loading-center">Đang tải dữ liệu...</div>
             ) : (
-                <div className="dash-stats-grid">
-                    {dashCards.map((card, i) => (
-                        <StatCard 
-                            key={i}
-                            icon={card.icon}
-                            label={card.label}
-                            value={card.value}
-                            color={card.color}
-                        />
-                    ))}
-                </div>
+                renderDashboardByRole()
             )}
             
-            {/* Danh sách công việc Admin (Áp dụng Recoil Todo-App) */}
-            <AdminTasks />
+            {role === 'admin' && <AdminTasks />}
         </div>
     );
 }

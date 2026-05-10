@@ -71,10 +71,14 @@ export default function BedPage() {
                     <div className="empty-state"><div className="empty-state-icon">🛏️</div><p>Chưa có dữ liệu giường bệnh</p></div>
                 ) : (
                     <table className="data-table">
-                        <thead><tr><th>Mã giường</th><th>Tên giường</th><th>Khoa</th><th>Loại</th><th style={{ width: '150px' }}>Giá</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
+                        <thead><tr><th>Mã giường</th><th>Tên giường</th><th>Khoa</th><th>Loại</th><th>Bệnh nhân</th><th style={{ width: '150px' }}>Giá</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
                         <tbody>{filteredBeds.map(b => (
                             <tr key={b.id}>
-                                <td><strong style={{ fontSize: '0.85em', wordBreak: 'break-all' }}>{b.id}</strong></td><td>{b.tenGiuong}</td><td>{b.tenKhoa || b.khoaId}</td><td>{b.loaiGiuong}</td>
+                                <td><strong style={{ fontSize: '0.85em', wordBreak: 'break-all' }}>{b.id}</strong></td>
+                                <td>{b.tenGiuong}</td>
+                                <td>{b.tenKhoa || b.khoaId}</td>
+                                <td>{b.loaiGiuong}</td>
+                                <td>{b.tenBenhNhan || '—'}</td>
                                 <td>{(b.giaTien ?? b.giaGiuong)?.toLocaleString('vi-VN')} đ</td>
                                 <td><span className={`status-badge badge-${getStatusColor(b.trangThai)}`}>{b.trangThai}</span></td>
                                 <td><div className="action-btns">

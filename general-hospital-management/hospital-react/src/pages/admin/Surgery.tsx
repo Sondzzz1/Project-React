@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { surgeryApi, Surgery, patientApi, Patient, doctorApi, Doctor } from '../../services';
+import { surgeryApi, Surgery, admissionApi, Admission, doctorApi, Doctor } from '../../services';
 import { usePermissions } from '../../hooks/usePermissions';
 import '../../assets/css/admin/admin.css';
 
@@ -33,7 +33,7 @@ function toInputDateTime(dateStr?: string): string {
 
 export default function SurgeryPage() {
     const [surgeries, setSurgeries] = useState<Surgery[]>([]);
-    const [patients, setPatients] = useState<Patient[]>([]);
+    const [admissions, setAdmissions] = useState<Admission[]>([]);
     const [doctors, setDoctors] = useState<Doctor[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [search, setSearch] = useState<string>('');
@@ -49,7 +49,7 @@ export default function SurgeryPage() {
             setLoading(true);
             const [surgeriesRes, patientsRes, doctorsRes] = await Promise.allSettled([
                 surgeryApi.getAll(),
-                patientApi.getAll(),
+                admissionApi.getAll(),
                 doctorApi.getAll()
             ]);
 
@@ -63,10 +63,9 @@ export default function SurgeryPage() {
 
             if (patientsRes.status === 'fulfilled') {
                 const data = patientsRes.value;
-                const list = (data as { data?: Patient[] })?.data;
-                setPatients(Array.isArray(data) ? (data as Patient[]) : (list || []));
+                setAdmissions(Array.isArray(data) ? data : (data as any)?.data || []);
             } else {
-                setPatients([]);
+                setAdmissions([]);
             }
 
             if (doctorsRes.status === 'fulfilled') {
@@ -249,10 +248,10 @@ export default function SurgeryPage() {
                                     value={String(formData.nhapVienId || '')}
                                     onChange={e => setFormData({ ...formData, nhapVienId: e.target.value || undefined })}
                                 >
-                                    <option value="">-- Chọn bệnh nhân --</option>
-                                    {patients.map(p => (
-                                        <option key={p.id} value={p.id}>
-                                            {p.hoTen}
+                                    <option value="">-- Chọn bệnh nhân đang điều trị --</option>
+                                    {admissions.map(adm => (
+                                        <option key={adm.id} value={adm.id}>
+                                            {adm.tenBenhNhan} (Phòng: {adm.tenGiuong || 'Chưa xếp'})
                                         </option>
                                     ))}
                                 </select>

@@ -49,13 +49,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             const newToken = apiData.token;
             let userData = apiData.user || apiData;
 
-            // Normalize role về lowercase vì backend trả về "Admin" nhưng frontend expect "admin"
+            // Normalize role về lowercase và map sang role frontend expect
+            const roleMap: Record<string, string> = {
+                'admin': 'admin',
+                'bacsi': 'doctor',
+                'yta': 'nurse',
+                'ketoan': 'accountant',
+                'benhnhan': 'patient'
+            };
+
+            let finalRole = 'patient'; // Default
             if (userData.role) {
-                userData = { ...userData, role: userData.role.toLowerCase() };
+                finalRole = roleMap[userData.role.toLowerCase()] || userData.role.toLowerCase();
+            } else if (userData.vaiTro) {
+                finalRole = roleMap[userData.vaiTro.toLowerCase()] || userData.vaiTro.toLowerCase();
             }
-            if (userData.vaiTro) {
-                userData = { ...userData, role: userData.vaiTro.toLowerCase() };
-            }
+            
+            userData = { ...userData, role: finalRole };
 
             localStorage.setItem(APP_CONFIG.TOKEN_KEY, newToken);
             localStorage.setItem(APP_CONFIG.USER_KEY, JSON.stringify(userData));
