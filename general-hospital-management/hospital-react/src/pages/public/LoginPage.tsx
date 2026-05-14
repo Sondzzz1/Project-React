@@ -17,7 +17,19 @@ export default function LoginPage() {
         setLoading(true);
         setError('');
         const result = await login(tenDangNhap, matKhau);
-        if (result.success) { navigate('/admin'); } else { setError(result.error || 'Đăng nhập thất bại'); }
+        if (result.success) {
+            // Redirect theo vai trò: bệnh nhân → trang chủ, nhân viên → admin
+            const role = result.user?.role || '';
+            const staffRoles = ['admin', 'doctor', 'nurse', 'caregiver', 'accountant', 'nhanvien'];
+            if (staffRoles.includes(role)) {
+                navigate('/admin');
+            } else {
+                // patient hoặc role không xác định → về trang chủ
+                navigate('/');
+            }
+        } else {
+            setError(result.error || 'Đăng nhập thất bại');
+        }
         setLoading(false);
     };
 

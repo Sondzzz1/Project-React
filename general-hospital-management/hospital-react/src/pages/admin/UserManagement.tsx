@@ -42,6 +42,7 @@ export default function UserManagementPage() {
             matKhau: '', 
             hoTen: '', 
             email: '', 
+            soDienThoai: '',
             role: 'doctor' 
         });
         setError('');
@@ -210,17 +211,26 @@ export default function UserManagementPage() {
                         </div>
 
                         <div className="form-group">
+                            <label>Số điện thoại</label>
+                            <input
+                                placeholder="0912345678"
+                                value={(formData as any).soDienThoai || ''}
+                                onChange={e => setFormData({ ...formData, soDienThoai: e.target.value } as any)}
+                            />
+                        </div>
+
+                        <div className="form-group">
                             <label>Vai trò *</label>
                             <select 
-                                value={formData.role || ''} 
+                                value={formData.role || 'doctor'} 
                                 onChange={e => setFormData({ ...formData, role: e.target.value })}
                             >
-                                <option value="admin">Quản trị viên</option>
-                                <option value="doctor">Bác sĩ</option>
-                                <option value="nurse">Y tá</option>
-                                <option value="caregiver">Điều dưỡng</option>
-                                <option value="accountant">Kế toán</option>
-                                <option value="patient">Bệnh nhân</option>
+                                <option value="admin">👑 Quản trị viên (Admin)</option>
+                                <option value="doctor">👨‍⚕️ Bác sĩ</option>
+                                <option value="nurse">👩‍⚕️ Y tá</option>
+                                <option value="caregiver">🩺 Điều dưỡng</option>
+                                <option value="accountant">💰 Kế toán</option>
+                                <option value="patient">🧑 Bệnh nhân</option>
                             </select>
                         </div>
 

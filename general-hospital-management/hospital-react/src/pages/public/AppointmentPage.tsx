@@ -1,7 +1,24 @@
-import { useState, FormEvent } from 'react';
+import { useState, useEffect, FormEvent } from 'react';
 import { Link } from 'react-router-dom';
-import { appointmentApi } from '../../services';
+import axiosPublic from '../../services/axiosPublic';
+import { ENDPOINTS } from '../../constant/api';
 import './AppointmentPage.css';
+
+// ─── Local types ────────────────────────────────────────────────────────────────
+
+interface DeptItem {
+    id: number;
+    tenKhoa: string;
+    moTa?: string;
+}
+
+interface DoctorItem {
+    id: string;       // GUID
+    hoTen: string;
+    chuyenKhoa?: string;
+    khoaId?: string | number | null;
+    tenKhoa?: string;
+}
 
 interface AppointmentForm {
     hoTen: string;
@@ -9,112 +26,205 @@ interface AppointmentForm {
     email: string;
     ngaySinh: string;
     gioiTinh: string;
-    khoaKham: string;
-    bacSi: string;
+    /** ID số của KhoaPhong – dùng để filter bác sĩ */
+    khoaKhamId: string;
+    /** Tên khoa – gửi lên backend field khoaKham */
+    khoaKhamTen: string;
+    /** GUID thực của BacSi – gửi lên backend field bacSiId */
+    bacSiId: string;
+    /** Tên bác sĩ – chỉ hiển thị */
+    bacSiTen: string;
     ngayKham: string;
     gioKham: string;
     trieuChung: string;
     bhyt: string;
 }
 
-const departments = [
-    { id: 'NK', name: 'Khoa Nội Tổng hợp' },
-    { id: 'NGK', name: 'Khoa Ngoại Tổng hợp' },
-    { id: 'SAN', name: 'Khoa Sản' },
-    { id: 'NHI', name: 'Khoa Nhi' },
-    { id: 'TM', name: 'Khoa Tim mạch' },
-    { id: 'TK', name: 'Khoa Thần kinh' },
+const TIME_SLOTS = [
+    '07:30', '08:00', '08:30', '09:00', '09:30', '10:00',
+    '10:30', '11:00', '14:00', '14:30', '15:00', '15:30', '16:00',
 ];
 
-const doctorsByDept: Record<string, { id: string; name: string }[]> = {
-    NK: [{ id: 'bs1', name: 'GS.TS Nguyễn Văn Minh' }, { id: 'bs9', name: 'PGS.TS Trần Thị Mai' }],
-    NGK: [{ id: 'bs2', name: 'TS.BS Trần Quốc Hùng' }],
-    SAN: [{ id: 'bs3', name: 'TS.BS Lê Thị Hương' }],
-    NHI: [{ id: 'bs4', name: 'PGS.TS Phạm Văn Đức' }],
-    TM: [{ id: 'bs5', name: 'GS.TS Vũ Đình Hải' }],
-    TK: [{ id: 'bs7', name: 'TS.BS Đỗ Minh Quân' }],
+const STEPS = [
+    { num: 1, title: 'Chọn khoa & bác sĩ', icon: '🏥' },
+    { num: 2, title: 'Chọn ngày giờ',       icon: '📅' },
+    { num: 3, title: 'Điền thông tin',       icon: '📝' },
+    { num: 4, title: 'Xác nhận',             icon: '✅' },
+];
+
+const EMPTY_FORM: AppointmentForm = {
+    hoTen: '', soDienThoai: '', email: '', ngaySinh: '', gioiTinh: '',
+    khoaKhamId: '', khoaKhamTen: '',
+    bacSiId: '', bacSiTen: '',
+    ngayKham: '', gioKham: '', trieuChung: '', bhyt: '',
 };
 
-const timeSlots = ['07:30', '08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '14:00', '14:30', '15:00', '15:30', '16:00'];
+// ─── Helper: safely unwrap API response (array OR {data:[]} OR {success,data:[]}) ──
+function unwrapArray<T>(raw: unknown): T[] {
+    if (Array.isArray(raw)) return raw as T[];
+    if (raw && typeof raw === 'object') {
+        const obj = raw as Record<string, unknown>;
+        if (Array.isArray(obj['data'])) return obj['data'] as T[];
+    }
+    return [];
+}
 
-const steps = [
-    { num: 1, title: 'Chọn khoa & bác sĩ', icon: '🏥' },
-    { num: 2, title: 'Chọn ngày giờ', icon: '📅' },
-    { num: 3, title: 'Điền thông tin', icon: '📝' },
-    { num: 4, title: 'Xác nhận', icon: '✅' },
-];
+// ─── Component ──────────────────────────────────────────────────────────────────
 
 export default function AppointmentPage() {
     const [currentStep, setCurrentStep] = useState<number>(1);
-    const [form, setForm] = useState<AppointmentForm>({
-        hoTen: '', soDienThoai: '', email: '', ngaySinh: '', gioiTinh: '',
-        khoaKham: '', bacSi: '', ngayKham: '', gioKham: '', trieuChung: '', bhyt: '',
-    });
-    const [submitted, setSubmitted] = useState<boolean>(false);
+    const [form, setForm] = useState<AppointmentForm>(EMPTY_FORM);
+    const [submitted, setSubmitted]   = useState<boolean>(false);
     const [submitting, setSubmitting] = useState<boolean>(false);
-    const [error, setError] = useState<string>('');
+    const [submitError, setSubmitError] = useState<string>('');
 
-    const availableDoctors = form.khoaKham ? (doctorsByDept[form.khoaKham] || []) : [];
+    // Data from API
+    const [departments, setDepartments]  = useState<DeptItem[]>([]);
+    const [allDoctors, setAllDoctors]    = useState<DoctorItem[]>([]);
+    const [loadingData, setLoadingData]  = useState<boolean>(true);
+    const [loadError, setLoadError]      = useState<string>('');
 
+    // ── Fetch departments & doctors once on mount ──────────────────────────────
+    useEffect(() => {
+        const fetchData = async () => {
+            setLoadingData(true);
+            setLoadError('');
+            try {
+                const [deptRes, docRes] = await Promise.allSettled([
+                    axiosPublic.get(`${ENDPOINTS.DEPARTMENT}/get-all`),
+                    axiosPublic.get(`${ENDPOINTS.DOCTOR}/doctors`),
+                ]);
+
+                if (deptRes.status === 'fulfilled') {
+                    setDepartments(unwrapArray<DeptItem>(deptRes.value.data));
+                } else {
+                    console.warn('[AppointmentPage] Không tải được danh sách khoa:', deptRes.reason);
+                    setLoadError('Không thể tải danh sách khoa. Vui lòng thử lại.');
+                }
+
+                if (docRes.status === 'fulfilled') {
+                    setAllDoctors(unwrapArray<DoctorItem>(docRes.value.data));
+                } else {
+                    console.warn('[AppointmentPage] Không tải được danh sách bác sĩ:', docRes.reason);
+                    // Không báo lỗi – user vẫn có thể đặt lịch không chọn bác sĩ
+                }
+            } catch (err) {
+                console.error('[AppointmentPage] fetchData error:', err);
+                setLoadError('Có lỗi xảy ra khi tải dữ liệu. Vui lòng tải lại trang.');
+            } finally {
+                setLoadingData(false);
+            }
+        };
+        fetchData();
+    }, []);
+
+    // ── Bác sĩ lọc theo khoa đang chọn ────────────────────────────────────────
+    // Fallback: nếu không có bác sĩ nào có khoaId khớp → hiện toàn bộ bác sĩ
+    const doctorsByKhoa: DoctorItem[] = (() => {
+        if (!form.khoaKhamId || allDoctors.length === 0) return [];
+        const filtered = allDoctors.filter(
+            (d) => d.khoaId != null && String(d.khoaId) === String(form.khoaKhamId)
+        );
+        // Nếu không có bác sĩ nào thuộc khoa này → trả về tất cả bác sĩ
+        return filtered.length > 0 ? filtered : allDoctors;
+    })();
+
+    // ── Chọn khoa ─────────────────────────────────────────────────────────────
+    const handleSelectDept = (dept: DeptItem) => {
+        setForm(prev => ({
+            ...prev,
+            khoaKhamId:  String(dept.id),
+            khoaKhamTen: dept.tenKhoa,
+            bacSiId:     '',
+            bacSiTen:    '',
+        }));
+    };
+
+    // ── Chọn bác sĩ ───────────────────────────────────────────────────────────
+    const handleSelectDoctor = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const guid = e.target.value;
+        const doc  = allDoctors.find(d => d.id === guid);
+        setForm(prev => ({
+            ...prev,
+            bacSiId:  guid,
+            bacSiTen: doc?.hoTen || '',
+        }));
+    };
+
+    // ── Submit ─────────────────────────────────────────────────────────────────
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         setSubmitting(true);
-        setError('');
-        
+        setSubmitError('');
         try {
-            const result = await appointmentApi.create({
-                hoTen: form.hoTen,
-                soDienThoai: form.soDienThoai,
-                email: form.email || undefined,
-                ngaySinh: form.ngaySinh || undefined,
-                gioiTinh: form.gioiTinh || undefined,
-                khoaKham: form.khoaKham,
-                bacSiId: form.bacSi || undefined,
-                ngayKham: form.ngayKham,
-                gioKham: form.gioKham,
-                trieuChung: form.trieuChung || undefined,
-                soTheBaoHiem: form.bhyt || undefined,
-            });
-            
+            const payload = {
+                hoTen:        form.hoTen,
+                soDienThoai:  form.soDienThoai,
+                email:        form.email      || undefined,
+                ngaySinh:     form.ngaySinh   || undefined,
+                gioiTinh:     form.gioiTinh   || undefined,
+                khoaKham:     form.khoaKhamTen,
+                bacSiId:      form.bacSiId    || undefined,
+                ngayKham:     form.ngayKham,
+                gioKham:      form.gioKham,
+                trieuChung:   form.trieuChung || undefined,
+                soTheBaoHiem: form.bhyt       || undefined,
+            };
+
+            console.log('[AppointmentPage] Payload gửi lên:', payload);
+
+            // Dùng axiosPublic để đặt lịch — không cần đăng nhập
+            const res = await axiosPublic.post(`${ENDPOINTS.APPOINTMENT}/dat-lich`, payload);
+            const result = res.data as { success: boolean; message: string };
+
             if (result.success) {
                 setSubmitted(true);
             } else {
-                setError(result.message || 'Đặt lịch thất bại');
+                setSubmitError(result.message || 'Đặt lịch thất bại. Vui lòng thử lại.');
             }
         } catch (err: unknown) {
             const axiosErr = err as { response?: { data?: { message?: string } } };
-            setError(axiosErr.response?.data?.message || 'Có lỗi xảy ra khi đặt lịch');
+            const msg = axiosErr.response?.data?.message || 'Có lỗi xảy ra khi đặt lịch.';
+            console.error('[AppointmentPage] Submit error:', err);
+            setSubmitError(msg);
         } finally {
             setSubmitting(false);
         }
     };
 
-    const nextStep = () => { if (currentStep < 4) setCurrentStep(currentStep + 1); };
-    const prevStep = () => { if (currentStep > 1) setCurrentStep(currentStep - 1); };
+    // ── Navigation ─────────────────────────────────────────────────────────────
+    const nextStep = () => setCurrentStep(s => Math.min(s + 1, 4));
+    const prevStep = () => setCurrentStep(s => Math.max(s - 1, 1));
 
     const canNext = (): boolean => {
-        if (currentStep === 1) return !!form.khoaKham;
+        if (currentStep === 1) return !!form.khoaKhamId;
         if (currentStep === 2) return !!form.ngayKham && !!form.gioKham;
-        if (currentStep === 3) return !!form.hoTen && !!form.soDienThoai;
+        if (currentStep === 3) return !!form.hoTen.trim() && !!form.soDienThoai.trim();
         return true;
     };
 
+    // ── Success screen ─────────────────────────────────────────────────────────
     if (submitted) {
         return (
             <div className="appt-page">
-                <div className="appt-hero"><h1>Đặt Lịch Khám</h1><p>Đặt lịch hẹn trực tuyến dễ dàng, nhanh chóng</p></div>
+                <div className="appt-hero">
+                    <h1>Đặt Lịch Khám</h1>
+                    <p>Đặt lịch hẹn trực tuyến dễ dàng, nhanh chóng</p>
+                </div>
                 <div className="container appt-content">
                     <div className="appt-success">
                         <div className="appt-success-icon">🎉</div>
                         <h2>Đặt lịch thành công!</h2>
                         <p>Cảm ơn bạn đã đặt lịch khám tại Bệnh viện Hoàn Mỹ.</p>
-                        <p className="appt-note">📱 Xác nhận đã được gửi qua SĐT <strong>{form.soDienThoai}</strong></p>
+                        <p className="appt-note">
+                            📱 Xác nhận đã được gửi qua SĐT <strong>{form.soDienThoai}</strong>
+                        </p>
                         <div className="appt-summary-card">
-                            <div className="appt-sum-row"><span>Họ tên:</span><strong>{form.hoTen}</strong></div>
-                            <div className="appt-sum-row"><span>Khoa:</span><strong>{departments.find(d => d.id === form.khoaKham)?.name}</strong></div>
-                            <div className="appt-sum-row"><span>Bác sĩ:</span><strong>{availableDoctors.find(d => d.id === form.bacSi)?.name || 'Bệnh viện chỉ định'}</strong></div>
+                            <div className="appt-sum-row"><span>Họ tên:</span>   <strong>{form.hoTen}</strong></div>
+                            <div className="appt-sum-row"><span>Khoa:</span>      <strong>{form.khoaKhamTen}</strong></div>
+                            <div className="appt-sum-row"><span>Bác sĩ:</span>   <strong>{form.bacSiTen || 'Bệnh viện chỉ định'}</strong></div>
                             <div className="appt-sum-row"><span>Ngày khám:</span><strong>{form.ngayKham}</strong></div>
-                            <div className="appt-sum-row"><span>Giờ khám:</span><strong>{form.gioKham}</strong></div>
+                            <div className="appt-sum-row"><span>Giờ khám:</span> <strong>{form.gioKham}</strong></div>
                         </div>
                         <p style={{ marginTop: '1rem', fontSize: '0.9rem', color: '#64748b' }}>
                             💡 Vui lòng mang theo CCCD/CMND và thẻ BHYT (nếu có) khi đến khám
@@ -126,6 +236,7 @@ export default function AppointmentPage() {
         );
     }
 
+    // ── Main form ──────────────────────────────────────────────────────────────
     return (
         <div className="appt-page">
             <div className="appt-hero">
@@ -134,10 +245,13 @@ export default function AppointmentPage() {
             </div>
 
             <div className="container appt-content">
-                {/* Progress Steps */}
+                {/* ── Progress Steps ── */}
                 <div className="appt-steps">
-                    {steps.map((s) => (
-                        <div key={s.num} className={`appt-step ${currentStep >= s.num ? 'active' : ''} ${currentStep === s.num ? 'current' : ''}`}>
+                    {STEPS.map((s) => (
+                        <div
+                            key={s.num}
+                            className={`appt-step ${currentStep >= s.num ? 'active' : ''} ${currentStep === s.num ? 'current' : ''}`}
+                        >
                             <div className="appt-step-circle">{currentStep > s.num ? '✔' : s.icon}</div>
                             <span className="appt-step-label">{s.title}</span>
                         </div>
@@ -145,56 +259,96 @@ export default function AppointmentPage() {
                 </div>
 
                 <form className="appt-form" onSubmit={handleSubmit}>
-                    {error && (
-                        <div style={{ 
-                            padding: '1rem', 
-                            background: '#fee2e2', 
-                            color: '#991b1b', 
-                            borderRadius: '8px', 
-                            marginBottom: '1rem' 
-                        }}>
-                            {error}
+
+                    {/* Submit error */}
+                    {submitError && (
+                        <div style={{ padding: '1rem', background: '#fee2e2', color: '#991b1b', borderRadius: '8px', marginBottom: '1rem' }}>
+                            ⚠️ {submitError}
                         </div>
                     )}
-                    
-                    {/* Step 1: Choose Department & Doctor */}
+
+                    {/* ════ BƯỚC 1: Chọn Khoa & Bác sĩ ════ */}
                     {currentStep === 1 && (
                         <div className="appt-step-content">
-                            <h2>Bước 1: Chọn Khoa & Bác sĩ</h2>
-                            <div className="appt-dept-grid">
-                                {departments.map((dept) => (
-                                    <div key={dept.id} className={`appt-dept-card ${form.khoaKham === dept.id ? 'selected' : ''}`} onClick={() => setForm({ ...form, khoaKham: dept.id, bacSi: '' })}>
-                                        <div className="appt-dept-icon">🏥</div>
-                                        <h3>{dept.name}</h3>
-                                    </div>
-                                ))}
-                            </div>
-                            {form.khoaKham && availableDoctors.length > 0 && (
+                            <h2>Bước 1: Chọn Khoa &amp; Bác sĩ</h2>
+
+                            {/* Loading / Error khi fetch */}
+                            {loadingData && (
+                                <p style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
+                                    ⏳ Đang tải danh sách khoa...
+                                </p>
+                            )}
+                            {!loadingData && loadError && (
+                                <div style={{ padding: '0.75rem 1rem', background: '#fee2e2', color: '#991b1b', borderRadius: '8px', marginBottom: '1rem' }}>
+                                    {loadError}
+                                </div>
+                            )}
+
+                            {/* Grid chọn khoa */}
+                            {!loadingData && departments.length > 0 && (
+                                <div className="appt-dept-grid">
+                                    {departments.map((dept) => (
+                                        <div
+                                            key={dept.id}
+                                            className={`appt-dept-card ${form.khoaKhamId === String(dept.id) ? 'selected' : ''}`}
+                                            onClick={() => handleSelectDept(dept)}
+                                        >
+                                            <div className="appt-dept-icon">🏥</div>
+                                            <h3>{dept.tenKhoa}</h3>
+                                            {dept.moTa && <p style={{ fontSize: '0.8rem', color: '#64748b', margin: 0 }}>{dept.moTa}</p>}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
+                            {/* Combobox bác sĩ – hiện sau khi chọn khoa */}
+                            {!loadingData && form.khoaKhamId && (
                                 <div className="appt-doctor-select">
-                                    <label>Chọn bác sĩ (không bắt buộc)</label>
-                                    <select value={form.bacSi} onChange={(e) => setForm({ ...form, bacSi: e.target.value })}>
-                                        <option value="">Để bệnh viện chỉ định</option>
-                                        {availableDoctors.map((d) => (<option key={d.id} value={d.id}>{d.name}</option>))}
+                                    <label>Chọn bác sĩ <em style={{ fontWeight: 400, color: '#64748b' }}>(không bắt buộc)</em></label>
+                                    <select value={form.bacSiId} onChange={handleSelectDoctor}>
+                                        <option value="">-- Để bệnh viện chỉ định --</option>
+                                        {doctorsByKhoa.length > 0
+                                            ? doctorsByKhoa.map((d) => (
+                                                <option key={d.id} value={d.id}>
+                                                    {d.hoTen}{d.chuyenKhoa ? ` — ${d.chuyenKhoa}` : ''}
+                                                    {/* Hiện tên khoa nếu đang dùng fallback (hiện tất cả) */}
+                                                    {d.tenKhoa && String(d.khoaId) !== form.khoaKhamId
+                                                        ? ` (${d.tenKhoa})`
+                                                        : ''}
+                                                </option>
+                                              ))
+                                            : <option disabled value="">(Chưa có bác sĩ)</option>
+                                        }
                                     </select>
                                 </div>
                             )}
                         </div>
                     )}
 
-                    {/* Step 2: Choose Date & Time */}
+                    {/* ════ BƯỚC 2: Chọn Ngày & Giờ ════ */}
                     {currentStep === 2 && (
                         <div className="appt-step-content">
-                            <h2>Bước 2: Chọn Ngày & Giờ Khám</h2>
+                            <h2>Bước 2: Chọn Ngày &amp; Giờ Khám</h2>
                             <div className="appt-field">
                                 <label>Ngày khám *</label>
-                                <input type="date" value={form.ngayKham} min={new Date().toISOString().split('T')[0]} onChange={(e) => setForm({ ...form, ngayKham: e.target.value })} />
+                                <input
+                                    type="date"
+                                    value={form.ngayKham}
+                                    min={new Date().toISOString().split('T')[0]}
+                                    onChange={(e) => setForm(prev => ({ ...prev, ngayKham: e.target.value }))}
+                                />
                             </div>
                             {form.ngayKham && (
                                 <div className="appt-timeslots">
                                     <label>Chọn giờ khám *</label>
                                     <div className="appt-time-grid">
-                                        {timeSlots.map((t) => (
-                                            <button type="button" key={t} className={`appt-time-btn ${form.gioKham === t ? 'active' : ''}`} onClick={() => setForm({ ...form, gioKham: t })}>
+                                        {TIME_SLOTS.map((t) => (
+                                            <button
+                                                type="button"
+                                                key={t}
+                                                className={`appt-time-btn ${form.gioKham === t ? 'active' : ''}`}
+                                                onClick={() => setForm(prev => ({ ...prev, gioKham: t }))}
+                                            >
                                                 {t}
                                             </button>
                                         ))}
@@ -204,65 +358,131 @@ export default function AppointmentPage() {
                         </div>
                     )}
 
-                    {/* Step 3: Patient Info */}
+                    {/* ════ BƯỚC 3: Thông Tin Bệnh Nhân ════ */}
                     {currentStep === 3 && (
                         <div className="appt-step-content">
                             <h2>Bước 3: Thông Tin Bệnh Nhân</h2>
                             <div className="appt-form-row">
-                                <div className="appt-field"><label>Họ và tên *</label><input required value={form.hoTen} onChange={(e) => setForm({ ...form, hoTen: e.target.value })} placeholder="Nguyễn Văn A" /></div>
-                                <div className="appt-field"><label>Số điện thoại *</label><input required value={form.soDienThoai} onChange={(e) => setForm({ ...form, soDienThoai: e.target.value })} placeholder="0912 345 678" /></div>
+                                <div className="appt-field">
+                                    <label>Họ và tên *</label>
+                                    <input
+                                        required
+                                        value={form.hoTen}
+                                        onChange={(e) => setForm(prev => ({ ...prev, hoTen: e.target.value }))}
+                                        placeholder="Nguyễn Văn A"
+                                    />
+                                </div>
+                                <div className="appt-field">
+                                    <label>Số điện thoại *</label>
+                                    <input
+                                        required
+                                        value={form.soDienThoai}
+                                        onChange={(e) => setForm(prev => ({ ...prev, soDienThoai: e.target.value }))}
+                                        placeholder="0912 345 678"
+                                    />
+                                </div>
                             </div>
                             <div className="appt-form-row">
-                                <div className="appt-field"><label>Email</label><input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="email@example.com" /></div>
-                                <div className="appt-field"><label>Ngày sinh</label><input type="date" value={form.ngaySinh} onChange={(e) => setForm({ ...form, ngaySinh: e.target.value })} /></div>
+                                <div className="appt-field">
+                                    <label>Email</label>
+                                    <input
+                                        type="email"
+                                        value={form.email}
+                                        onChange={(e) => setForm(prev => ({ ...prev, email: e.target.value }))}
+                                        placeholder="email@example.com"
+                                    />
+                                </div>
+                                <div className="appt-field">
+                                    <label>Ngày sinh</label>
+                                    <input
+                                        type="date"
+                                        value={form.ngaySinh}
+                                        onChange={(e) => setForm(prev => ({ ...prev, ngaySinh: e.target.value }))}
+                                    />
+                                </div>
                             </div>
                             <div className="appt-form-row">
                                 <div className="appt-field">
                                     <label>Giới tính</label>
-                                    <select value={form.gioiTinh} onChange={(e) => setForm({ ...form, gioiTinh: e.target.value })}>
-                                        <option value="">-- Chọn --</option><option value="Nam">Nam</option><option value="Nữ">Nữ</option>
+                                    <select
+                                        value={form.gioiTinh}
+                                        onChange={(e) => setForm(prev => ({ ...prev, gioiTinh: e.target.value }))}
+                                    >
+                                        <option value="">-- Chọn --</option>
+                                        <option value="Nam">Nam</option>
+                                        <option value="Nữ">Nữ</option>
                                     </select>
                                 </div>
-                                <div className="appt-field"><label>Số BHYT</label><input value={form.bhyt} onChange={(e) => setForm({ ...form, bhyt: e.target.value })} placeholder="Nếu có" /></div>
+                                <div className="appt-field">
+                                    <label>Số BHYT</label>
+                                    <input
+                                        value={form.bhyt}
+                                        onChange={(e) => setForm(prev => ({ ...prev, bhyt: e.target.value }))}
+                                        placeholder="Nếu có"
+                                    />
+                                </div>
                             </div>
                             <div className="appt-field">
                                 <label>Triệu chứng / Lý do khám</label>
-                                <textarea rows={3} value={form.trieuChung} onChange={(e) => setForm({ ...form, trieuChung: e.target.value })} placeholder="Mô tả ngắn gọn triệu chứng..." />
+                                <textarea
+                                    rows={3}
+                                    value={form.trieuChung}
+                                    onChange={(e) => setForm(prev => ({ ...prev, trieuChung: e.target.value }))}
+                                    placeholder="Mô tả ngắn gọn triệu chứng..."
+                                />
                             </div>
                         </div>
                     )}
 
-                    {/* Step 4: Confirm */}
+                    {/* ════ BƯỚC 4: Xác Nhận ════ */}
                     {currentStep === 4 && (
                         <div className="appt-step-content">
                             <h2>Bước 4: Xác Nhận Thông Tin</h2>
                             <div className="appt-confirm-card">
                                 <div className="appt-confirm-section">
                                     <h3>📋 Thông tin khám</h3>
-                                    <div className="appt-sum-row"><span>Khoa:</span><strong>{departments.find(d => d.id === form.khoaKham)?.name}</strong></div>
-                                    <div className="appt-sum-row"><span>Bác sĩ:</span><strong>{availableDoctors.find(d => d.id === form.bacSi)?.name || 'Bệnh viện chỉ định'}</strong></div>
-                                    <div className="appt-sum-row"><span>Ngày:</span><strong>{form.ngayKham}</strong></div>
-                                    <div className="appt-sum-row"><span>Giờ:</span><strong>{form.gioKham}</strong></div>
+                                    <div className="appt-sum-row"><span>Khoa:</span>      <strong>{form.khoaKhamTen}</strong></div>
+                                    <div className="appt-sum-row"><span>Bác sĩ:</span>   <strong>{form.bacSiTen || 'Bệnh viện chỉ định'}</strong></div>
+                                    <div className="appt-sum-row"><span>Ngày:</span>      <strong>{form.ngayKham}</strong></div>
+                                    <div className="appt-sum-row"><span>Giờ:</span>       <strong>{form.gioKham}</strong></div>
                                 </div>
                                 <div className="appt-confirm-section">
                                     <h3>👤 Thông tin bệnh nhân</h3>
-                                    <div className="appt-sum-row"><span>Họ tên:</span><strong>{form.hoTen}</strong></div>
-                                    <div className="appt-sum-row"><span>SĐT:</span><strong>{form.soDienThoai}</strong></div>
-                                    {form.email && <div className="appt-sum-row"><span>Email:</span><strong>{form.email}</strong></div>}
+                                    <div className="appt-sum-row"><span>Họ tên:</span>   <strong>{form.hoTen}</strong></div>
+                                    <div className="appt-sum-row"><span>SĐT:</span>       <strong>{form.soDienThoai}</strong></div>
+                                    {form.email      && <div className="appt-sum-row"><span>Email:</span>      <strong>{form.email}</strong></div>}
+                                    {form.gioiTinh   && <div className="appt-sum-row"><span>Giới tính:</span> <strong>{form.gioiTinh}</strong></div>}
+                                    {form.ngaySinh   && <div className="appt-sum-row"><span>Ngày sinh:</span> <strong>{form.ngaySinh}</strong></div>}
                                     {form.trieuChung && <div className="appt-sum-row"><span>Triệu chứng:</span><strong>{form.trieuChung}</strong></div>}
+                                    {form.bhyt       && <div className="appt-sum-row"><span>Số BHYT:</span>   <strong>{form.bhyt}</strong></div>}
                                 </div>
                             </div>
                         </div>
                     )}
 
-                    {/* Navigation */}
+                    {/* ── Navigation ── */}
                     <div className="appt-nav">
-                        {currentStep > 1 && <button type="button" className="appt-nav-btn appt-btn-back" onClick={prevStep}>← Quay lại</button>}
+                        {currentStep > 1 && (
+                            <button type="button" className="appt-nav-btn appt-btn-back" onClick={prevStep}>
+                                ← Quay lại
+                            </button>
+                        )}
                         <div style={{ flex: 1 }} />
                         {currentStep < 4 ? (
-                            <button type="button" className="appt-nav-btn appt-btn-next" onClick={nextStep} disabled={!canNext()}>Tiếp theo →</button>
+                            <button
+                                type="button"
+                                className="appt-nav-btn appt-btn-next"
+                                onClick={nextStep}
+                                disabled={!canNext() || (currentStep === 1 && loadingData)}
+                            >
+                                Tiếp theo →
+                            </button>
                         ) : (
-                            <button type="submit" className="appt-nav-btn appt-btn-submit" disabled={submitting}>
+                            <button
+                                type="submit"
+                                className="appt-nav-btn appt-btn-submit"
+                                disabled={submitting}
+                            >
                                 {submitting ? '⏳ Đang xử lý...' : '✅ Xác nhận đặt lịch'}
                             </button>
                         )}

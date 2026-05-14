@@ -65,6 +65,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 finalRole = roleMap[userData.vaiTro.toLowerCase()] || userData.vaiTro.toLowerCase();
             }
             
+            console.log('🔐 Login Debug:', {
+                originalRole: userData.role || userData.vaiTro,
+                mappedRole: finalRole,
+                userData
+            });
+            
             userData = { ...userData, role: finalRole };
 
             localStorage.setItem(APP_CONFIG.TOKEN_KEY, newToken);

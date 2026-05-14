@@ -6,6 +6,7 @@ import StatCard from '../../components/common/StatCard';
 import DoctorDashboard from '../../components/dashboard/DoctorDashboard';
 import NurseDashboard from '../../components/dashboard/NurseDashboard';
 import AccountantDashboard from '../../components/dashboard/AccountantDashboard';
+import PatientDashboard from '../../components/dashboard/PatientDashboard';
 import { patientApi, doctorApi, bedApi, nurseApi } from '../../services';
 import '../../assets/css/admin/admin.css';
 
@@ -67,6 +68,8 @@ export default function DashboardPage() {
                 return <NurseDashboard />;
             case 'accountant':
                 return <AccountantDashboard />;
+            case 'patient':
+                return <PatientDashboard />;
             default:
                 return (
                     <div className="dash-stats-grid">
@@ -89,6 +92,7 @@ export default function DashboardPage() {
             case 'doctor': return 'Bác sĩ';
             case 'nurse': return 'Y tá';
             case 'accountant': return 'Kế toán';
+            case 'patient': return 'Bệnh nhân';
             default: return 'Quản trị viên';
         }
     };

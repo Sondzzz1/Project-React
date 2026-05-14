@@ -1,0 +1,383 @@
+/* =========================================================
+   USER ACCOUNT PAGE — Trang tài khoản người dùng (Public)
+   ========================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+.user-account-page {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f0f4ff 0%, #e8f0fe 50%, #f5f0ff 100%);
+    padding: 2rem 1rem 4rem;
+    font-family: 'Inter', sans-serif;
+}
+
+/* ── Hero Banner ── */
+.uac-hero {
+    background: linear-gradient(135deg, #0f4c81 0%, #1a73a7 60%, #6c63ff 100%);
+    color: #fff;
+    border-radius: 20px;
+    padding: 2.5rem 2rem;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    max-width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: 0 10px 40px rgba(15, 76, 129, 0.3);
+}
+
+.uac-hero-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    border: 3px solid rgba(255,255,255,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+    backdrop-filter: blur(4px);
+}
+
+.uac-hero-info h1 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin: 0 0 4px;
+}
+
+.uac-hero-info p {
+    opacity: 0.8;
+    font-size: 0.9rem;
+    margin: 0 0 8px;
+}
+
+.uac-hero-badge {
+    display: inline-block;
+    padding: 3px 12px;
+    background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.4);
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+/* ── Layout Grid ── */
+.uac-grid {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 1.5rem;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+    .uac-grid { grid-template-columns: 1fr; }
+    .uac-hero { flex-direction: column; text-align: center; }
+}
+
+/* ── Sidebar ── */
+.uac-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.uac-tab-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem 1.25rem;
+    background: #fff;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #4b5563;
+    transition: all 0.2s;
+    text-align: left;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+.uac-tab-btn:hover {
+    background: #f0f4ff;
+    color: #1a73a7;
+    transform: translateX(4px);
+}
+
+.uac-tab-btn.active {
+    background: linear-gradient(135deg, #0f4c81, #1a73a7);
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(15, 76, 129, 0.3);
+}
+
+.uac-tab-icon { font-size: 1.1rem; }
+
+.uac-logout-btn {
+    margin-top: 1rem;
+    background: #fff5f5 !important;
+    color: #dc2626 !important;
+    border: 1px solid #fecaca !important;
+}
+
+.uac-logout-btn:hover {
+    background: #fee2e2 !important;
+    color: #b91c1c !important;
+    transform: translateX(4px);
+}
+
+/* ── Main Content Card ── */
+.uac-content {
+    background: #fff;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+    min-height: 400px;
+}
+
+.uac-section-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #111827;
+    margin: 0 0 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #f3f4f6;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* ── Info Tab ── */
+.uac-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+}
+
+@media (max-width: 600px) {
+    .uac-info-grid { grid-template-columns: 1fr; }
+}
+
+.uac-info-item {
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    border: 1px solid #e5e7eb;
+}
+
+.uac-info-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+
+.uac-info-value {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #111827;
+}
+
+.uac-info-value.empty { color: #9ca3af; font-weight: 400; font-style: italic; }
+
+/* ── Form ── */
+.uac-form { display: flex; flex-direction: column; gap: 1.25rem; }
+
+.uac-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+@media (max-width: 600px) { .uac-form-row { grid-template-columns: 1fr; } }
+
+.uac-field { display: flex; flex-direction: column; gap: 6px; }
+
+.uac-field label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #374151;
+}
+
+.uac-field input,
+.uac-field select {
+    padding: 0.625rem 0.875rem;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    background: #fafbfc;
+    transition: all 0.2s;
+    color: #111827;
+}
+
+.uac-field input:focus,
+.uac-field select:focus {
+    outline: none;
+    border-color: #1a73a7;
+    box-shadow: 0 0 0 3px rgba(26, 115, 167, 0.1);
+    background: #fff;
+}
+
+.uac-field input:disabled {
+    background: #f3f4f6;
+    color: #6b7280;
+    cursor: not-allowed;
+}
+
+/* ── Alerts ── */
+.uac-alert {
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.uac-alert-error {
+    background: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+}
+
+.uac-alert-success {
+    background: #f0fdf4;
+    color: #16a34a;
+    border: 1px solid #bbf7d0;
+}
+
+/* ── Buttons ── */
+.uac-btn-primary {
+    padding: 0.75rem 2rem;
+    background: linear-gradient(135deg, #0f4c81, #1a73a7);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    align-self: flex-start;
+}
+
+.uac-btn-primary:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(15, 76, 129, 0.3);
+}
+
+.uac-btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* ── Quick Links ── */
+.uac-quicklinks {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.uac-ql-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1.5rem 1rem;
+    background: linear-gradient(135deg, #f0f4ff, #e8f0fe);
+    border: 1px solid #c7d7f8;
+    border-radius: 14px;
+    text-decoration: none;
+    color: #1a73a7;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+}
+
+.uac-ql-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(26,115,167,0.15);
+    background: linear-gradient(135deg, #dbeafe, #ede9fe);
+}
+
+.uac-ql-icon { font-size: 1.8rem; }
+
+/* ── Tips ── */
+.uac-tips-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.uac-tips-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: #4b5563;
+    padding: 0.625rem 0.875rem;
+    background: #f9fafb;
+    border-radius: 8px;
+}
+
+.uac-tips-list li::before {
+    content: '✅';
+    flex-shrink: 0;
+}
+
+/* ── Not Logged In ── */
+.uac-not-logged-in {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    gap: 1rem;
+    text-align: center;
+}
+
+.uac-not-logged-in h2 { color: #111827; font-size: 1.5rem; }
+.uac-not-logged-in p  { color: #6b7280; max-width: 360px; }
+
+.uac-not-logged-in-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.uac-btn-login {
+    padding: 0.75rem 2rem;
+    background: linear-gradient(135deg, #0f4c81, #1a73a7);
+    color: #fff;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+}
+
+.uac-btn-login:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(15,76,129,0.3); }
+
+.uac-btn-register {
+    padding: 0.75rem 2rem;
+    background: #fff;
+    color: #1a73a7;
+    border: 2px solid #1a73a7;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+}
+
+.uac-btn-register:hover { background: #f0f4ff; transform: translateY(-2px); }
