@@ -18,15 +18,9 @@ export default function LoginPage() {
         setError('');
         const result = await login(tenDangNhap, matKhau);
         if (result.success) {
-            // Redirect theo vai trò: bệnh nhân → trang chủ, nhân viên → admin
-            const role = result.user?.role || '';
-            const staffRoles = ['admin', 'doctor', 'nurse', 'caregiver', 'accountant', 'nhanvien'];
-            if (staffRoles.includes(role)) {
-                navigate('/admin');
-            } else {
-                // patient hoặc role không xác định → về trang chủ
-                navigate('/');
-            }
+            // Tất cả user đã đăng nhập đều vào /admin
+            // Dashboard sẽ hiển thị nội dung phù hợp theo role
+            navigate('/admin');
         } else {
             setError(result.error || 'Đăng nhập thất bại');
         }

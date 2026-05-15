@@ -2,15 +2,30 @@ import { useState, FormEvent, ChangeEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { changePassword } from '../../services/auth.services';
+import { useEffect } from 'react';
+import axiosInstance from '../../services/axiosInstance';
+import { ENDPOINTS } from '../../constant/api';
 import './UserAccountPage.css';
 
-type TabKey = 'info' | 'password' | 'quicklinks';
+type TabKey = 'info' | 'history' | 'password' | 'quicklinks';
 
 const TABS: { key: TabKey; icon: string; label: string }[] = [
     { key: 'info',       icon: '👤', label: 'Thông tin tài khoản' },
+    { key: 'history',    icon: '📅', label: 'Lịch sử khám' },
     { key: 'password',   icon: '🔒', label: 'Đổi mật khẩu' },
     { key: 'quicklinks', icon: '⚡', label: 'Truy cập nhanh' },
 ];
+
+interface Appointment {
+    id: string;
+    tenBacSi: string;
+    chuyenKhoa: string;
+    tenKhoa?: string;
+    ngayKham: string;
+    gioKham: string;
+    trangThai: string;
+    lyDoKham?: string;
+}
 
 export default function UserAccountPage() {
     const { user, isAuthenticated, logout } = useAuth();
@@ -22,6 +37,36 @@ export default function UserAccountPage() {
     const [pwError, setPwError]     = useState('');
     const [pwSuccess, setPwSuccess] = useState('');
     const [pwLoading, setPwLoading] = useState(false);
+
+    // ── Lịch sử khám ────────────────────────────────────────────────────────
+    const [appointments, setAppointments] = useState<Appointment[]>([]);
+    const [historyLoading, setHistoryLoading] = useState(false);
+
+    const loadHistory = async () => {
+        if (!user?.id) return;
+        setHistoryLoading(true);
+        try {
+            const response = await axiosInstance.post(`${ENDPOINTS.APPOINTMENT}/danh-sach`, {
+                benhNhanId: user.id,
+                pageIndex: 1,
+                pageSize: 50
+            });
+            if (response.data.success) {
+                setAppointments(response.data.data.items);
+            }
+        } catch (error) {
+            console.error('Lỗi tải lịch sử khám:', error);
+        } finally {
+            setHistoryLoading(false);
+        }
+    };
+
+    // Tự động load khi chuyển sang tab history
+    useEffect(() => {
+        if (activeTab === 'history') {
+            loadHistory();
+        }
+    }, [activeTab]);
 
     const handlePwChange = (e: ChangeEvent<HTMLInputElement>) =>
         setPwForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -210,6 +255,58 @@ export default function UserAccountPage() {
                                     <li>Đổi mật khẩu định kỳ ít nhất 3 tháng/lần</li>
                                 </ul>
                             </div>
+                        </>
+                    )}
+                    {/* ════ Tab: Lịch sử khám ════ */}
+                    {activeTab === 'history' && (
+                        <>
+                            <div className="uac-header-with-btn">
+                                <h2 className="uac-section-title">📅 Lịch sử đặt lịch khám</h2>
+                                <button className="uac-btn-refresh" onClick={loadHistory} disabled={historyLoading}>
+                                    {historyLoading ? '...' : '🔄 Làm mới'}
+                                </button>
+                            </div>
+
+                            {historyLoading ? (
+                                <div className="uac-loading">Đang tải lịch sử...</div>
+                            ) : appointments.length === 0 ? (
+                                <div className="uac-empty-state">
+                                    <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📅</div>
+                                    <p>Bạn chưa có lịch hẹn khám nào.</p>
+                                    <Link to="/appointment" className="uac-btn-primary" style={{ display: 'inline-block', marginTop: '1rem', textDecoration: 'none' }}>
+                                        Đặt lịch ngay
+                                    </Link>
+                                </div>
+                            ) : (
+                                <div className="uac-history-list">
+                                    {appointments.map(app => (
+                                        <div key={app.id} className="uac-history-card">
+                                            <div className="uac-hcard-header">
+                                                <div className="uac-hcard-doctor">
+                                                    <strong>BS. {app.tenBacSi || 'Chưa rõ'}</strong>
+                                                    <span>{app.chuyenKhoa || app.tenKhoa || 'Chuyên khoa'}</span>
+                                                </div>
+                                                <span className={`uac-status-badge ${app.trangThai}`}>
+                                                    {app.trangThai || 'Chờ xác nhận'}
+                                                </span>
+                                            </div>
+                                            <div className="uac-hcard-body">
+                                                <div className="uac-hcard-item">
+                                                    <span className="icon">📅</span> {app.ngayKham ? new Date(app.ngayKham).toLocaleDateString('vi-VN') : '—'}
+                                                </div>
+                                                <div className="uac-hcard-item">
+                                                    <span className="icon">⏰</span> {app.gioKham ? app.gioKham.substring(0, 5) : '—'}
+                                                </div>
+                                                {app.lyDoKham && (
+                                                    <div className="uac-hcard-item uac-hcard-reason">
+                                                        <span className="icon">💬</span> {app.lyDoKham}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         </>
                     )}
 

@@ -65,9 +65,9 @@ export default function RegisterPage() {
             email:       form.email.trim()       || undefined,
             soDienThoai: form.soDienThoai.trim() || undefined,
             matKhau:     form.matKhau,
-            // Luôn đăng ký với vai trò bệnh nhân — staff do admin cấp
-            role:    'patient',
-            vaiTro:  'benhnhan', // gửi cả dạng tiếng Việt phòng backend check
+            // Luôn đăng ký với vai trò bệnh nhân (khớp với Backend Roles.BenhNhan)
+            role:    'BenhNhan',
+            vaiTro:  'BenhNhan', 
         };
 
         const result = await register(payload);

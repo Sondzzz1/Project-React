@@ -49,25 +49,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             const newToken = apiData.token;
             let userData = apiData.user || apiData;
 
-            // Normalize role về lowercase và map sang role frontend expect
-            const roleMap: Record<string, string> = {
-                'admin': 'admin',
-                'bacsi': 'doctor',
-                'yta': 'nurse',
-                'ketoan': 'accountant',
-                'benhnhan': 'patient'
-            };
-
-            let finalRole = 'patient'; // Default
-            if (userData.role) {
-                finalRole = roleMap[userData.role.toLowerCase()] || userData.role.toLowerCase();
-            } else if (userData.vaiTro) {
-                finalRole = roleMap[userData.vaiTro.toLowerCase()] || userData.vaiTro.toLowerCase();
-            }
+            // Giữ nguyên role từ Backend (khớp với IdentityService Roles)
+            let finalRole = userData.role || userData.vaiTro || 'BenhNhan';
             
             console.log('🔐 Login Debug:', {
                 originalRole: userData.role || userData.vaiTro,
-                mappedRole: finalRole,
+                finalRole,
                 userData
             });
             

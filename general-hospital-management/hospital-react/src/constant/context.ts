@@ -5,7 +5,7 @@
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-export type Role = 'admin' | 'doctor' | 'nurse' | 'caregiver' | 'accountant' | 'patient' | 'nhanvien';
+export type Role = 'Admin' | 'BacSi' | 'YTa' | 'KeToan' | 'BenhNhan';
 
 export interface Permission {
     dashboard: boolean;
@@ -39,53 +39,39 @@ export interface SidebarItem {
 // ─── Constants ─────────────────────────────────────────────────────────────────
 
 export const ROLES: Record<string, Role> = {
-    ADMIN: 'admin',
-    DOCTOR: 'doctor',
-    NURSE: 'nurse',
-    CAREGIVER: 'caregiver',
-    ACCOUNTANT: 'accountant',
-    PATIENT: 'patient',
-    NHANVIEN: 'nhanvien',
+    ADMIN: 'Admin',
+    DOCTOR: 'BacSi',
+    NURSE: 'YTa',
+    ACCOUNTANT: 'KeToan',
+    PATIENT: 'BenhNhan',
 };
 
 export const PERMISSIONS: Record<Role, Permission> = {
-    admin: {
+    Admin: {
         dashboard: true, appointments: true, patients: true, beds: true,
         surgery: true, records: true, doctors: true, nurses: true,
         admissions: true, billing: true, reports: true, audit: true,
         settings: true, canAdd: true, canEdit: true, canDelete: true, canExport: true, profile: true,
     },
-    nhanvien: {
-        dashboard: true, appointments: true, patients: true, beds: true,
-        surgery: true, records: true, doctors: true, nurses: true,
-        admissions: true, billing: true, reports: true, audit: true,
-        settings: true, canAdd: true, canEdit: true, canDelete: true, canExport: true, profile: true,
-    },
-    doctor: {
+    BacSi: {
         dashboard: true, appointments: true, patients: true, beds: false,
         surgery: true, records: true, doctors: false, nurses: false,
         admissions: false, billing: false, reports: false, audit: false,
         settings: false, canAdd: true, canEdit: true, canDelete: false, canExport: false, profile: true,
     },
-    nurse: {
+    YTa: {
         dashboard: true, appointments: true, patients: true, beds: true,
         surgery: false, records: true, doctors: false, nurses: true,
         admissions: true, billing: false, reports: false, audit: false,
         settings: false, canAdd: true, canEdit: true, canDelete: false, canExport: false, profile: true,
     },
-    caregiver: {
-        dashboard: true, appointments: true, patients: true, beds: true,
-        surgery: false, records: true, doctors: false, nurses: false,
-        admissions: true, billing: false, reports: false, audit: false,
-        settings: false, canAdd: true, canEdit: true, canDelete: false, canExport: false, profile: true,
-    },
-    accountant: {
+    KeToan: {
         dashboard: true, appointments: false, patients: true, beds: false,
         surgery: false, records: false, doctors: false, nurses: false,
         admissions: true, billing: true, reports: true, audit: false,
         settings: false, canAdd: false, canEdit: false, canDelete: false, canExport: true, profile: true,
     },
-    patient: {
+    BenhNhan: {
         dashboard: true, appointments: true, patients: false, beds: false,
         surgery: false, records: true, doctors: false, nurses: false,
         admissions: false, billing: true, reports: false, audit: false,
@@ -94,17 +80,16 @@ export const PERMISSIONS: Record<Role, Permission> = {
 };
 
 export const ROLE_LABELS: Record<Role, string> = {
-    admin: 'Quản trị viên',
-    nhanvien: 'Nhân viên',
-    doctor: 'Bác sĩ',
-    nurse: 'Y tá',
-    caregiver: 'Điều dưỡng',
-    accountant: 'Kế toán',
-    patient: 'Bệnh nhân',
+    Admin: 'Quản trị viên',
+    BacSi: 'Bác sĩ',
+    YTa: 'Y tá',
+    KeToan: 'Kế toán',
+    BenhNhan: 'Bệnh nhân',
 };
 
 export const SIDEBAR_MENU: SidebarItem[] = [
     { id: 'dashboard', label: 'Tổng quan', icon: '📊', path: '/admin', permission: 'dashboard' },
+    { id: 'appointments', label: 'Lịch khám', icon: '📅', path: '/admin/appointments', permission: 'appointments' },
     { id: 'patients', label: 'Bệnh nhân', icon: '🏥', path: '/admin/patients', permission: 'patients' },
     { id: 'beds', label: 'Giường bệnh', icon: '🛏️', path: '/admin/beds', permission: 'beds' },
     { id: 'doctors', label: 'Bác sĩ', icon: '👨‍⚕️', path: '/admin/doctors', permission: 'doctors' },

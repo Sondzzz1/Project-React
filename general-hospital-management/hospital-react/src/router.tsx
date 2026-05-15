@@ -17,6 +17,7 @@ import DoctorListPage from './pages/public/DoctorListPage';
 import ContactPage from './pages/public/ContactPage';
 import AppointmentPage from './pages/public/AppointmentPage';
 import NewsPage from './pages/public/NewsPage';
+import UserAccountPage from './pages/public/UserAccountPage';
 import NotFoundPage from './pages/public/NotFoundPage';
 
 // Admin Dashboard Pages (TypeScript)
@@ -34,6 +35,7 @@ import Audit from './pages/admin/Audit';
 import ProfilePage from './pages/admin/ProfilePage';
 import UserManagement from './pages/admin/UserManagement';
 import LabTest from './pages/admin/LabTest';
+import Appointments from './pages/admin/Appointments';
 
 /**
  * Centralized Route Configuration
@@ -54,6 +56,7 @@ export default function AppRouter() {
                         <Route path="/contact" element={<ContactPage />} />
                         <Route path="/appointment" element={<AppointmentPage />} />
                         <Route path="/news" element={<NewsPage />} />
+                        <Route path="/account" element={<UserAccountPage />} />
                     </Route>
 
                     {/* Auth Routes (no layout) */}
@@ -71,6 +74,7 @@ export default function AppRouter() {
                         }
                     >
                         <Route index element={<Dashboard />} />
+                        <Route path="appointments" element={<Appointments />} />
                         <Route path="patients" element={<Patient />} />
                         <Route path="beds" element={<Bed />} />
                         <Route path="doctors" element={<Doctor />} />

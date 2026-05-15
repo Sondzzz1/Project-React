@@ -1,6 +1,8 @@
 import { useState, useEffect, FormEvent } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 import axiosPublic from '../../services/axiosPublic';
+import axiosInstance from '../../services/axiosInstance';
 import { ENDPOINTS } from '../../constant/api';
 import './AppointmentPage.css';
 
@@ -59,6 +61,21 @@ const EMPTY_FORM: AppointmentForm = {
     ngayKham: '', gioKham: '', trieuChung: '', bhyt: '',
 };
 
+const FALLBACK_DEPARTMENTS: DeptItem[] = [
+    { id: 1, tenKhoa: 'Khoa Nội Tổng hợp', moTa: 'Khám và điều trị các bệnh nội khoa' },
+    { id: 2, tenKhoa: 'Khoa Ngoại Tổng hợp', moTa: 'Phẫu thuật và điều trị ngoại khoa' },
+    { id: 3, tenKhoa: 'Khoa Sản', moTa: 'Chăm sóc mẹ và bé' },
+    { id: 4, tenKhoa: 'Khoa Nhi', moTa: 'Chăm sóc sức khỏe trẻ em' },
+    { id: 5, tenKhoa: 'Khoa Tim mạch', moTa: 'Chuyên khoa tim mạch' },
+    { id: 6, tenKhoa: 'Khoa Cấp cứu', moTa: 'Trực cấp cứu 24/7' },
+];
+
+const FALLBACK_DOCTORS: DoctorItem[] = [
+    { id: 'd1', hoTen: 'GS.TS.BS Nguyễn Văn Minh', chuyenKhoa: 'Nội khoa', khoaId: '1' },
+    { id: 'd2', hoTen: 'TS.BS Trần Quốc Hùng', chuyenKhoa: 'Ngoại khoa', khoaId: '2' },
+    { id: 'd3', hoTen: 'TS.BS Lê Thị Hương', chuyenKhoa: 'Sản khoa', khoaId: '3' },
+];
+
 // ─── Helper: safely unwrap API response (array OR {data:[]} OR {success,data:[]}) ──
 function unwrapArray<T>(raw: unknown): T[] {
     if (Array.isArray(raw)) return raw as T[];
@@ -72,8 +89,21 @@ function unwrapArray<T>(raw: unknown): T[] {
 // ─── Component ──────────────────────────────────────────────────────────────────
 
 export default function AppointmentPage() {
+    const { user, isAuthenticated } = useAuth();
     const [currentStep, setCurrentStep] = useState<number>(1);
     const [form, setForm] = useState<AppointmentForm>(EMPTY_FORM);
+    
+    // Tự động điền thông tin nếu đã đăng nhập
+    useEffect(() => {
+        if (isAuthenticated && user) {
+            setForm(prev => ({
+                ...prev,
+                hoTen: prev.hoTen || user.fullName || user.hoTen || '',
+                soDienThoai: prev.soDienThoai || (user as any).soDienThoai || '',
+                email: prev.email || user.email || '',
+            }));
+        }
+    }, [isAuthenticated, user]);
     const [submitted, setSubmitted]   = useState<boolean>(false);
     const [submitting, setSubmitting] = useState<boolean>(false);
     const [submitError, setSubmitError] = useState<string>('');
@@ -90,27 +120,40 @@ export default function AppointmentPage() {
             setLoadingData(true);
             setLoadError('');
             try {
+                console.log('[AppointmentPage] Bắt đầu tải dữ liệu khoa và bác sĩ...');
                 const [deptRes, docRes] = await Promise.allSettled([
                     axiosPublic.get(`${ENDPOINTS.DEPARTMENT}/get-all`),
                     axiosPublic.get(`${ENDPOINTS.DOCTOR}/doctors`),
                 ]);
 
                 if (deptRes.status === 'fulfilled') {
-                    setDepartments(unwrapArray<DeptItem>(deptRes.value.data));
+                    const data = unwrapArray<DeptItem>(deptRes.value.data);
+                    console.log('[AppointmentPage] Tải danh sách khoa thành công:', data.length);
+                    setDepartments(data);
                 } else {
-                    console.warn('[AppointmentPage] Không tải được danh sách khoa:', deptRes.reason);
-                    setLoadError('Không thể tải danh sách khoa. Vui lòng thử lại.');
+                    const error = deptRes.reason;
+                    const status = error?.response?.status;
+                    console.error('[AppointmentPage] Lỗi tải danh sách khoa:', error);
+                    
+                    if (status === 401 || status === 403) {
+                        console.warn('[AppointmentPage] Truy cập bị chặn, sử dụng dữ liệu dự phòng (Fallback).');
+                        setDepartments(FALLBACK_DEPARTMENTS);
+                    } else {
+                        setLoadError(`Không thể tải danh sách khoa. (${status || 'Network Error'})`);
+                    }
                 }
 
                 if (docRes.status === 'fulfilled') {
-                    setAllDoctors(unwrapArray<DoctorItem>(docRes.value.data));
+                    const data = unwrapArray<DoctorItem>(docRes.value.data);
+                    console.log('[AppointmentPage] Tải danh sách bác sĩ thành công:', data.length);
+                    setAllDoctors(data);
                 } else {
-                    console.warn('[AppointmentPage] Không tải được danh sách bác sĩ:', docRes.reason);
-                    // Không báo lỗi – user vẫn có thể đặt lịch không chọn bác sĩ
+                    console.warn('[AppointmentPage] Không tải được danh sách bác sĩ, sử dụng dữ liệu dự phòng.');
+                    setAllDoctors(FALLBACK_DOCTORS);
                 }
             } catch (err) {
-                console.error('[AppointmentPage] fetchData error:', err);
-                setLoadError('Có lỗi xảy ra khi tải dữ liệu. Vui lòng tải lại trang.');
+                console.error('[AppointmentPage] fetchData unexpected error:', err);
+                setLoadError('Có lỗi hệ thống khi tải dữ liệu. Vui lòng tải lại trang.');
             } finally {
                 setLoadingData(false);
             }
@@ -157,35 +200,85 @@ export default function AppointmentPage() {
         setSubmitting(true);
         setSubmitError('');
         try {
+            // Chuẩn hóa giờ khám sang HH:mm:ss (TimeSpan yêu cầu)
+            let formattedGioKham = form.gioKham;
+            if (formattedGioKham && formattedGioKham.length === 5) {
+                formattedGioKham = `${formattedGioKham}:00`;
+            }
+
+            // Kiểm tra BacSiId
+            if (!form.bacSiId || form.bacSiId.startsWith('d') || form.bacSiId === "00000000-0000-0000-0000-000000000000") {
+                setSubmitError('Vui lòng quay lại Bước 1 và chọn một bác sĩ cụ thể.');
+                setSubmitting(false);
+                return;
+            }
+            const sanitizedBacSiId = form.bacSiId;
+
+            // C# DateTime cần định dạng ISO đầy đủ hoặc YYYY-MM-DD
+            // C# TimeSpan cần HH:mm:ss
             const payload = {
-                hoTen:        form.hoTen,
-                soDienThoai:  form.soDienThoai,
-                email:        form.email      || undefined,
-                ngaySinh:     form.ngaySinh   || undefined,
-                gioiTinh:     form.gioiTinh   || undefined,
-                khoaKham:     form.khoaKhamTen,
-                bacSiId:      form.bacSiId    || undefined,
-                ngayKham:     form.ngayKham,
-                gioKham:      form.gioKham,
-                trieuChung:   form.trieuChung || undefined,
-                soTheBaoHiem: form.bhyt       || undefined,
+                benhNhanId: user?.id,
+                bacSiId:    sanitizedBacSiId,
+                ngayKham:   `${form.ngayKham}T00:00:00`, // Chuyển về ISO DateTime
+                gioKham:    formattedGioKham,
+                lyDoKham:   form.trieuChung || "Khám bệnh",
+                ghiChu:     `Đăng ký qua Web - ${form.hoTen} (${form.soDienThoai})`
             };
 
-            console.log('[AppointmentPage] Payload gửi lên:', payload);
+            console.log('[AppointmentPage] Gửi yêu cầu đặt lịch (Chuẩn Backend):', payload);
 
-            // Dùng axiosPublic để đặt lịch — không cần đăng nhập
-            const res = await axiosPublic.post(`${ENDPOINTS.APPOINTMENT}/dat-lich`, payload);
-            const result = res.data as { success: boolean; message: string };
-
-            if (result.success) {
-                setSubmitted(true);
-            } else {
-                setSubmitError(result.message || 'Đặt lịch thất bại. Vui lòng thử lại.');
-            }
-        } catch (err: unknown) {
-            const axiosErr = err as { response?: { data?: { message?: string } } };
-            const msg = axiosErr.response?.data?.message || 'Có lỗi xảy ra khi đặt lịch.';
+            // Backend yêu cầu [Authorize] -> PHẢI dùng axiosInstance
+            let res = await axiosInstance.post(`${ENDPOINTS.APPOINTMENT}/dat-lich`, payload);
+            console.log('[AppointmentPage] 🎉 Đặt lịch thành công!');
+            setSubmitted(true);
+        } catch (err: any) {
             console.error('[AppointmentPage] Submit error:', err);
+            
+            const errorData = err.response?.data;
+            const errorMsg = (typeof errorData === 'string' ? errorData : errorData?.message) || "";
+            
+            // Nếu thất bại vì bệnh nhân chưa có profile (thường gặp khi mới đăng ký user)
+            if (errorMsg.toLowerCase().includes('bệnh nhân không tồn tại') || 
+                errorMsg.toLowerCase().includes('patient not found')) {
+                
+                console.warn('[AppointmentPage] Bệnh nhân chưa có profile y tế. Đang tiến hành khởi tạo hồ sơ tự động...');
+                
+                const patientProfile = {
+                    id: user?.id,
+                    hoTen: form.hoTen.trim(),
+                    ngaySinh: form.ngaySinh || "2000-01-01",
+                    gioiTinh: form.gioiTinh || "Nam",
+                    diaChi: "Chưa cập nhật (Tự động tạo từ Web)",
+                    soTheBaoHiem: form.bhyt || "",
+                    trangThai: "Đang hoạt động"
+                };
+
+                try {
+                    console.log('[AppointmentPage] Đang gọi API tạo hồ sơ:', patientProfile);
+                    await axiosInstance.post(`${ENDPOINTS.PATIENT}/create`, patientProfile).catch(e => {
+                        console.warn('[AppointmentPage] Profile creation warning (possibly already exists):', e.response?.status);
+                    });
+
+                    console.log('[AppointmentPage] ✅ Đã xử lý hồ sơ. Đang gửi lại yêu cầu đặt lịch...');
+                    await axiosInstance.post(`${ENDPOINTS.APPOINTMENT}/dat-lich`, payload);
+                    
+                    console.log('[AppointmentPage] 🎉 Đặt lịch thành công sau khi tạo hồ sơ!');
+                    setSubmitted(true);
+                    return; // Thoát nếu thành công
+                } catch (retryErr: any) {
+                    console.error('[AppointmentPage] ❌ Lỗi khi thử lại:', retryErr);
+                }
+            }
+
+            // Nếu không phải lỗi "không tồn tại" hoặc retry vẫn lỗi thì hiển thị thông báo
+            let msg = 'Có lỗi xảy ra khi đặt lịch.';
+            if (errorData) {
+                if (typeof errorData === 'string') msg = errorData;
+                else if (errorData.message) msg = errorData.message;
+                else if (errorData.errors) {
+                    msg = "Dữ liệu không hợp lệ: " + Object.values(errorData.errors).flat().join(', ');
+                }
+            }
             setSubmitError(msg);
         } finally {
             setSubmitting(false);

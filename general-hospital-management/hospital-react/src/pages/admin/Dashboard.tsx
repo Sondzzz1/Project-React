@@ -62,13 +62,13 @@ export default function DashboardPage() {
 
     const renderDashboardByRole = () => {
         switch (role) {
-            case 'doctor':
+            case 'BacSi':
                 return <DoctorDashboard />;
-            case 'nurse':
+            case 'YTa':
                 return <NurseDashboard />;
-            case 'accountant':
+            case 'KeToan':
                 return <AccountantDashboard />;
-            case 'patient':
+            case 'BenhNhan':
                 return <PatientDashboard />;
             default:
                 return (
@@ -89,10 +89,10 @@ export default function DashboardPage() {
 
     const getRoleTitle = () => {
         switch (role) {
-            case 'doctor': return 'Bác sĩ';
-            case 'nurse': return 'Y tá';
-            case 'accountant': return 'Kế toán';
-            case 'patient': return 'Bệnh nhân';
+            case 'BacSi': return 'Bác sĩ';
+            case 'YTa': return 'Y tá';
+            case 'KeToan': return 'Kế toán';
+            case 'BenhNhan': return 'Bệnh nhân';
             default: return 'Quản trị viên';
         }
     };

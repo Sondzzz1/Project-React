@@ -18,7 +18,7 @@ const navItems: NavItem[] = [
 ];
 
 export default function PublicLayout() {
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, user, logout } = useAuth();
     const location = useLocation();
 
     return (
@@ -46,7 +46,15 @@ export default function PublicLayout() {
                     <div className="pub-header-btn">
                         <Link to="/appointment" className="pub-btn pub-btn-appointment">📅 Đặt lịch khám</Link>
                         {isAuthenticated ? (
-                            <Link to="/admin" className="pub-btn pub-btn-primary">Dashboard</Link>
+                            <div className="pub-header-user">
+                                <Link 
+                                    to={user?.role === 'BenhNhan' ? '/account' : '/admin'} 
+                                    className="pub-btn pub-btn-primary"
+                                >
+                                    {user?.role === 'BenhNhan' ? '👤 Tài khoản' : '📊 Dashboard'}
+                                </Link>
+                                <button onClick={logout} className="pub-btn pub-btn-outline pub-btn-sm" style={{ marginLeft: '8px' }}>🚪</button>
+                            </div>
                         ) : (
                             <>
                                 <Link to="/register" className="pub-btn pub-btn-outline">Đăng ký</Link>

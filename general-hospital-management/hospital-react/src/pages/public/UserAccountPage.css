@@ -43,6 +43,115 @@
     backdrop-filter: blur(4px);
 }
 
+/* ── History Styles ── */
+.uac-header-with-btn {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.uac-btn-refresh {
+    background: #f3f4f6;
+    border: 1px solid #e5e7eb;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.uac-btn-refresh:hover {
+    background: #e5e7eb;
+}
+
+.uac-history-list {
+    display: grid;
+    gap: 1rem;
+}
+
+.uac-history-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 1.25rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.uac-history-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.uac-hcard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px dashed #f3f4f6;
+}
+
+.uac-hcard-doctor {
+    display: flex;
+    flex-direction: column;
+}
+
+.uac-hcard-doctor strong {
+    color: #111827;
+    font-size: 1rem;
+}
+
+.uac-hcard-doctor span {
+    color: #6b7280;
+    font-size: 0.85rem;
+}
+
+.uac-status-badge {
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.uac-status-badge.Chờ\ xác\ nhận { background: #fffbeb; color: #92400e; }
+.uac-status-badge.Đã\ xác\ nhận { background: #ecfdf5; color: #065f46; }
+.uac-status-badge.Đã\ khám { background: #eff6ff; color: #1e40af; }
+.uac-status-badge.Đã\ hủy { background: #fef2f2; color: #991b1b; }
+.uac-status-badge.Đã\ từ\ chối { background: #fef2f2; color: #991b1b; }
+
+.uac-hcard-body {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.uac-hcard-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: #4b5563;
+}
+
+.uac-hcard-item .icon {
+    font-size: 1.1rem;
+}
+
+.uac-hcard-reason {
+    width: 100%;
+    margin-top: 0.25rem;
+    padding-top: 0.5rem;
+    color: #6b7280;
+    font-style: italic;
+}
+
+.uac-loading, .uac-empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #6b7280;
+}
+
 .uac-hero-info h1 {
     font-size: 1.6rem;
     font-weight: 700;

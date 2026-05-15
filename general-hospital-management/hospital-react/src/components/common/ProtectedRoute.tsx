@@ -5,14 +5,14 @@ import { Loading } from '../common';
 
 interface ProtectedRouteProps {
     children: ReactNode;
-    /** Danh sách role được phép vào. Mặc định: tất cả trừ 'patient' */
+    /** Danh sách role được phép vào. Mặc định: tất cả (kể cả patient) */
     allowedRoles?: string[];
 }
 
-// Các role nhân viên được phép vào /admin
-const STAFF_ROLES = ['admin', 'doctor', 'nurse', 'caregiver', 'accountant', 'nhanvien'];
+// Danh sách các role được phép truy cập khu vực quản trị/dashboard (Khớp với Backend IdentityService)
+const ALL_ROLES = ['Admin', 'BacSi', 'YTa', 'KeToan', 'BenhNhan'];
 
-export default function ProtectedRoute({ children, allowedRoles = STAFF_ROLES }: ProtectedRouteProps) {
+export default function ProtectedRoute({ children, allowedRoles = ALL_ROLES }: ProtectedRouteProps) {
     const { isAuthenticated, loading, user } = useAuth();
 
     if (loading) {
@@ -24,8 +24,9 @@ export default function ProtectedRoute({ children, allowedRoles = STAFF_ROLES }:
         return <Navigate to="/login" replace />;
     }
 
-    // Đã đăng nhập nhưng không đủ quyền (ví dụ: patient vào /admin)
+    // Đã đăng nhập nhưng không đủ quyền (đối chiếu role của user với allowedRoles)
     if (user && !allowedRoles.includes(user.role || '')) {
+        // Nếu không có quyền, về trang chủ
         return <Navigate to="/" replace />;
     }
 

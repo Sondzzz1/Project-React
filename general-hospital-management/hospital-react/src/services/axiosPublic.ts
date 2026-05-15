@@ -1,7 +1,11 @@
 /**
  * axiosPublic — Axios instance dành cho các API công khai
- * KHÔNG gắn JWT token, KHÔNG redirect khi 401
- * Dùng cho: /khoaphong/get-all, /bacsi/doctors, /LichKham/dat-lich (đặt lịch công khai)
+ * Tuyệt đối KHÔNG gắn JWT token. 
+ * 
+ * Tại sao? Một số backend gặp lỗi phân quyền (403 Forbidden) khi nhận được 
+ * token của 'Bệnh nhân' cho các endpoint lẽ ra là công khai.
+ * Việc không gửi token giúp backend xử lý request dưới quyền khách (Guest), 
+ * vốn luôn được phép xem danh mục khoa/bác sĩ.
  */
 import axios, { AxiosInstance } from 'axios';
 import { API_BASE_URL } from '../constant/api';
@@ -15,15 +19,7 @@ const axiosPublic: AxiosInstance = axios.create({
     },
 });
 
-// Nếu user đang đăng nhập thì vẫn gắn token (để backend biết context)
-// nhưng KHÔNG redirect về /login nếu 401 — chỉ throw error bình thường
-axiosPublic.interceptors.request.use((config) => {
-    const token = localStorage.getItem(APP_CONFIG.TOKEN_KEY);
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-});
+// KHÔNG gắn bất kỳ interceptor nào liên quan đến Auth ở đây.
+// Đảm bảo tính "Công khai" tuyệt đối cho instance này.
 
-// Không có interceptor 401-redirect — để component tự xử lý lỗi
 export default axiosPublic;
