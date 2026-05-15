@@ -33,6 +33,30 @@
     gap: 20px;
 }
 
+.admin-home-btn {
+    padding: 7px 16px;
+    background: linear-gradient(135deg, #2196c8, #1e6fb0);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    font-size: 0.82rem;
+    font-weight: 600;
+    transition: all 0.2s;
+    box-shadow: 0 2px 8px rgba(33, 150, 200, 0.25);
+}
+
+.admin-home-btn:hover {
+    background: linear-gradient(135deg, #1e88c7, #1a5f9a);
+    box-shadow: 0 4px 12px rgba(33, 150, 200, 0.35);
+    transform: translateY(-1px);
+}
+
+.admin-home-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(33, 150, 200, 0.25);
+}
+
 .admin-user-info {
     display: flex;
     align-items: center;

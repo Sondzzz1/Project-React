@@ -18,9 +18,8 @@ export default function LoginPage() {
         setError('');
         const result = await login(tenDangNhap, matKhau);
         if (result.success) {
-            // Tất cả user đã đăng nhập đều vào /admin
-            // Dashboard sẽ hiển thị nội dung phù hợp theo role
-            navigate('/admin');
+            // Sau khi đăng nhập thành công, điều hướng về trang chủ thay vì trang quản trị
+            navigate('/');
         } else {
             setError(result.error || 'Đăng nhập thất bại');
         }

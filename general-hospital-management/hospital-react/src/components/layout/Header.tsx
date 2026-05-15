@@ -12,6 +12,10 @@ export default function Header() {
         navigate('/login');
     };
 
+    const handleGoHome = () => {
+        navigate('/');
+    };
+
     const userRole = (user?.role || (user as { vaiTro?: string } | null)?.vaiTro) as Role | undefined;
     const roleName = (userRole && ROLE_LABELS[userRole]) || 'Nhân viên';
     const userName = user?.fullName || (user as { hoTen?: string } | null)?.hoTen || 'Người dùng';
@@ -22,6 +26,9 @@ export default function Header() {
                 <h2 className="admin-header-title">Hệ thống Quản lý Bệnh viện</h2>
             </div>
             <div className="admin-header-right">
+                <button className="admin-home-btn" onClick={handleGoHome} title="Về trang chủ">
+                    🏠 Trang chủ
+                </button>
                 <div className="admin-user-info">
                     <div className="admin-user-avatar">
                         {userName.charAt(0).toUpperCase()}

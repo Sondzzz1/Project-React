@@ -130,3 +130,42 @@
     background: rgba(255, 255, 255, 0.15);
     color: #fff;
 }
+
+/* ─── Sidebar Footer ────────────────────────────────────────────────────────── */
+.sidebar-footer {
+    padding: 12px 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+    background: rgba(0, 0, 0, 0.12);
+}
+
+.sidebar-home-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.sidebar-home-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateX(2px);
+}
+
+.sidebar-collapsed .sidebar-footer {
+    padding: 12px 6px;
+}
+
+.sidebar-collapsed .sidebar-home-btn {
+    justify-content: center;
+    padding: 10px;
+}

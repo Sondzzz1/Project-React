@@ -52,10 +52,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             // Giữ nguyên role từ Backend (khớp với IdentityService Roles)
             let finalRole = userData.role || userData.vaiTro || 'BenhNhan';
             
+            // Map role từ backend sang frontend nếu cần
+            const roleMapping: Record<string, string> = {
+                'Admin': 'Admin',
+                'QuanTriVien': 'QuanTriVien',
+                'BacSi': 'BacSi',
+                'Doctor': 'BacSi',
+                'YTa': 'YTa',
+                'Nurse': 'YTa',
+                'KeToan': 'KeToan',
+                'Accountant': 'KeToan',
+                'BenhNhan': 'BenhNhan',
+                'Patient': 'BenhNhan',
+            };
+            
+            finalRole = roleMapping[finalRole] || finalRole;
+            
             console.log('🔐 Login Debug:', {
                 originalRole: userData.role || userData.vaiTro,
-                finalRole,
-                userData
+                mappedRole: finalRole,
+                fullUserData: userData
             });
             
             userData = { ...userData, role: finalRole };

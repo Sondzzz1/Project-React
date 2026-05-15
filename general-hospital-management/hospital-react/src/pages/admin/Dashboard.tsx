@@ -46,7 +46,7 @@ export default function DashboardPage() {
     }, []);
 
     useEffect(() => { 
-        if (role === 'admin') {
+        if (role === 'Admin' || role === 'QuanTriVien') {
             loadStats(); 
         } else {
             setLoading(false);
@@ -110,7 +110,7 @@ export default function DashboardPage() {
                 renderDashboardByRole()
             )}
             
-            {role === 'admin' && <AdminTasks />}
+            {role === 'Admin' || role === 'QuanTriVien' ? <AdminTasks /> : null}
         </div>
     );
 }

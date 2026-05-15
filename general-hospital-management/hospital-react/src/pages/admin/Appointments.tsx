@@ -1,54 +1,76 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { usePermissions } from '../../hooks/usePermissions';
-import { Table, Button, Modal } from '../../components/common';
-import axiosInstance from '../../services/axiosInstance';
-import { ENDPOINTS } from '../../constant/api';
+import { appointmentApi } from '../../services';
 import './AdminPages.css';
 
 interface Appointment {
     id: string;
     benhNhanId: string;
     tenBenhNhan: string;
-    ngayKham: string;
-    gioKham: string;
+    soDienThoai?: string;
     bacSiId: string;
     tenBacSi: string;
-    bacSi?: string; // Bổ sung lại cho Form
-    chuyenKhoa: string;
-    trangThai: string;
-    ghiChu?: string;
+    khoaKham?: string;
+    ngayKham: string;
+    gioKham: string;
     lyDoKham?: string;
+    trangThai: 'ChoXacNhan' | 'DaXacNhan' | 'HoanThanh' | 'DaHuy' | 'TuChoi';
+    ghiChu?: string;
 }
 
 export default function AppointmentsPage() {
     const { user } = useAuth();
-    const { role, canAdd, canEdit, canDelete } = usePermissions();
+    const { role, canDelete } = usePermissions();
     const [appointments, setAppointments] = useState<Appointment[]>([]);
     const [loading, setLoading] = useState(true);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
+    const [filterDate, setFilterDate] = useState<string>('');
+    const [filterStatus, setFilterStatus] = useState<string>('');
 
     useEffect(() => {
         loadAppointments();
-    }, []);
+    }, [filterDate, filterStatus]);
 
     const loadAppointments = async () => {
         try {
             setLoading(true);
-            const searchParams: any = {
-                pageIndex: 1,
-                pageSize: 100
-            };
-
-            // Tự động lọc theo vai trò từ API
-            if (user?.role === 'BenhNhan') searchParams.benhNhanId = user.id;
-            if (user?.role === 'BacSi') searchParams.bacSiId = user.id;
             
-            const response = await axiosInstance.post(`${ENDPOINTS.APPOINTMENT}/danh-sach`, searchParams);
-            if (response.data.success) {
-                setAppointments(response.data.data.items);
+            const searchParams: any = {
+                pageNumber: 1,
+                pageSize: 100,
+            };
+            
+            if (role === 'BacSi' && user?.id) {
+                searchParams.bacSiId = user.id;
+            } else if (role === 'BenhNhan' && user?.id) {
+                searchParams.benhNhanId = user.id;
             }
+            
+            if (filterDate) {
+                searchParams.ngayKham = `${filterDate}T00:00:00`;
+            }
+            if (filterStatus) {
+                searchParams.trangThai = filterStatus;
+            }
+            
+            const response = await appointmentApi.getDanhSach(searchParams);
+            
+            // Trích xuất dữ liệu từ response:
+            // 1. response.data.items (nếu là paginated result từ backend mới)
+            // 2. response.data (nếu là ApiResponse wrapper)
+            // 3. response (nếu là mảng trực tiếp)
+            let data = [];
+            if (response?.data?.items && Array.isArray(response.data.items)) {
+                data = response.data.items;
+            } else if (response?.data && Array.isArray(response.data)) {
+                data = response.data;
+            } else if (Array.isArray(response)) {
+                data = response;
+            } else if (response?.items && Array.isArray(response.items)) {
+                data = response.items;
+            }
+            
+            setAppointments(data);
         } catch (error) {
             console.error('Lỗi khi tải lịch khám:', error);
         } finally {
@@ -56,114 +78,149 @@ export default function AppointmentsPage() {
         }
     };
 
-    const handleAdd = () => {
-        setSelectedAppointment(null);
-        setIsModalOpen(true);
-    };
-
-    const handleEdit = (appointment: Appointment) => {
-        setSelectedAppointment(appointment);
-        setIsModalOpen(true);
-    };
-
-    const handleDelete = async (appointment: Appointment) => {
-        if (!window.confirm(`Bạn có chắc muốn hủy lịch khám này?`)) return;
+    const handleConfirm = async (appointment: Appointment) => {
+        if (!window.confirm(`Xác nhận lịch khám của ${appointment.tenBenhNhan}?`)) return;
         
         try {
-            // TODO: Gọi API
-            // await appointmentApi.delete(appointment.id);
-            alert('Hủy lịch khám thành công!');
+            await appointmentApi.confirm(appointment.id);
+            alert('Đã xác nhận lịch khám!');
             loadAppointments();
-        } catch (error) {
-            console.error('Lỗi khi hủy lịch khám:', error);
-            alert('Có lỗi xảy ra!');
+        } catch (error: any) {
+            console.error('Lỗi khi xác nhận:', error);
+            alert(error.response?.data?.message || 'Có lỗi xảy ra!');
         }
     };
 
-    const handleSubmit = async (data: any) => {
+    const handleComplete = async (appointment: Appointment) => {
+        if (!window.confirm(`Đánh dấu hoàn thành lịch khám của ${appointment.tenBenhNhan}?`)) return;
+        
         try {
-            if (selectedAppointment) {
-                // TODO: Update
-                // await appointmentApi.update(selectedAppointment.id, data);
-                alert('Cập nhật lịch khám thành công!');
-            } else {
-                // TODO: Create
-                // await appointmentApi.create(data);
-                alert('Đặt lịch khám thành công!');
-            }
-            setIsModalOpen(false);
+            await appointmentApi.complete(appointment.id);
+            alert('Đã hoàn thành lịch khám!');
             loadAppointments();
-        } catch (error) {
-            console.error('Lỗi:', error);
-            alert('Có lỗi xảy ra!');
+        } catch (error: any) {
+            console.error('Lỗi khi hoàn thành:', error);
+            alert(error.response?.data?.message || 'Có lỗi xảy ra!');
+        }
+    };
+
+    const handleCancel = async (appointment: Appointment) => {
+        const lyDoHuy = window.prompt(`Lý do hủy lịch khám của ${appointment.tenBenhNhan}:`);
+        if (!lyDoHuy) return;
+        
+        try {
+            await appointmentApi.cancel(appointment.id, lyDoHuy);
+            alert('Đã hủy lịch khám!');
+            loadAppointments();
+        } catch (error: any) {
+            console.error('Lỗi khi hủy:', error);
+            alert(error.response?.data?.message || 'Có lỗi xảy ra!');
+        }
+    };
+
+    const handleDelete = async (appointment: Appointment) => {
+        const lyDoHuy = window.prompt(`Lý do xóa lịch khám này:`);
+        if (!lyDoHuy) return;
+        
+        try {
+            await appointmentApi.huyLich({ id: appointment.id, lyDoHuy });
+            alert('Đã xóa lịch khám!');
+            loadAppointments();
+        } catch (error: any) {
+            console.error('Lỗi khi xóa:', error);
+            alert(error.response?.data?.message || 'Có lỗi xảy ra!');
         }
     };
 
     const getStatusBadge = (status: string) => {
         const statusMap: Record<string, { label: string; color: string }> = {
-            'Chờ xác nhận': { label: 'Chờ xác nhận', color: '#f59e0b' },
-            'Đã xác nhận':  { label: 'Đã xác nhận',  color: '#10b981' },
-            'Đã khám':      { label: 'Đã khám',      color: '#3b82f6' },
-            'Đã hủy':       { label: 'Đã hủy',       color: '#ef4444' },
-            'Đã từ chối':   { label: 'Đã từ chối',   color: '#ef4444' },
+            ChoXacNhan: { label: 'Chờ xác nhận', color: '#f59e0b' },
+            DaXacNhan: { label: 'Đã xác nhận', color: '#2196c8' },
+            HoanThanh: { label: 'Hoàn thành', color: '#059669' },
+            DaHuy: { label: 'Đã hủy', color: '#dc2626' },
+            TuChoi: { label: 'Từ chối', color: '#dc2626' },
         };
-
-        const config = statusMap[status] || { label: status || 'Chờ xác nhận', color: '#6b7280' };
+        const s = statusMap[status] || { label: status, color: '#6b7280' };
         return (
-            <span className="status-badge" style={{ 
-                backgroundColor: config.color + '20', 
-                color: config.color,
-                padding: '4px 10px',
-                borderRadius: '20px',
-                fontSize: '0.85rem',
-                fontWeight: 600
+            <span style={{ 
+                padding: '4px 12px', 
+                borderRadius: '12px', 
+                backgroundColor: s.color + '20', 
+                color: s.color,
+                fontSize: '13px',
+                fontWeight: 500
             }}>
-                {config.label}
+                {s.label}
             </span>
         );
     };
 
-    const columns: any[] = [
-        { dataIndex: 'ngayKham',    title: 'Ngày khám' },
-        { dataIndex: 'gioKham',     title: 'Giờ khám' },
-        { dataIndex: 'tenBenhNhan', title: 'Bệnh nhân' },
-        { dataIndex: 'bacSi',       title: 'Bác sĩ' },
-        { dataIndex: 'chuyenKhoa',  title: 'Chuyên khoa' },
-        { 
-            dataIndex: 'trangThai',   
-            title: 'Trạng thái',
-            render: (_: any, row: any) => getStatusBadge(row.trangThai || row.TrangThai)
-        },
-        { 
-            dataIndex: 'id', 
-            title: 'Hành động',
-            render: (_: any, row: any) => (
-                <div className="table-actions">
-                    {canEdit && (
-                        <Button variant="secondary" onClick={(e) => { e.stopPropagation(); handleEdit(row); }}>
-                            Sửa
-                        </Button>
-                    )}
-                    {canDelete && (
-                        <Button variant="danger" onClick={(e) => { e.stopPropagation(); handleDelete(row); }}>
-                            Hủy
-                        </Button>
-                    )}
-                </div>
-            )
-        },
-    ];
-
-    // Lọc dữ liệu theo vai trò (để chắc chắn ở Frontend)
-    const filteredAppointments = useMemo(() => {
-        if (user?.role === 'BenhNhan') {
-            return appointments.filter(app => app.benhNhanId === user.id);
+    const getActionButtons = (appointment: Appointment) => {
+        const buttons = [];
+        
+        if (role === 'BacSi') {
+            if (appointment.trangThai === 'ChoXacNhan') {
+                buttons.push(
+                    <button
+                        key="confirm"
+                        className="btn btn-sm btn-primary"
+                        onClick={() => handleConfirm(appointment)}
+                        style={{ marginRight: '5px', padding: '4px 12px', fontSize: '13px' }}
+                    >
+                        ✓ Xác nhận
+                    </button>
+                );
+            }
+            if (appointment.trangThai === 'DaXacNhan') {
+                buttons.push(
+                    <button
+                        key="complete"
+                        className="btn btn-sm btn-success"
+                        onClick={() => handleComplete(appointment)}
+                        style={{ 
+                            marginRight: '5px', 
+                            padding: '4px 12px', 
+                            fontSize: '13px', 
+                            background: '#059669', 
+                            color: 'white', 
+                            border: 'none', 
+                            borderRadius: '6px', 
+                            cursor: 'pointer' 
+                        }}
+                    >
+                        ✓ Hoàn thành
+                    </button>
+                );
+            }
+            if (appointment.trangThai !== 'HoanThanh' && appointment.trangThai !== 'DaHuy') {
+                buttons.push(
+                    <button
+                        key="cancel"
+                        className="btn btn-sm btn-danger"
+                        onClick={() => handleCancel(appointment)}
+                        style={{ padding: '4px 12px', fontSize: '13px' }}
+                    >
+                        ✕ Hủy
+                    </button>
+                );
+            }
         }
-        if (user?.role === 'BacSi') {
-            return appointments.filter(app => app.bacSiId === user.id);
+        
+        if ((role === 'Admin' || role === 'QuanTriVien') && canDelete) {
+            buttons.push(
+                <button
+                    key="delete"
+                    className="btn btn-sm btn-danger"
+                    onClick={() => handleDelete(appointment)}
+                    style={{ padding: '4px 12px', fontSize: '13px' }}
+                >
+                    🗑 Xóa
+                </button>
+            );
         }
-        return appointments;
-    }, [appointments, user]);
+        
+        return <div style={{ display: 'flex', gap: '5px' }}>{buttons}</div>;
+    };
 
     if (loading) {
         return <div className="loading-center">Đang tải dữ liệu...</div>;
@@ -173,145 +230,133 @@ export default function AppointmentsPage() {
         <div className="admin-page">
             <div className="page-header">
                 <h1>📅 Quản lý Lịch khám</h1>
-                {canAdd && (
-                    <Button variant="primary" onClick={handleAdd}>
-                        + Đặt lịch mới
-                    </Button>
-                )}
             </div>
 
-            {filteredAppointments.length === 0 ? (
+            <div style={{ 
+                background: 'white', 
+                padding: '20px', 
+                borderRadius: '12px', 
+                marginBottom: '20px',
+                display: 'flex',
+                gap: '15px',
+                alignItems: 'end'
+            }}>
+                <div style={{ flex: 1 }}>
+                    <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px', fontWeight: 500 }}>
+                        Lọc theo ngày
+                    </label>
+                    <input
+                        type="date"
+                        value={filterDate}
+                        onChange={(e) => setFilterDate(e.target.value)}
+                        style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid #e5e7eb' }}
+                    />
+                </div>
+                <div style={{ flex: 1 }}>
+                    <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px', fontWeight: 500 }}>
+                        Lọc theo trạng thái
+                    </label>
+                    <select
+                        value={filterStatus}
+                        onChange={(e) => setFilterStatus(e.target.value)}
+                        style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid #e5e7eb' }}
+                    >
+                        <option value="">Tất cả</option>
+                        <option value="ChoXacNhan">Chờ xác nhận</option>
+                        <option value="DaXacNhan">Đã xác nhận</option>
+                        <option value="HoanThanh">Hoàn thành</option>
+                        <option value="DaHuy">Đã hủy</option>
+                        <option value="TuChoi">Từ chối</option>
+                    </select>
+                </div>
+                <button
+                    onClick={() => { setFilterDate(''); setFilterStatus(''); }}
+                    style={{ 
+                        padding: '8px 16px', 
+                        borderRadius: '6px', 
+                        border: '1px solid #e5e7eb',
+                        background: 'white',
+                        cursor: 'pointer'
+                    }}
+                >
+                    🔄 Reset
+                </button>
+            </div>
+
+            <div style={{ 
+                display: 'grid', 
+                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
+                gap: '15px',
+                marginBottom: '20px'
+            }}>
+                <div style={{ background: 'white', padding: '15px', borderRadius: '12px', borderLeft: '4px solid #f59e0b' }}>
+                    <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#f59e0b' }}>
+                        {appointments.filter(a => a.trangThai === 'ChoXacNhan').length}
+                    </div>
+                    <div style={{ fontSize: '14px', color: '#6b7280' }}>Chờ xác nhận</div>
+                </div>
+                <div style={{ background: 'white', padding: '15px', borderRadius: '12px', borderLeft: '4px solid #2196c8' }}>
+                    <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#2196c8' }}>
+                        {appointments.filter(a => a.trangThai === 'DaXacNhan').length}
+                    </div>
+                    <div style={{ fontSize: '14px', color: '#6b7280' }}>Đã xác nhận</div>
+                </div>
+                <div style={{ background: 'white', padding: '15px', borderRadius: '12px', borderLeft: '4px solid #059669' }}>
+                    <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#059669' }}>
+                        {appointments.filter(a => a.trangThai === 'HoanThanh').length}
+                    </div>
+                    <div style={{ fontSize: '14px', color: '#6b7280' }}>Hoàn thành</div>
+                </div>
+            </div>
+
+            {appointments.length === 0 ? (
                 <div className="empty-state">
                     <p>Chưa có lịch khám nào.</p>
-                    {canAdd && (
-                        <Button variant="primary" onClick={handleAdd}>
-                            Đặt lịch khám
-                        </Button>
-                    )}
                 </div>
             ) : (
-                <Table
-                    columns={columns}
-                    data={filteredAppointments.map((a: any) => ({
-                        ...a,
-                        // Giữ nguyên giá trị gốc để hàm render xử lý
-                        ngayKham: a.ngayKham || a.NgayKham ? new Date(a.ngayKham || a.NgayKham).toLocaleDateString('vi-VN') : '—',
-                        gioKham: a.gioKham || a.GioKham || '—',
-                        tenBenhNhan: a.tenBenhNhan || a.TenBenhNhan || '—',
-                        bacSi: a.tenBacSi || a.TenBacSi || '—',
-                        chuyenKhoa: a.chuyenKhoa || a.ChuyenKhoa || '—',
-                        trangThai: a.trangThai || a.TrangThai
-                    }))}
-                />
+                <div style={{ background: 'white', borderRadius: '12px', overflow: 'hidden' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                        <thead style={{ background: '#f9fafb', borderBottom: '2px solid #e5e7eb' }}>
+                            <tr>
+                                <th style={{ padding: '12px', textAlign: 'left', fontSize: '14px', fontWeight: 600 }}>Ngày</th>
+                                <th style={{ padding: '12px', textAlign: 'left', fontSize: '14px', fontWeight: 600 }}>Giờ</th>
+                                <th style={{ padding: '12px', textAlign: 'left', fontSize: '14px', fontWeight: 600 }}>Bệnh nhân</th>
+                                <th style={{ padding: '12px', textAlign: 'left', fontSize: '14px', fontWeight: 600 }}>SĐT</th>
+                                {role !== 'BacSi' && (
+                                    <th style={{ padding: '12px', textAlign: 'left', fontSize: '14px', fontWeight: 600 }}>Bác sĩ</th>
+                                )}
+                                <th style={{ padding: '12px', textAlign: 'left', fontSize: '14px', fontWeight: 600 }}>Khoa</th>
+                                <th style={{ padding: '12px', textAlign: 'left', fontSize: '14px', fontWeight: 600 }}>Lý do</th>
+                                <th style={{ padding: '12px', textAlign: 'left', fontSize: '14px', fontWeight: 600 }}>Trạng thái</th>
+                                <th style={{ padding: '12px', textAlign: 'center', fontSize: '14px', fontWeight: 600 }}>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {appointments.map((appointment) => (
+                                <tr key={appointment.id} style={{ borderBottom: '1px solid #f3f4f6' }}>
+                                    <td style={{ padding: '12px', fontSize: '14px' }}>
+                                        {new Date(appointment.ngayKham).toLocaleDateString('vi-VN')}
+                                    </td>
+                                    <td style={{ padding: '12px', fontSize: '14px', fontWeight: 500 }}>
+                                        {appointment.gioKham}
+                                    </td>
+                                    <td style={{ padding: '12px', fontSize: '14px' }}>{appointment.tenBenhNhan}</td>
+                                    <td style={{ padding: '12px', fontSize: '14px' }}>{appointment.soDienThoai}</td>
+                                    {role !== 'BacSi' && (
+                                        <td style={{ padding: '12px', fontSize: '14px' }}>{appointment.tenBacSi}</td>
+                                    )}
+                                    <td style={{ padding: '12px', fontSize: '14px' }}>{appointment.khoaKham}</td>
+                                    <td style={{ padding: '12px', fontSize: '14px' }}>{appointment.lyDoKham}</td>
+                                    <td style={{ padding: '12px' }}>{getStatusBadge(appointment.trangThai)}</td>
+                                    <td style={{ padding: '12px', textAlign: 'center' }}>
+                                        {getActionButtons(appointment)}
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             )}
-
-            <Modal
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
-                title={selectedAppointment ? 'Cập nhật lịch khám' : 'Đặt lịch khám mới'}
-            >
-                <AppointmentForm
-                    appointment={selectedAppointment}
-                    onSubmit={handleSubmit}
-                    onCancel={() => setIsModalOpen(false)}
-                />
-            </Modal>
         </div>
-    );
-}
-
-// Form component
-interface AppointmentFormProps {
-    appointment: Appointment | null;
-    onSubmit: (data: any) => void;
-    onCancel: () => void;
-}
-
-function AppointmentForm({ appointment, onSubmit, onCancel }: AppointmentFormProps) {
-    const [formData, setFormData] = useState({
-        ngayKham: appointment?.ngayKham || '',
-        gioKham: appointment?.gioKham || '',
-        bacSi: appointment?.tenBacSi || appointment?.bacSi || '',
-        chuyenKhoa: appointment?.chuyenKhoa || '',
-        ghiChu: appointment?.ghiChu || '',
-    });
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
-
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        onSubmit(formData);
-    };
-
-    return (
-        <form onSubmit={handleSubmit} className="form">
-            <div className="form-group">
-                <label>Ngày khám *</label>
-                <input
-                    type="date"
-                    name="ngayKham"
-                    value={formData.ngayKham}
-                    onChange={handleChange}
-                    required
-                />
-            </div>
-
-            <div className="form-group">
-                <label>Giờ khám *</label>
-                <input
-                    type="time"
-                    name="gioKham"
-                    value={formData.gioKham}
-                    onChange={handleChange}
-                    required
-                />
-            </div>
-
-            <div className="form-group">
-                <label>Chuyên khoa *</label>
-                <select name="chuyenKhoa" value={formData.chuyenKhoa} onChange={handleChange} required>
-                    <option value="">-- Chọn chuyên khoa --</option>
-                    <option value="Nội khoa">Nội khoa</option>
-                    <option value="Ngoại khoa">Ngoại khoa</option>
-                    <option value="Sản phụ khoa">Sản phụ khoa</option>
-                    <option value="Nhi khoa">Nhi khoa</option>
-                    <option value="Tim mạch">Tim mạch</option>
-                    <option value="Thần kinh">Thần kinh</option>
-                </select>
-            </div>
-
-            <div className="form-group">
-                <label>Bác sĩ</label>
-                <input
-                    type="text"
-                    name="bacSi"
-                    value={formData.bacSi}
-                    onChange={handleChange}
-                    placeholder="Để trống nếu chưa chọn bác sĩ"
-                />
-            </div>
-
-            <div className="form-group">
-                <label>Ghi chú</label>
-                <textarea
-                    name="ghiChu"
-                    value={formData.ghiChu}
-                    onChange={handleChange}
-                    rows={3}
-                    placeholder="Triệu chứng, lý do khám..."
-                />
-            </div>
-
-            <div className="form-actions">
-                <Button type="button" variant="secondary" onClick={onCancel}>
-                    Hủy
-                </Button>
-                <Button type="submit" variant="primary">
-                    {appointment ? 'Cập nhật' : 'Đặt lịch'}
-                </Button>
-            </div>
-        </form>
     );
 }

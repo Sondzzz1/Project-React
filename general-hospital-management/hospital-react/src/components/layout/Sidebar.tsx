@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { usePermissions } from '../../hooks/usePermissions';
 import { SIDEBAR_MENU, SidebarItem } from '../../constant/context';
@@ -8,7 +8,12 @@ import './Sidebar.css';
 export default function Sidebar() {
     const { hasPermission } = usePermissions();
     const [collapsed, setCollapsed] = useRecoilState(sidebarCollapsedAtom);
+    const navigate = useNavigate();
     const visibleItems: SidebarItem[] = SIDEBAR_MENU.filter((item) => hasPermission(item.permission));
+
+    const handleGoHome = () => {
+        navigate('/');
+    };
 
     return (
         <aside className={`sidebar ${collapsed ? 'sidebar-collapsed' : ''}`}>
@@ -40,6 +45,16 @@ export default function Sidebar() {
                     ))}
                 </ul>
             </nav>
+            <div className="sidebar-footer">
+                <button 
+                    className="sidebar-home-btn" 
+                    onClick={handleGoHome}
+                    title="Về trang chủ công khai"
+                >
+                    <span className="sidebar-icon">🏠</span>
+                    {!collapsed && <span className="sidebar-label">Trang chủ</span>}
+                </button>
+            </div>
         </aside>
     );
 }

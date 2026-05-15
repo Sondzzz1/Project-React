@@ -5,7 +5,7 @@
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-export type Role = 'Admin' | 'BacSi' | 'YTa' | 'KeToan' | 'BenhNhan';
+export type Role = 'Admin' | 'QuanTriVien' | 'BacSi' | 'YTa' | 'KeToan' | 'BenhNhan';
 
 export interface Permission {
     dashboard: boolean;
@@ -53,6 +53,12 @@ export const PERMISSIONS: Record<Role, Permission> = {
         admissions: true, billing: true, reports: true, audit: true,
         settings: true, canAdd: true, canEdit: true, canDelete: true, canExport: true, profile: true,
     },
+    QuanTriVien: {
+        dashboard: true, appointments: true, patients: true, beds: true,
+        surgery: true, records: true, doctors: true, nurses: true,
+        admissions: true, billing: true, reports: true, audit: true,
+        settings: true, canAdd: true, canEdit: true, canDelete: true, canExport: true, profile: true,
+    },
     BacSi: {
         dashboard: true, appointments: true, patients: true, beds: false,
         surgery: true, records: true, doctors: false, nurses: false,
@@ -81,6 +87,7 @@ export const PERMISSIONS: Record<Role, Permission> = {
 
 export const ROLE_LABELS: Record<Role, string> = {
     Admin: 'Quản trị viên',
+    QuanTriVien: 'Quản trị viên',
     BacSi: 'Bác sĩ',
     YTa: 'Y tá',
     KeToan: 'Kế toán',
