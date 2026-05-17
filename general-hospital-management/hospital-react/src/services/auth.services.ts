@@ -15,6 +15,7 @@ export interface AuthUser {
     tenDangNhap?: string;
     hoTen?: string;
     email?: string;
+    soDienThoai?: string;
     role: string;
 }
 

@@ -18,7 +18,9 @@ export interface Invoice {
 }
 
 export interface PaymentRequest {
+    soTien: number;
     phuongThucThanhToan?: string;
+    ghiChu?: string;
 }
 
 export interface InvoiceCreateRequest {
@@ -72,6 +74,11 @@ export const deleteInvoice = async (id: string): Promise<{ message: string }> =>
     return response.data;
 };
 
+export const updateInvoiceStatus = async (id: string, status: string): Promise<{ message: string }> => {
+    const response = await axiosInstance.put<{ success: boolean; message: string }>(`${ENDPOINTS.BILLING}/cap-nhat-trang-thai`, { id, trangThai: status });
+    return response.data;
+};
+
 // Legacy object export
 export const billingApi = { 
     getAll: getInvoices, 
@@ -81,6 +88,7 @@ export const billingApi = {
     pay: payInvoice,
     getPreviewByPatient: getPreviewByPatientId,
     create: createInvoice,
-    delete: deleteInvoice
+    delete: deleteInvoice,
+    updateStatus: updateInvoiceStatus
 };
 export default billingApi;

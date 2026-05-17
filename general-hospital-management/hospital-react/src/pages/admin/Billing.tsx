@@ -29,6 +29,8 @@ export default function BillingPage() {
     const [creating, setCreating] = useState<boolean>(false);
     
     const { canExport, canEdit, canDelete } = usePermissions();
+    //load dữ liệu
+
 
     const loadInvoices = useCallback(async () => {
         try {
@@ -43,13 +45,15 @@ export default function BillingPage() {
     }, []);
 
     useEffect(() => { loadInvoices(); }, [loadInvoices]);
+    //tìm kiếm
+
 
     const filtered = invoices.filter(inv =>
         !search ||
         (inv.tenBenhNhan || '').toLowerCase().includes(search.toLowerCase()) ||
         inv.id.toLowerCase().includes(search.toLowerCase())
     );
-
+    
     const handleExportPdf = async (id: string) => {
         try {
             const blob = await billingApi.exportPdf(id);
@@ -67,7 +71,9 @@ export default function BillingPage() {
             alert('Xuất Excel thất bại');
         }
     };
+    //mở modal thanh toán
 
+    
     const openPaymentModal = (invoice: Invoice) => {
         setSelectedInvoice(invoice);
         setPaymentMethod('Tiền mặt');
@@ -110,7 +116,10 @@ export default function BillingPage() {
         if (!selectedInvoice) return;
         setPaying(true);
         try {
-            await billingApi.pay(selectedInvoice.id, { phuongThucThanhToan: paymentMethod });
+            await billingApi.pay(selectedInvoice.id, { 
+                soTien: bhytResult ? bhytResult.benhNhanPhaiTra : selectedInvoice.benhNhanThanhToan,
+                phuongThucThanhToan: paymentMethod 
+            });
             setShowPaymentModal(false);
             loadInvoices();
             alert('Thanh toán thành công!');
@@ -132,13 +141,13 @@ export default function BillingPage() {
             setPreviewData(null);
         }
     };
-
+    
     const handleCreateInvoice = async () => {
         if (!previewData) return;
         setCreating(true);
         try {
             await billingApi.create({
-                nhapVienId: previewData.nhapVienId || nhapVienId,
+                nhapVienId: previewData.nhapVienId || '',
                 benhNhanId: previewData.benhNhanId,
                 tongTien: previewData.tongTienGoiY || previewData.tongTien || 0,
                 baoHiemChiTra: previewData.baoHiemChiTraGoiY || previewData.baoHiemChiTra || 0,
@@ -164,6 +173,38 @@ export default function BillingPage() {
             loadInvoices();
         } catch (err: any) {
             alert(err.response?.data?.message || 'Xóa thất bại');
+        }
+    };
+
+    const handleStatusChange = async (id: string, currentStatus: string, newStatus: string) => {
+        const isCurrentPaid = currentStatus === 'Đã thanh toán' || currentStatus === 'Da thanh toan';
+        const isNewUnpaid = newStatus === 'Chưa thanh toán' || newStatus === 'Chua thanh toan';
+        
+        if (isCurrentPaid && isNewUnpaid) {
+            alert('Không thể chuyển từ Đã thanh toán về Chưa thanh toán!');
+            loadInvoices(); // reset UI dropdown
+            return;
+        }
+        
+        if (newStatus === 'Đã thanh toán' || newStatus === 'Da thanh toan') {
+            try {
+                // Tận dụng API thanh toán có sẵn của Backend (vì backend không có API cập nhật trạng thái riêng)
+                const inv = invoices.find(i => i.id === id);
+                const amount = inv ? inv.benhNhanThanhToan : 0;
+                
+                await billingApi.pay(id, { 
+                    soTien: amount,
+                    phuongThucThanhToan: 'Tiền mặt' 
+                });
+                alert('Đã chuyển trạng thái thành Đã thanh toán thành công');
+                loadInvoices();
+            } catch (err: any) {
+                alert(err.response?.data?.message || 'Lỗi khi cập nhật trạng thái');
+                loadInvoices();
+            }
+        } else {
+            alert('Backend hiện tại chưa hỗ trợ API chuyển sang trạng thái: ' + newStatus);
+            loadInvoices();
         }
     };
 
@@ -222,13 +263,25 @@ export default function BillingPage() {
                                     <td><strong>{formatCurrency(inv.benhNhanThanhToan)}</strong></td>
                                     <td>{formatDate(inv.ngay || '')}</td>
                                     <td>
-                                        <span className={`status-badge badge-${inv.trangThai === 'Đã thanh toán' ? 'success' : 'warning'}`}>
-                                            {inv.trangThai}
-                                        </span>
+                                        {canEdit ? (
+                                            <select
+                                                value={inv.trangThai === 'Da thanh toan' ? 'Đã thanh toán' : inv.trangThai === 'Chua thanh toan' ? 'Chưa thanh toán' : inv.trangThai}
+                                                onChange={(e) => handleStatusChange(inv.id, inv.trangThai, e.target.value)}
+                                                className={`status-badge badge-${inv.trangThai === 'Da thanh toan' || inv.trangThai === 'Đã thanh toán' ? 'success' : 'warning'}`}
+                                                style={{ border: 'none', outline: 'none', cursor: 'pointer', appearance: 'auto' }}
+                                            >
+                                                <option value="Chưa thanh toán" disabled={inv.trangThai === 'Da thanh toan' || inv.trangThai === 'Đã thanh toán'}>Chưa thanh toán</option>
+                                                <option value="Đã thanh toán">Đã thanh toán</option>
+                                            </select>
+                                        ) : (
+                                            <span className={`status-badge badge-${inv.trangThai === 'Da thanh toan' || inv.trangThai === 'Đã thanh toán' ? 'success' : 'warning'}`}>
+                                                {inv.trangThai === 'Da thanh toan' ? 'Đã thanh toán' : inv.trangThai === 'Chua thanh toan' ? 'Chưa thanh toán' : inv.trangThai}
+                                            </span>
+                                        )}
                                     </td>
                                     <td>
                                         <div className="action-btns">
-                                            {inv.trangThai === 'Chưa thanh toán' && canEdit && (
+                                            {(inv.trangThai === 'Chua thanh toan' || inv.trangThai === 'Chưa thanh toán') && canEdit && (
                                                 <>
                                                     <button
                                                         className="btn-action btn-edit"
@@ -411,6 +464,31 @@ export default function BillingPage() {
                                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                         <span>Bệnh nhân:</span> <strong>{previewData.tenBenhNhan}</strong>
                                     </div>
+                                    {(previewData.ngayNhapVien || previewData.ngayXuatVien) && (
+                                        <>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#475569', fontSize: '0.9rem' }}>
+                                                <span>Ngày nhập viện:</span> <span>{previewData.ngayNhapVien ? formatDate(previewData.ngayNhapVien) : '—'}</span>
+                                            </div>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#475569', fontSize: '0.9rem' }}>
+                                                <span>Ngày xuất viện:</span> <span>{previewData.ngayXuatVien ? formatDate(previewData.ngayXuatVien) : '—'}</span>
+                                            </div>
+                                        </>
+                                    )}
+                                    {previewData.tienGiuong > 0 && (
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', color: '#475569', fontSize: '0.9rem' }}>
+                                            <span>Tiền giường:</span> <span>{formatCurrency(previewData.tienGiuong)}</span>
+                                        </div>
+                                    )}
+                                    {previewData.chiPhiPhauThuat > 0 && (
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', color: '#475569', fontSize: '0.9rem' }}>
+                                            <span>Phí phẫu thuật:</span> <span>{formatCurrency(previewData.chiPhiPhauThuat)}</span>
+                                        </div>
+                                    )}
+                                    {previewData.chiPhiXetNghiem > 0 && (
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', color: '#475569', fontSize: '0.9rem' }}>
+                                            <span>Phí xét nghiệm:</span> <span>{formatCurrency(previewData.chiPhiXetNghiem)}</span>
+                                        </div>
+                                    )}
                                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                         <span>Tổng chi phí:</span> <strong>{formatCurrency(previewData.tongTienGoiY ?? previewData.tongTien)}</strong>
                                     </div>

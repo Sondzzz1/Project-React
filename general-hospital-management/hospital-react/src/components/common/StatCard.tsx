@@ -10,7 +10,7 @@ import React from 'react';
 export interface StatCardProps {
     icon: string;       // Bắt buộc phải là chuỗi (chứa emoji hoặc symbol)
     label: string;      // Bắt buộc là chuỗi văn bản (VD: "Bệnh nhân")
-    value: number;      // Bắt buộc là số (VD: 150)
+    value: number | string; // Có thể là số hoặc chuỗi (VD: 150, "15.5%", "1.500.000 đ")
     color: string;      // Bắt buộc là mã màu CSS (VD: "#2196c8")
     onClick?: () => void; // Tùy chọn (Optional Props validation): có thể truyền hàm hoặc không
 }

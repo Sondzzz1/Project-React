@@ -15,6 +15,27 @@ interface Appointment {
     trangThai: string;
 }
 
+const extractPhoneFromNote = (note?: string) => note?.match(/\(([^)]+)\)/)?.[1];
+
+const unwrapAppointmentItems = (response: any): any[] => {
+    if (Array.isArray(response)) return response;
+    if (Array.isArray(response?.items)) return response.items;
+    if (Array.isArray(response?.data)) return response.data;
+    if (Array.isArray(response?.data?.items)) return response.data.items;
+    if (Array.isArray(response?.data?.data)) return response.data.data;
+    if (Array.isArray(response?.data?.data?.items)) return response.data.data.items;
+    return [];
+};
+
+const normalizeAppointment = (raw: any): Appointment => ({
+    id: raw.id || raw.Id,
+    tenBenhNhan: raw.tenBenhNhan || raw.TenBenhNhan || '—',
+    soDienThoai: raw.soDienThoai || raw.SoDienThoai || extractPhoneFromNote(raw.ghiChu || raw.GhiChu),
+    gioKham: raw.gioKham || raw.GioKham,
+    lyDoKham: raw.lyDoKham || raw.LyDoKham,
+    trangThai: raw.trangThai || raw.TrangThai || 'ChoXacNhan',
+});
+
 export default function DoctorDashboard() {
     const { user } = useAuth();
     const navigate = useNavigate();
@@ -34,9 +55,7 @@ export default function DoctorDashboard() {
             if (user?.id) {
                 try {
                     const apptResponse = await appointmentApi.getTodayByDoctor(user.id);
-                    // Backend trả về: { success: true, data: { data: [...], totalRecords, ... } }
-                    const data = apptResponse?.data?.data || apptResponse?.data || [];
-                    appointments = Array.isArray(data) ? data : [];
+                    appointments = unwrapAppointmentItems(apptResponse).map(normalizeAppointment);
                     setTodayAppointments(appointments);
                 } catch (err) {
                     console.warn('Không thể tải lịch khám:', err);
@@ -75,11 +94,11 @@ export default function DoctorDashboard() {
     ];
 
     const appointmentColumns = [
-        { key: 'gioKham', label: 'Giờ' },
-        { key: 'tenBenhNhan', label: 'Bệnh nhân' },
-        { key: 'soDienThoai', label: 'SĐT' },
-        { key: 'lyDoKham', label: 'Lý do khám' },
-        { key: 'trangThai', label: 'Trạng thái' },
+        { dataIndex: 'gioKham', title: 'Giờ' },
+        { dataIndex: 'tenBenhNhan', title: 'Bệnh nhân' },
+        { dataIndex: 'soDienThoai', title: 'SĐT' },
+        { dataIndex: 'lyDoKham', title: 'Lý do khám' },
+        { dataIndex: 'trangThai', title: 'Trạng thái' },
     ];
 
     const getStatusBadge = (status: string) => {

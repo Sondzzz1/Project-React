@@ -206,8 +206,9 @@ export default function AppointmentPage() {
                 formattedGioKham = `${formattedGioKham}:00`;
             }
 
-            // Kiểm tra BacSiId
-            if (!form.bacSiId || form.bacSiId.startsWith('d') || form.bacSiId === "00000000-0000-0000-0000-000000000000") {
+            // Kiểm tra BacSiId (Chỉ chặn các ID fallback như d1, d2, d3 hoặc empty GUID)
+            const isFallbackId = form.bacSiId.startsWith('d') && form.bacSiId.length < 5;
+            if (!form.bacSiId || isFallbackId || form.bacSiId === "00000000-0000-0000-0000-000000000000") {
                 setSubmitError('Vui lòng quay lại Bước 1 và chọn một bác sĩ cụ thể.');
                 setSubmitting(false);
                 return;
@@ -397,7 +398,7 @@ export default function AppointmentPage() {
                             {/* Combobox bác sĩ – hiện sau khi chọn khoa */}
                             {!loadingData && form.khoaKhamId && (
                                 <div className="appt-doctor-select">
-                                    <label>Chọn bác sĩ <em style={{ fontWeight: 400, color: '#64748b' }}>(không bắt buộc)</em></label>
+                                    <label>Chọn bác sĩ *</label>
                                     <select value={form.bacSiId} onChange={handleSelectDoctor}>
                                         <option value="">-- Để bệnh viện chỉ định --</option>
                                         {doctorsByKhoa.length > 0

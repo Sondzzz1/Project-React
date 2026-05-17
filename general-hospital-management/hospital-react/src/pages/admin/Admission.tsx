@@ -33,6 +33,7 @@ export default function AdmissionPage() {
     // Form cập nhật nhập viện
     const [updateForm, setUpdateForm] = useState<Partial<UpdateAdmissionRequest>>({});
     // Discharge state
+    // xuất việt
     const [dischargePreview, setDischargePreview] = useState<XuatVienPreview | null>(null);
     const [dischargeLoading, setDischargeLoading] = useState<boolean>(false);
     const [dischargeGhiChu, setDischargeGhiChu] = useState<string>('');
@@ -185,7 +186,7 @@ export default function AdmissionPage() {
             setSaving(false);
         }
     };
-
+    // chuyển giường
     const handleTransfer = async () => {
         if (!selectedAdmission || !newBedId || !transferReason) {
             setError('Vui lòng chọn giường mới và nhập lý do chuyển');
@@ -215,7 +216,7 @@ export default function AdmissionPage() {
             alert(axiosErr.response?.data?.message || 'Xóa thất bại');
         }
     };
-
+    // kiểm tra điều kiện xuất viện
     const openDischargeModal = async (a: Admission) => {
         setSelectedAdmission(a);
         setDischargeGhiChu('');
@@ -234,7 +235,7 @@ export default function AdmissionPage() {
             setDischargeLoading(false);
         }
     };
-
+    
     const handleCheckBHYT = async () => {
         if (!dischargePreview?.soTheBaoHiem) return;
         setBhytChecking(true);
@@ -595,22 +596,30 @@ export default function AdmissionPage() {
                         ) : dischargePreview ? (
                             <>
                                 {/* Thông tin điều kiện xuất viện */}
-                                <div style={{ background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: '8px', padding: '12px', marginBottom: '12px' }}>
-                                    <div style={{ fontWeight: 'bold', marginBottom: '6px', color: '#0f172a' }}>
-                                        Dữ liệu kiểm tra điều kiện từ hệ thống:
-                                    </div>
-                                    <pre style={{ background: '#e2e8f0', padding: '8px', borderRadius: '4px', fontSize: '0.85rem', overflowX: 'auto', whiteSpace: 'pre-wrap' }}>
-                                        {JSON.stringify(dischargePreview, null, 2)}
-                                    </pre>
-                                </div>
-                                    <div style={{ marginTop: '8px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px', fontSize: '0.9rem' }}>
-                                        <div>📅 Số ngày nằm viện: <strong>{dischargePreview.soNgayNamVien ?? dischargePreview.ngayNamVien ?? '—'}</strong></div>
-                                        <div>🧾 Số hóa đơn: <strong>{dischargePreview.soHoaDon ?? dischargePreview.hoaDonCount ?? '—'}</strong></div>
+                                    <div style={{ marginTop: '12px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', fontSize: '0.9rem' }}>
+                                        <div>📅 Số ngày nằm viện: <strong>{dischargePreview.soNgayNam ?? dischargePreview.soNgayNamVien ?? dischargePreview.ngayNamVien ?? '—'}</strong></div>
+                                        <div>🧾 Số hóa đơn: <strong>{dischargePreview.danhSachHoaDon?.length ?? dischargePreview.soHoaDon ?? dischargePreview.hoaDonCount ?? '0'}</strong></div>
+                                        
                                         <div>💰 Tổng chi phí: <strong>
-                                            {dischargePreview.tongChiPhiDichVu ?? dischargePreview.tongTien ?? dischargePreview.chiPhi 
-                                                ? Number(dischargePreview.tongChiPhiDichVu ?? dischargePreview.tongTien ?? dischargePreview.chiPhi).toLocaleString('vi-VN') + ' đ' 
-                                                : '—'}
+                                            {dischargePreview.tongTienHoaDon ?? dischargePreview.tongChiPhiDichVu ?? dischargePreview.tongTien ?? dischargePreview.chiPhi 
+                                                ? Number(dischargePreview.tongTienHoaDon ?? dischargePreview.tongChiPhiDichVu ?? dischargePreview.tongTien ?? dischargePreview.chiPhi).toLocaleString('vi-VN') + ' đ' 
+                                                : '0 đ'}
                                         </strong></div>
+
+                                        <div>✅ Đã thanh toán: <strong style={{ color: '#16a34a' }}>
+                                            {dischargePreview.daThanhToan !== undefined
+                                                ? Number(dischargePreview.daThanhToan).toLocaleString('vi-VN') + ' đ'
+                                                : '0 đ'}
+                                        </strong></div>
+
+                                        <div style={{ gridColumn: 'span 2', padding: '8px', background: '#fee2e2', borderRadius: '4px', border: '1px solid #fca5a5' }}>
+                                            ⚠️ Còn nợ: <strong style={{ color: '#dc2626', fontSize: '1.05rem' }}>
+                                                {dischargePreview.conNo !== undefined
+                                                    ? Number(dischargePreview.conNo).toLocaleString('vi-VN') + ' đ'
+                                                    : '0 đ'}
+                                            </strong>
+                                            {dischargePreview.conNo > 0 && <span style={{ marginLeft: '8px', fontSize: '0.8rem', color: '#991b1b' }}>(Vui lòng thanh toán trước khi xuất viện)</span>}
+                                        </div>
                                     </div>
 
                                 {/* Kiểm tra BHYT nếu có thẻ */}
@@ -661,9 +670,10 @@ export default function AdmissionPage() {
                             <button className="btn-cancel" onClick={closeModal}>Hủy</button>
                             <button
                                 className="btn-save"
-                                style={{ background: '#10b981' }}
+                                style={{ background: dischargePreview && dischargePreview.sanSangXuatVien === false ? '#94a3b8' : '#10b981' }}
                                 onClick={handleDischarge}
-                                disabled={saving || dischargeLoading}
+                                disabled={saving || dischargeLoading || (dischargePreview && dischargePreview.sanSangXuatVien === false)}
+                                title={dischargePreview && dischargePreview.sanSangXuatVien === false ? "Bệnh nhân chưa thanh toán đủ viện phí" : ""}
                             >
                                 {saving ? 'Đang xử lý...' : '🏥 Xác nhận xuất viện'}
                             </button>

@@ -15,6 +15,8 @@ export interface BenhNhanViewDTO {
     trangThai: string;
 }
 
+export type Patient = BenhNhanViewDTO;
+
 export interface BenhNhanCreateDTO {
     id?: string;             // Guid (optional, backend sẽ tạo nếu không có)
     hoTen: string;

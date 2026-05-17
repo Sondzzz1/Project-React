@@ -92,7 +92,7 @@ export default function PatientPage() {
         setSaving(true);
         try {
             if (editingPatient) {
-                await patientApi.update(editingPatient.id, formData);
+                await patientApi.update({ id: editingPatient.id, ...formData } as any);
             } else {
                 await patientApi.create(formData as Parameters<typeof patientApi.create>[0]);
             }

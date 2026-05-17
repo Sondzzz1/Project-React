@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { usePermissions } from '../../hooks/usePermissions';
-import { appointmentApi } from '../../services';
+import { appointmentApi, doctorApi } from '../../services';
 import './AdminPages.css';
 
 interface Appointment {
@@ -19,6 +19,70 @@ interface Appointment {
     ghiChu?: string;
 }
 
+interface DoctorLookup {
+    id?: string;
+    hoTen?: string;
+    email?: string;
+    soDienThoai?: string;
+    thongTinLienHe?: string;
+}
+
+const normalizeText = (value?: string) =>
+    (value || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .trim()
+        .toLowerCase();
+
+const normalizePhone = (value?: string) => (value || '').replace(/\D/g, '');
+
+const normalizeStatus = (status?: string): Appointment['trangThai'] => {
+    const raw = (status || '').trim();
+    const text = normalizeText(raw);
+
+    if (raw === 'ChoXacNhan' || text === 'cho xac nhan') return 'ChoXacNhan';
+    if (raw === 'DaXacNhan' || text === 'da xac nhan') return 'DaXacNhan';
+    if (raw === 'HoanThanh' || text === 'hoan thanh' || text === 'da kham') return 'HoanThanh';
+    if (raw === 'DaHuy' || text === 'da huy') return 'DaHuy';
+    if (raw === 'TuChoi' || text === 'tu choi' || text === 'da tu choi') return 'TuChoi';
+
+    return 'ChoXacNhan';
+};
+
+const extractPhoneFromNote = (note?: string) => note?.match(/\(([^)]+)\)/)?.[1];
+
+const normalizeAppointment = (raw: any): Appointment => ({
+    id: raw.id || raw.Id,
+    benhNhanId: raw.benhNhanId || raw.BenhNhanId,
+    tenBenhNhan: raw.tenBenhNhan || raw.TenBenhNhan || '—',
+    soDienThoai: raw.soDienThoai || raw.SoDienThoai || extractPhoneFromNote(raw.ghiChu || raw.GhiChu),
+    bacSiId: raw.bacSiId || raw.BacSiId,
+    tenBacSi: raw.tenBacSi || raw.TenBacSi || '—',
+    khoaKham: raw.khoaKham || raw.KhoaKham || raw.tenKhoa || raw.TenKhoa || raw.chuyenKhoa || raw.ChuyenKhoa,
+    ngayKham: raw.ngayKham || raw.NgayKham,
+    gioKham: raw.gioKham || raw.GioKham,
+    lyDoKham: raw.lyDoKham || raw.LyDoKham,
+    trangThai: normalizeStatus(raw.trangThai || raw.TrangThai),
+    ghiChu: raw.ghiChu || raw.GhiChu,
+});
+
+const unwrapItems = (response: any): any[] => {
+    if (Array.isArray(response)) return response;
+    if (Array.isArray(response?.items)) return response.items;
+    if (Array.isArray(response?.data)) return response.data;
+    if (Array.isArray(response?.data?.items)) return response.data.items;
+    if (Array.isArray(response?.data?.data)) return response.data.data;
+    if (Array.isArray(response?.data?.data?.items)) return response.data.data.items;
+    return [];
+};
+
+const unwrapDoctors = (response: any): DoctorLookup[] => {
+    if (Array.isArray(response)) return response;
+    if (Array.isArray(response?.data)) return response.data;
+    if (Array.isArray(response?.data?.data)) return response.data.data;
+    return [];
+};
+
 export default function AppointmentsPage() {
     const { user } = useAuth();
     const { role, canDelete } = usePermissions();
@@ -29,50 +93,68 @@ export default function AppointmentsPage() {
 
     useEffect(() => {
         loadAppointments();
-    }, [filterDate, filterStatus]);
+    }, [filterDate, filterStatus, role, user?.id]);
+
+    const resolveDoctorId = async () => {
+        if (role !== 'BacSi' || !user?.id) return undefined;
+
+        const userId = String(user.id);
+        try {
+            const doctors = unwrapDoctors(await doctorApi.getAll());
+            const userEmail = normalizeText((user as any).email || (user as any).Email);
+            const userPhone = normalizePhone((user as any).soDienThoai || (user as any).SoDienThoai || (user as any).phoneNumber);
+            const userName = normalizeText((user as any).hoTen || (user as any).fullName || (user as any).HoTen);
+            const username = normalizeText((user as any).tenDangNhap || (user as any).username || (user as any).TenDangNhap);
+
+            const matchedDoctor = doctors.find((doctor) => {
+                const doctorId = String(doctor.id || '');
+                const doctorEmail = normalizeText(doctor.email);
+                const doctorPhone = normalizePhone(doctor.soDienThoai || doctor.thongTinLienHe);
+                const doctorName = normalizeText(doctor.hoTen);
+                const doctorEmailUser = normalizeText(doctor.email?.split('@')[0]);
+
+                return doctorId === userId ||
+                    (!!userEmail && userEmail === doctorEmail) ||
+                    (!!userPhone && userPhone === doctorPhone) ||
+                    (!!userName && userName === doctorName) ||
+                    (!!username && username === doctorEmailUser);
+            });
+
+            return matchedDoctor?.id || userId;
+        } catch (error) {
+            console.warn('Không resolve được BacSiId từ tài khoản hiện tại, dùng user.id làm fallback:', error);
+            return userId;
+        }
+    };
 
     const loadAppointments = async () => {
         try {
             setLoading(true);
             
             const searchParams: any = {
-                pageNumber: 1,
+                pageIndex: 1,
                 pageSize: 100,
             };
             
             if (role === 'BacSi' && user?.id) {
-                searchParams.bacSiId = user.id;
+                searchParams.bacSiId = await resolveDoctorId();
             } else if (role === 'BenhNhan' && user?.id) {
                 searchParams.benhNhanId = user.id;
             }
             
             if (filterDate) {
-                searchParams.ngayKham = `${filterDate}T00:00:00`;
+                searchParams.tuNgay = `${filterDate}T00:00:00`;
+                searchParams.denNgay = `${filterDate}T23:59:59`;
             }
             if (filterStatus) {
                 searchParams.trangThai = filterStatus;
             }
             
             const response = await appointmentApi.getDanhSach(searchParams);
-            
-            // Trích xuất dữ liệu từ response:
-            // 1. response.data.items (nếu là paginated result từ backend mới)
-            // 2. response.data (nếu là ApiResponse wrapper)
-            // 3. response (nếu là mảng trực tiếp)
-            let data = [];
-            if (response?.data?.items && Array.isArray(response.data.items)) {
-                data = response.data.items;
-            } else if (response?.data && Array.isArray(response.data)) {
-                data = response.data;
-            } else if (Array.isArray(response)) {
-                data = response;
-            } else if (response?.items && Array.isArray(response.items)) {
-                data = response.items;
-            }
-            
-            setAppointments(data);
+            setAppointments(unwrapItems(response).map(normalizeAppointment));
         } catch (error) {
             console.error('Lỗi khi tải lịch khám:', error);
+            setAppointments([]);
         } finally {
             setLoading(false);
         }

@@ -11,10 +11,11 @@ export interface Appointment {
     bacSiId: string;
     tenBacSi: string;
     khoaKham?: string;
+    tenKhoa?: string;
     ngayKham: string;
     gioKham: string;
     lyDoKham?: string;
-    trangThai: 'ChoXacNhan' | 'DaXacNhan' | 'HoanThanh' | 'DaHuy';
+    trangThai: 'ChoXacNhan' | 'DaXacNhan' | 'HoanThanh' | 'DaHuy' | 'TuChoi';
     ghiChu?: string;
     createdAt?: string;
 }
@@ -32,7 +33,10 @@ export interface SearchLichKhamDTO {
     benhNhanId?: string;
     bacSiId?: string;
     ngayKham?: string;
+    tuNgay?: string;
+    denNgay?: string;
     trangThai?: string;
+    pageIndex?: number;
     pageNumber?: number;
     pageSize?: number;
 }
@@ -62,8 +66,27 @@ export const datLich = async (data: DatLichDTO) => {
  * Lấy danh sách lịch khám (có filter và phân trang)
  */
 export const getDanhSach = async (search: SearchLichKhamDTO) => {
-    const response = await axiosInstance.post(`${ENDPOINTS.APPOINTMENT}/danh-sach`, search);
+    const payload = {
+        ...search,
+        pageIndex: search.pageIndex ?? search.pageNumber ?? 1,
+        tuNgay: search.tuNgay ?? search.ngayKham,
+        denNgay: search.denNgay ?? search.ngayKham,
+    };
+    delete (payload as { pageNumber?: number }).pageNumber;
+    delete (payload as { ngayKham?: string }).ngayKham;
+
+    const response = await axiosInstance.post(`${ENDPOINTS.APPOINTMENT}/danh-sach`, payload);
     return response.data;
+};
+
+const getDayRange = (value?: string) => {
+    if (!value) return {};
+
+    const day = value.split('T')[0];
+    return {
+        tuNgay: `${day}T00:00:00`,
+        denNgay: `${day}T23:59:59`,
+    };
 };
 
 /**
@@ -104,11 +127,13 @@ export const getLichTrong = async (bacSiId: string, ngayKham: string) => {
  * Lấy lịch khám của bác sĩ
  */
 export const getByDoctor = async (bacSiId: string, filters?: { ngayKham?: string; trangThai?: string }) => {
+    const dateRange = getDayRange(filters?.ngayKham);
+
     return getDanhSach({
         bacSiId,
-        ngayKham: filters?.ngayKham,
+        ...dateRange,
         trangThai: filters?.trangThai,
-        pageNumber: 1,
+        pageIndex: 1,
         pageSize: 100,
     });
 };
@@ -119,7 +144,7 @@ export const getByDoctor = async (bacSiId: string, filters?: { ngayKham?: string
 export const getByPatient = async (benhNhanId: string) => {
     return getDanhSach({
         benhNhanId,
-        pageNumber: 1,
+        pageIndex: 1,
         pageSize: 100,
     });
 };
@@ -129,7 +154,7 @@ export const getByPatient = async (benhNhanId: string) => {
  */
 export const getTodayByDoctor = async (bacSiId: string) => {
     const today = new Date().toISOString().split('T')[0];
-    return getByDoctor(bacSiId, { ngayKham: `${today}T00:00:00` });
+    return getByDoctor(bacSiId, { ngayKham: today });
 };
 
 /**
